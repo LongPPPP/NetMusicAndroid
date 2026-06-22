@@ -1,0 +1,16 @@
+{
+  "name": "netmusic-server",
+  "version": "1.0.0",
+  "description": "NetMusic App - Backend Server (Node.js + TypeScript)",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "jest",
+    "lint": "eslint src/"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "private": true
+}
