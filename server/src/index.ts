@@ -1,11 +1,11 @@
-import express from 'express';
 import cors from 'cors';
+import express from 'express';
 import swaggerUi from 'swagger-ui-express';
-import { config } from './config';
-import { generateOpenAPIDocument } from './docs';
+import {config} from './config';
+import {generateOpenAPIDocument} from './docs';
+import {errorMiddleware, notFoundMiddleware} from './middlewares/error.middleware';
+import {loggerMiddleware} from './middlewares/logger.middleware';
 import routes from './routes';
-import { loggerMiddleware } from './middlewares/logger.middleware';
-import { errorMiddleware, notFoundMiddleware } from './middlewares/error.middleware';
 
 const app = express();
 
@@ -31,7 +31,7 @@ app.use(errorMiddleware);           // 全局错误
 
 // ===== 启动服务器 =====
 app.listen(config.port, () => {
-  console.log(`🎵 NetMusic Server 启动成功`);
-  console.log(`  地址: http://localhost:${config.port}`);
-  console.log(`  API:  http://localhost:${config.port}/api/v1`);
+    console.log(`🎵 NetMusic Server 启动成功`);
+    console.log(`  地址: http://localhost:${config.port}`);
+    console.log(`  API:  http://localhost:${config.port}/api/v1`);
 });
