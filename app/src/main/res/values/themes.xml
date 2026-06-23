@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.NetMusicAndroid" parent="android:Theme.Material.Light.NoActionBar" />
+    <!--应用全局主题,改用 AppCompat 主题，避免闪退-->
+    <style name="Theme.NetMusicAndroid" parent="Theme.AppCompat.Light.NoActionBar" />
 </resources>
