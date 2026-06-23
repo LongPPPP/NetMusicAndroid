@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  nickname  String?
+  email     String   @unique
+  avatar    String?
+  gender    Int      @default(0) // 0-未知 1-男 2-女
+  signature String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
