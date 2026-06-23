@@ -180,7 +180,7 @@ server/
 │   │   ├── error.middleware.ts # 全局错误处理
 │   │   └── logger.middleware.ts
 │   ├── constants/
-│   │   └── auth.errors.ts     # 错误码枚举
+│   │   └── errorString.ts     # 错误码枚举
 │   └── utils/
 │       ├── password.ts         # bcrypt 加密
 │       ├── jwt.ts              # JWT 签发/验证

@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
 import { config } from './config';
+import { generateOpenAPIDocument } from './docs';
 import routes from './routes';
 import { loggerMiddleware } from './middlewares/logger.middleware';
 import { errorMiddleware, notFoundMiddleware } from './middlewares/error.middleware';
@@ -11,6 +13,11 @@ const app = express();
 app.use(cors());                    // 跨域
 app.use(express.json());            // JSON 解析
 app.use(loggerMiddleware);          // 请求日志
+
+// ===== API 文档（Swagger UI）=====
+const openapiDoc = generateOpenAPIDocument();
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDoc));
+app.get('/api-docs.json', (_req, res) => res.json(openapiDoc));
 
 // ===== 静态文件托管（音乐文件）=====
 app.use('/static', express.static('storage'));
