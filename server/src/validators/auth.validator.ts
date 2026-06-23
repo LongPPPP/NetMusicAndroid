@@ -1,30 +1,30 @@
-import { z } from 'zod';
+import {z} from 'zod';
 
 // 注册参数校验
 export const registerSchema = z.object({
-  username: z
-    .string()
-    .trim()
-    .min(3, '用户名至少 3 个字符')
-    .max(20, '用户名最多 20 个字符'),
-  password: z
-    .string()
-    .min(6, '密码至少 6 个字符')
-    .max(50, '密码最多 50 个字符'),
-  email: z
-    .string()
-    .email('邮箱格式不正确'),
+    username: z
+        .string()
+        .trim()
+        .min(4, '用户名至少 4 个字符')
+        .max(16, '用户名最多 16 个字符')
+        .regex(/^[a-zA-Z0-9_]+$/, '用户名仅支持英文、数字和下划线'),
+    password: z
+        .string()
+        .min(6, '密码至少 6 个字符')
+        .max(20, '密码最多 20 个字符'),
+    email: z
+        .email('邮箱格式不正确'),
 });
 
 // 登录参数校验
 export const loginSchema = z.object({
-  username: z
-    .string()
-    .trim()
-    .min(1, '用户名不能为空'),
-  password: z
-    .string()
-    .min(1, '密码不能为空'),
+    username: z
+        .string()
+        .trim()
+        .min(1, '用户名不能为空'),
+    password: z
+        .string()
+        .min(1, '密码不能为空'),
 });
 
 // 从 schema 推导 TypeScript 类型
