@@ -14,8 +14,9 @@ export const login = asyncHandler(async (req, res) => {
     return success(res, result, '登录成功');
 });
 
-// 验证 Token 有效性（免登自动登录）
-export const verifyToken = asyncHandler(async (req, res) => {
-    const user = await authService.getUserBasicInfo(req.userId!);
-    return success(res, user, 'Token 有效');
+// 刷新 Access Token
+export const refresh = asyncHandler(async (req, res) => {
+    const {refreshToken} = req.body;
+    const result = await authService.refresh(refreshToken);
+    return success(res, result, 'Token 刷新成功');
 });

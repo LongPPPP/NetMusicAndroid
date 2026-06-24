@@ -1,6 +1,6 @@
 import {PrismaLibSql} from '@prisma/adapter-libsql';
 import bcrypt from 'bcryptjs';
-import {PrismaClient} from '../src/generated/prisma/client';
+import {PrismaClient, Gender, Role} from '../src/generated/prisma/client';
 
 const adapter = new PrismaLibSql({
     url: process.env.DATABASE_URL || 'file:./prisma/dev.db',
@@ -13,33 +13,33 @@ const users = [
     {
         username: 'alice',
         password: 'alice123',
-        nickname: '爱丽丝',
         email: 'alice@example.com',
-        gender: 1,
+        gender: Gender.MALE,
+        role: Role.USER,
         signature: '欢迎来到音乐世界 🎵',
     },
     {
         username: 'bob',
         password: 'bob123456',
-        nickname: '鲍勃',
         email: 'bob@example.com',
-        gender: 1,
+        gender: Gender.MALE,
+        role: Role.ARTIST,
         signature: '摇滚不死',
     },
     {
         username: 'charlie',
         password: 'charlie123',
-        nickname: '查理',
         email: 'charlie@example.com',
-        gender: 2,
+        gender: Gender.FEMALE,
+        role: Role.USER,
         signature: '民谣爱好者',
     },
     {
         username: 'admin',
         password: 'admin123',
-        nickname: '管理员',
         email: 'admin@netmusic.com',
-        gender: 0,
+        gender: Gender.UNKNOWN,
+        role: Role.ARTIST,
         signature: '系统管理员',
     },
 ];
@@ -58,9 +58,9 @@ async function main() {
             data: {
                 username: u.username,
                 password: hashedPassword,
-                nickname: u.nickname,
                 email: u.email,
                 gender: u.gender,
+                role: u.role,
                 signature: u.signature,
             },
         });

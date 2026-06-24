@@ -1,12 +1,13 @@
 import {NextFunction, Request, Response} from 'express';
 import {UnauthorizedError} from '../errors/AppError';
-import {verifyToken} from '../utils/jwt';
+import {verifyAccessToken} from '../utils/jwt';
 
-// 扩展 Express Request 类型，添加 userId
+// 扩展 Express Request 类型，添加 userId 和 userRole
 declare global {
     namespace Express {
         interface Request {
             userId?: number;
+            userRole?: string;
         }
     }
 }
@@ -30,8 +31,9 @@ export function authMiddleware(req: Request, _res: Response, next: NextFunction)
     }
 
     try {
-        const decoded = verifyToken(token);
+        const decoded = verifyAccessToken(token);
         req.userId = decoded.userId;
+        req.userRole = decoded.role;
         next();
     } catch {
         return next(new UnauthorizedError('Token 已过期或无效，请重新登录'));

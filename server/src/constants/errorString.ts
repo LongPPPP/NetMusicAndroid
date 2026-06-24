@@ -7,4 +7,6 @@ export const AuthErrorMessage = {
     REGISTER_FAILED: '注册失败',
     LOGIN_ERROR: '登录失败',
     TOKEN_INVALID: 'Token 验证失败',
+    REFRESH_TOKEN_INVALID: 'Refresh Token 无效或已过期',
+    FORBIDDEN: '权限不足，无法执行此操作',
 } as const;

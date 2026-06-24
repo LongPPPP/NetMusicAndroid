@@ -1,23 +1,25 @@
 import prisma from '../config/database';
 import {AuthErrorMessage} from '../constants/errorString';
-import {NotFoundError} from '../errors/AppError';
+import {ConflictError, NotFoundError} from '../errors/AppError';
 import {sanitize} from '../utils/sanitize';
-import type {UpdateUserInput} from '../validators/user.validator';
+
+/** 返回给前端的用户公开信息字段 */
+const userSelect = {
+    id: true,
+    username: true,
+    email: true,
+    avatar: true,
+    gender: true,
+    signature: true,
+    role: true,
+    createdAt: true,
+} as const;
 
 // 获取用户公开信息
 export async function getUserById(userId: number) {
     const user = await prisma.user.findUnique({
         where: {id: userId},
-        select: {
-            id: true,
-            username: true,
-            nickname: true,
-            email: true,
-            avatar: true,
-            gender: true,
-            signature: true,
-            createdAt: true,
-        },
+        select: userSelect,
     });
 
     if (!user) {
@@ -27,33 +29,53 @@ export async function getUserById(userId: number) {
     return user;
 }
 
-// 更新用户资料（仅允许更新非敏感字段）
-export async function updateUser(userId: number, data: UpdateUserInput) {
-    const user = await prisma.user.findUnique({where: {id: userId}});
-    if (!user) {
-        throw new NotFoundError(AuthErrorMessage.USER_NOT_FOUND);
-    }
+// 修改用户名
+export async function updateUsername(userId: number, username: string) {
+    const sanitized = sanitize(username);
+    const updated = await prisma.user.update({
+        where: {id: userId},
+        data: {username: sanitized},
+        select: userSelect,
+    });
+    return updated;
+}
 
-    // XSS 过滤字符串字段
-    const updateData: Record<string, any> = {};
-    if (data.nickname !== undefined) updateData.nickname = sanitize(data.nickname);
-    if (data.avatar !== undefined) updateData.avatar = data.avatar;
-    if (data.gender !== undefined) updateData.gender = data.gender;
-    if (data.signature !== undefined) updateData.signature = sanitize(data.signature);
+// 修改头像
+export async function updateAvatar(userId: number, avatar: string) {
+    const updated = await prisma.user.update({
+        where: {id: userId},
+        data: {avatar},
+        select: userSelect,
+    });
+    return updated;
+}
+
+// 修改个性签名
+export async function updateSignature(userId: number, signature: string) {
+    const sanitized = sanitize(signature);
+    const updated = await prisma.user.update({
+        where: {id: userId},
+        data: {signature: sanitized},
+        select: userSelect,
+    });
+    return updated;
+}
+
+// 修改邮箱（唯一，需要查重）
+export async function updateEmail(userId: number, email: string) {
+    // 检查新邮箱是否已被其他用户占用
+    const existing = await prisma.user.findFirst({
+        where: {email, id: {not: userId}},
+        select: {id: true},
+    });
+    if (existing) {
+        throw new ConflictError(AuthErrorMessage.EMAIL_EXISTS);
+    }
 
     const updated = await prisma.user.update({
         where: {id: userId},
-        data: updateData,
-        select: {
-            id: true,
-            username: true,
-            nickname: true,
-            email: true,
-            avatar: true,
-            gender: true,
-            signature: true,
-        },
+        data: {email},
+        select: userSelect,
     });
-
     return updated;
 }

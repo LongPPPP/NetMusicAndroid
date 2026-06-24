@@ -2,11 +2,23 @@ import {Router} from 'express';
 import * as userController from '../controllers/user.controller';
 import {authMiddleware} from '../middlewares/auth.middleware';
 import {validate} from '../middlewares/validate';
-import {updateUserSchema} from '../validators/user.validator';
+import {
+    updateAvatarSchema,
+    updateEmailSchema,
+    updateSignatureSchema,
+    updateUsernameSchema,
+} from '../validators/user.validator';
 
 const router = Router();
 
-router.get('/:id', userController.getProfile);                                     // 公开：查看用户信息
-router.put('/:id', authMiddleware, validate(updateUserSchema), userController.updateProfile);  // 需鉴权：修改自己的信息
+// 需鉴权 — 放在 /:id 前面，避免被通配匹配
+router.get('/me', authMiddleware, userController.getMyProfile);
+router.patch('/me/username', authMiddleware, validate(updateUsernameSchema), userController.updateUsername);
+router.patch('/me/avatar', authMiddleware, validate(updateAvatarSchema), userController.updateAvatar);
+router.patch('/me/signature', authMiddleware, validate(updateSignatureSchema), userController.updateSignature);
+router.patch('/me/email', authMiddleware, validate(updateEmailSchema), userController.updateEmail);
+
+// 公开
+router.get('/:id', userController.getProfile);
 
 export default router;
