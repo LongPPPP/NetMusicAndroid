@@ -34,7 +34,14 @@ export const updateEmailSchema = z.object({
         .min(1, '邮箱不能为空'),
 });
 
+// 统一修改用户信息（数据字典：PATCH /users/me）
+export const updateUserSchema = z.object({
+    field: z.enum(['avatar', 'signature', 'password']),
+    value: z.string().trim().min(1, 'value 不能为空'),
+});
+
 export type UpdateUsernameInput = z.infer<typeof updateUsernameSchema>;
 export type UpdateAvatarInput = z.infer<typeof updateAvatarSchema>;
 export type UpdateSignatureInput = z.infer<typeof updateSignatureSchema>;
 export type UpdateEmailInput = z.infer<typeof updateEmailSchema>;
+export type UpdateUserInput = z.infer<typeof updateUserSchema>;

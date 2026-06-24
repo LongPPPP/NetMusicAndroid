@@ -7,6 +7,7 @@ import {
     updateEmailSchema,
     updateSignatureSchema,
     updateUsernameSchema,
+    updateUserSchema,
 } from '../validators/user.validator';
 
 const router = Router();
@@ -20,5 +21,8 @@ router.patch('/me/email', authMiddleware, validate(updateEmailSchema), userContr
 
 // 公开
 router.get('/:id', userController.getProfile);
+
+// 数据字典统一修改接口
+router.patch('/me', authMiddleware, validate(updateUserSchema), userController.updateUser);
 
 export default router;

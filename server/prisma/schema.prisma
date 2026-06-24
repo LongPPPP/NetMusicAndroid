@@ -19,6 +19,7 @@ enum Gender {
   FEMALE
 }
 
+// 用户表
 model User {
   id        Int      @id @default(autoincrement())
   username  String
@@ -30,4 +31,82 @@ model User {
   signature String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  playlists Playlist[]
+  comments  Comment[]
+}
+
+// 歌手表
+model Singer {
+  id          Int      @id @default(autoincrement())
+  name        String
+  avatarUrl   String?  @map("avatar_url")
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  songs Song[]
+
+  @@map("singers")
+}
+
+// 歌曲表
+model Song {
+  id         Int      @id @default(autoincrement())
+  name       String
+  singerId   Int?     @map("singer_id")
+  singerName String?  @map("singer_name")
+  playUrl    String?  @map("play_url")
+  coverUrl   String?  @map("cover_url")
+  duration   Int?
+  createdAt  DateTime @default(now())
+
+  singer          Singer?         @relation(fields: [singerId], references: [id])
+  comments        Comment[]
+  playlistSongs   PlaylistSong[]
+
+  @@map("songs")
+}
+
+// 歌单表
+model Playlist {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user         User           @relation(fields: [userId], references: [id])
+  playlistSongs PlaylistSong[]
+
+  @@unique([userId, name])
+  @@map("playlists")
+}
+
+// 歌单-歌曲关联表
+model PlaylistSong {
+  playlistId Int      @map("playlist_id")
+  songId     Int      @map("song_id")
+  addedAt    DateTime @default(now()) @map("added_at")
+
+  playlist Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  song     Song     @relation(fields: [songId], references: [id], onDelete: Cascade)
+
+  @@id([playlistId, songId])
+  @@map("playlist_songs")
+}
+
+// 评论表
+model Comment {
+  id        Int      @id @default(autoincrement())
+  songId    Int      @map("song_id")
+  userId    Int      @map("user_id")
+  username  String?
+  content   String
+  createdAt DateTime @default(now())
+
+  song Song @relation(fields: [songId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
 }

@@ -10,3 +10,24 @@ export const AuthErrorMessage = {
     REFRESH_TOKEN_INVALID: 'Refresh Token 无效或已过期',
     FORBIDDEN: '权限不足，无法执行此操作',
 } as const;
+
+export const PlaylistErrorMessage = {
+    NOT_FOUND: '歌单不存在',
+    NAME_EXISTS: '歌单名称已存在',
+    CREATE_FAILED: '创建歌单失败',
+} as const;
+
+export const SongErrorMessage = {
+    NOT_FOUND: '歌曲不存在或已下架',
+    UNAUTHORIZED: '无权限播放此歌曲',
+} as const;
+
+export const SingerErrorMessage = {
+    NOT_FOUND: '歌手不存在',
+} as const;
+
+export const CommentErrorMessage = {
+    SONG_NOT_FOUND: '歌曲不存在',
+    CONTENT_TOO_LONG: '评论内容过长',
+    CREATE_FAILED: '发表评论失败',
+} as const;

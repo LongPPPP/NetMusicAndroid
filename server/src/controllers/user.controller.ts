@@ -43,3 +43,10 @@ export const updateEmail = asyncHandler(async (req, res) => {
     const user = await userService.updateEmail(req.userId!, req.body.email);
     return success(res, user, '邮箱修改成功');
 });
+
+// 统一修改用户信息
+export const updateUser = asyncHandler(async (req, res) => {
+    const {field, value} = req.body;
+    const user = await userService.updateUser(req.userId!, field, value);
+    return success(res, user, '修改成功');
+});
