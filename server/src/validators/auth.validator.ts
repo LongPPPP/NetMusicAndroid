@@ -28,10 +28,9 @@ export const registerSchema = z.object({
 // 登录参数校验（使用邮箱登录）
 export const loginSchema = z.object({
     email: z
-        .string()
+        .email('邮箱格式不正确')
         .trim()
-        .min(1, '邮箱不能为空')
-        .email('邮箱格式不正确'),
+        .min(1, '邮箱不能为空'),
     password: z
         .string()
         .min(1, '密码不能为空'),

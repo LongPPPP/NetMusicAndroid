@@ -13,10 +13,9 @@ export const updateUsernameSchema = z.object({
 // 修改头像
 export const updateAvatarSchema = z.object({
     avatar: z
-        .string()
+        .url('头像地址格式不正确')
         .trim()
-        .min(1, '头像地址不能为空')
-        .url('头像地址格式不正确'),
+        .min(1, '头像地址不能为空'),
 });
 
 // 修改个性签名
@@ -30,10 +29,9 @@ export const updateSignatureSchema = z.object({
 // 修改邮箱
 export const updateEmailSchema = z.object({
     email: z
-        .string()
+        .email('邮箱格式不正确')
         .trim()
-        .min(1, '邮箱不能为空')
-        .email('邮箱格式不正确'),
+        .min(1, '邮箱不能为空'),
 });
 
 export type UpdateUsernameInput = z.infer<typeof updateUsernameSchema>;
