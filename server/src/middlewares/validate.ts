@@ -3,7 +3,7 @@ import {ZodSchema} from 'zod';
 import {ValidationError} from '../errors/AppError';
 
 /**
- * 可复用的 Zod 校验中间件。
+ * 可复用的 Zod 校验中间件（校验 req.body）。
  *
  * 使用方式：
  *   router.post('/register', validate(registerSchema), register);
@@ -18,7 +18,30 @@ export const validate =
             if (!result.success) {
                 return next(new ValidationError(result.error.issues[0].message));
             }
-            // 替换为已校验的类型安全数据
             req.body = result.data;
+            next();
+        };
+
+/**
+ * 校验 req.query 参数（用于 GET 请求的查询参数校验）。
+ *
+ * 使用方式：
+ *   router.get('/songs', validateQuery(getSongsSchema), listSongs);
+ *
+ * 校验成功后 parsed.data 挂在 req.query 上。
+ */
+export const validateQuery =
+    (schema: ZodSchema) =>
+        (req: Request, _res: Response, next: NextFunction) => {
+            const result = schema.safeParse(req.query);
+            if (!result.success) {
+                return next(new ValidationError(result.error.issues[0].message));
+            }
+            // Express 5 中 req.query 是只读 getter，需用 defineProperty 替换
+            Object.defineProperty(req, 'query', {
+                value: result.data,
+                writable: true,
+                configurable: true,
+            });
             next();
         };

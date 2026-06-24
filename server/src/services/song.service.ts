@@ -1,8 +1,8 @@
 import prisma from '../config/database';
 import {CommentErrorMessage, SongErrorMessage} from '../constants/errorString';
-import {NotFoundError} from '../errors/AppError';
+import {ForbiddenError, NotFoundError} from '../errors/AppError';
 import {sanitize} from '../utils/sanitize';
-import type {CreateCommentInput} from '../validators/song.validator';
+import type {CreateCommentInput, GetCommentsInput, GetSongsInput} from '../validators/song.validator';
 
 // 获取歌曲详情
 export async function getSongDetail(songId: number) {
@@ -32,8 +32,46 @@ export async function getSongDetail(songId: number) {
     };
 }
 
-// 获取歌曲评论列表（按时间倒序）
-export async function getSongComments(songId: number) {
+// 分页获取歌曲列表
+export async function listSongs(params: GetSongsInput) {
+    const {page, page_size, singer_id} = params;
+    const skip = (page - 1) * page_size;
+
+    const where = singer_id ? {singerId: singer_id} : {};
+
+    const [songs, total] = await Promise.all([
+        prisma.song.findMany({
+            where,
+            select: {
+                id: true,
+                name: true,
+                singerName: true,
+                playUrl: true,
+                duration: true,
+            },
+            skip,
+            take: page_size,
+            orderBy: {id: 'asc'},
+        }),
+        prisma.song.count({where}),
+    ]);
+
+    return {
+        list: songs.map(s => ({
+            song_id: s.id,
+            song_name: s.name,
+            singer_name: s.singerName,
+            play_url: s.playUrl,
+            duration: s.duration,
+        })),
+        total,
+        page,
+        page_size,
+    };
+}
+
+// 分页获取歌曲评论列表（按时间倒序）
+export async function getSongComments(songId: number, params: GetCommentsInput) {
     const song = await prisma.song.findUnique({
         where: {id: songId},
         select: {id: true},
@@ -42,17 +80,24 @@ export async function getSongComments(songId: number) {
         throw new NotFoundError(CommentErrorMessage.SONG_NOT_FOUND);
     }
 
-    const comments = await prisma.comment.findMany({
-        where: {songId},
-        select: {
-            id: true,
-            userId: true,
-            username: true,
-            content: true,
-            createdAt: true,
-        },
-        orderBy: {createdAt: 'desc'},
-    });
+    const {page, page_size} = params;
+    const skip = (page - 1) * page_size;
+
+    const [comments, total] = await Promise.all([
+        prisma.comment.findMany({
+            where: {songId},
+            select: {
+                id: true,
+                userId: true,
+                username: true,
+                content: true,
+            },
+            skip,
+            take: page_size,
+            orderBy: {createdAt: 'desc'},
+        }),
+        prisma.comment.count({where: {songId}}),
+    ]);
 
     return {
         list: comments.map(c => ({
@@ -61,11 +106,14 @@ export async function getSongComments(songId: number) {
             username: c.username,
             content: c.content,
         })),
+        total,
+        page,
+        page_size,
     };
 }
 
 // 发表评论
-export async function createComment(songId: number, data: CreateCommentInput) {
+export async function createComment(songId: number, userId: number, data: CreateCommentInput) {
     const song = await prisma.song.findUnique({
         where: {id: songId},
         select: {id: true},
@@ -76,16 +124,15 @@ export async function createComment(songId: number, data: CreateCommentInput) {
 
     const content = sanitize(data.content);
 
-    // 获取用户名用于冗余存储
     const user = await prisma.user.findUnique({
-        where: {id: data.user_id},
+        where: {id: userId},
         select: {username: true},
     });
 
     const comment = await prisma.comment.create({
         data: {
             songId,
-            userId: data.user_id,
+            userId,
             username: user?.username ?? null,
             content,
         },
@@ -104,4 +151,20 @@ export async function createComment(songId: number, data: CreateCommentInput) {
         username: comment.username,
         content: comment.content,
     };
+}
+
+// 删除评论
+export async function deleteComment(commentId: number, userId: number) {
+    const comment = await prisma.comment.findUnique({
+        where: {id: commentId},
+        select: {userId: true},
+    });
+    if (!comment) {
+        throw new NotFoundError(CommentErrorMessage.NOT_FOUND);
+    }
+    if (comment.userId !== userId) {
+        throw new ForbiddenError(CommentErrorMessage.NOT_AUTHOR);
+    }
+
+    await prisma.comment.delete({where: {id: commentId}});
 }

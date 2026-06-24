@@ -13,12 +13,6 @@ enum Role {
   ARTIST
 }
 
-enum Gender {
-  UNKNOWN
-  MALE
-  FEMALE
-}
-
 // 用户表
 model User {
   id        Int      @id @default(autoincrement())
@@ -27,7 +21,6 @@ model User {
   email     String   @unique
   avatar    String?
   role      Role     @default(USER)
-  gender    Gender   @default(UNKNOWN)
   signature String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -61,9 +54,9 @@ model Song {
   duration   Int?
   createdAt  DateTime @default(now())
 
-  singer          Singer?         @relation(fields: [singerId], references: [id])
-  comments        Comment[]
-  playlistSongs   PlaylistSong[]
+  singer        Singer?        @relation(fields: [singerId], references: [id])
+  comments      Comment[]
+  playlistSongs PlaylistSong[]
 
   @@map("songs")
 }
@@ -76,7 +69,7 @@ model Playlist {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user         User           @relation(fields: [userId], references: [id])
+  user          User           @relation(fields: [userId], references: [id])
   playlistSongs PlaylistSong[]
 
   @@unique([userId, name])

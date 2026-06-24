@@ -1,11 +1,20 @@
 import {registry} from '../config/openapi';
 
+const errorResponse = {
+    type: 'object' as const,
+    properties: {
+        code: {type: 'integer' as const, example: 400},
+        message: {type: 'string' as const, example: '参数校验失败'},
+        data: {type: 'null' as const},
+    },
+};
+
 // ===== POST /upload/avatar =====
 registry.registerPath({
     method: 'post',
     path: '/upload/avatar',
-    summary: '上传头像',
-    description: '上传头像图片，返回可访问的 URL。支持的格式：JPG/PNG/GIF/WebP，最大 5MB',
+    summary: '修改头像',
+    description: '上传新头像图片，自动替换用户头像（旧本地文件将被清理）。支持的格式：JPG/PNG/GIF/WebP，最大 5MB',
     security: [{bearerAuth: []}],
     tags: ['上传'],
     request: {
@@ -42,7 +51,7 @@ registry.registerPath({
                                 properties: {
                                     url: {
                                         type: 'string',
-                                        example: '/uploads/avatars/uuid.jpg',
+                                        example: '/static/avatars/uuid.jpg',
                                     },
                                 },
                             },
@@ -53,6 +62,11 @@ registry.registerPath({
         },
         400: {
             description: '参数校验失败 / 文件格式不支持',
+            content: {
+                'application/json': {
+                    schema: errorResponse,
+                },
+            },
         },
         401: {
             description: '未登录',

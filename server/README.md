@@ -30,8 +30,7 @@ NetMusic 音乐应用后端服务（Node.js + TypeScript + Express + Prisma）
 npm install
 
 # 2. 初始化数据库（建表 + 灌测试数据）
-npx prisma migrate dev
-npx prisma db seed
+npx prisma migrate dev --name init
 
 # 3. 启动开发服务器
 npm run dev
@@ -45,15 +44,14 @@ npm run dev
 
 ### 初始化数据库
 
-首次搭建环境时，两条命令依次执行：
+首次搭建环境时，执行以下命令：
 
 ```bash
-# 根据 schema.prisma 创建/更新数据库表
-npx prisma migrate dev
-
-# 插入预置测试数据（4 个用户）
-npx prisma db seed
+# 根据 schema.prisma 创建初始迁移 + 建表 + 插入预置测试数据
+npx prisma migrate dev --name init
 ```
+
+> `migrate dev --name init` 会自动完成：创建迁移文件 → 建表 → 生成 Prisma Client → 播种 4 个测试用户。
 
 ### 修改数据模型后
 
@@ -110,7 +108,7 @@ curl -s -X POST http://localhost:3000/api/v1/auth/register \
 # 登录（可用预置用户，见下方列表）
 curl -s -X POST http://localhost:3000/api/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"username":"alice","password":"alice123"}'
+  -d '{"email":"alice@example.com","password":"alice123"}'
 
 # 测试限流：快速循环 12 次，第 11 次开始返回 429
 for i in $(seq 1 12); do

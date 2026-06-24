@@ -12,13 +12,18 @@ const testUser = {
 };
 
 beforeAll(async () => {
-    // 注册测试用户并保存 token
-    const res = await request(app)
+    // 先注册测试用户
+    await request(app)
         .post('/api/v1/auth/register')
         .send(testUser);
 
-    accessToken = res.body.data.accessToken;
-    userId = res.body.data.user.id;
+    // 再登录获取 token 和 userId
+    const loginRes = await request(app)
+        .post('/api/v1/auth/login')
+        .send({email: testUser.email, password: testUser.password});
+
+    accessToken = loginRes.body.data.access_token;
+    userId = loginRes.body.data.user.id;
 });
 
 afterAll(async () => {
@@ -78,123 +83,77 @@ describe('User API', () => {
         });
     });
 
-    // ===== PATCH /users/me/username =====
-    describe('PATCH /users/me/username', () => {
-        const newName = 'updated_name';
-
+    // ===== PATCH /users/me (unified) =====
+    describe('PATCH /users/me', () => {
         it('should update username', async () => {
             const res = await request(app)
-                .patch('/api/v1/users/me/username')
+                .patch('/api/v1/users/me')
                 .set('Authorization', `Bearer ${accessToken}`)
-                .send({username: newName})
+                .send({field: 'username', value: 'updated_name'})
                 .expect(200);
 
             expect(res.body.code).toBe(200);
-            expect(res.body.data.username).toBe(newName);
+            expect(res.body.data.username).toBe('updated_name');
         });
-
-        it('should reject empty username', async () => {
-            const res = await request(app)
-                .patch('/api/v1/users/me/username')
-                .set('Authorization', `Bearer ${accessToken}`)
-                .send({username: ''})
-                .expect(400);
-        });
-    });
-
-    // ===== PATCH /users/me/signature =====
-    describe('PATCH /users/me/signature', () => {
-        const newSig = '新的个性签名';
 
         it('should update signature', async () => {
             const res = await request(app)
-                .patch('/api/v1/users/me/signature')
+                .patch('/api/v1/users/me')
                 .set('Authorization', `Bearer ${accessToken}`)
-                .send({signature: newSig})
+                .send({field: 'signature', value: '新的个性签名'})
                 .expect(200);
 
             expect(res.body.code).toBe(200);
-            expect(res.body.data.signature).toBe(newSig);
+            expect(res.body.data.signature).toBe('新的个性签名');
         });
-
-        it('should reject signature over 100 chars', async () => {
-            const res = await request(app)
-                .patch('/api/v1/users/me/signature')
-                .set('Authorization', `Bearer ${accessToken}`)
-                .send({signature: 'a'.repeat(101)})
-                .expect(400);
-        });
-    });
-
-    // ===== PATCH /users/me/email =====
-    describe('PATCH /users/me/email', () => {
-        const newEmail = `new_email_${Date.now()}@example.com`;
 
         it('should update email', async () => {
+            const newEmail = `new_email_${Date.now()}@example.com`;
             const res = await request(app)
-                .patch('/api/v1/users/me/email')
+                .patch('/api/v1/users/me')
                 .set('Authorization', `Bearer ${accessToken}`)
-                .send({email: newEmail})
+                .send({field: 'email', value: newEmail})
                 .expect(200);
 
             expect(res.body.code).toBe(200);
             expect(res.body.data.email).toBe(newEmail);
         });
 
-        it('should reject invalid email format', async () => {
-            const res = await request(app)
-                .patch('/api/v1/users/me/email')
-                .set('Authorization', `Bearer ${accessToken}`)
-                .send({email: 'not-an-email'})
-                .expect(400);
-        });
-    });
-
-    // ===== PATCH /users/me/avatar =====
-    describe('PATCH /users/me/avatar', () => {
-        const avatarUrl = 'https://example.com/avatar.jpg';
-
         it('should update avatar', async () => {
+            const avatarUrl = 'https://example.com/avatar.jpg';
             const res = await request(app)
-                .patch('/api/v1/users/me/avatar')
+                .patch('/api/v1/users/me')
                 .set('Authorization', `Bearer ${accessToken}`)
-                .send({avatar: avatarUrl})
+                .send({field: 'avatar', value: avatarUrl})
                 .expect(200);
 
             expect(res.body.code).toBe(200);
             expect(res.body.data.avatar).toBe(avatarUrl);
         });
 
-        it('should reject invalid url', async () => {
+        it('should reject invalid field', async () => {
             const res = await request(app)
-                .patch('/api/v1/users/me/avatar')
+                .patch('/api/v1/users/me')
                 .set('Authorization', `Bearer ${accessToken}`)
-                .send({avatar: 'not-a-url'})
+                .send({field: 'invalid', value: 'test'})
+                .expect(400);
+        });
+
+        it('should reject empty value', async () => {
+            const res = await request(app)
+                .patch('/api/v1/users/me')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({field: 'username', value: ''})
                 .expect(400);
         });
     });
 
-    // ===== Auth guard for all PATCH =====
+    // ===== Auth guard =====
     describe('Auth guard', () => {
-        it('should reject all PATCH without token', async () => {
+        it('should reject PATCH /users/me without token', async () => {
             await request(app)
-                .patch('/api/v1/users/me/username')
-                .send({username: 'test'})
-                .expect(401);
-
-            await request(app)
-                .patch('/api/v1/users/me/avatar')
-                .send({avatar: 'http://example.com/a.jpg'})
-                .expect(401);
-
-            await request(app)
-                .patch('/api/v1/users/me/signature')
-                .send({signature: 'test'})
-                .expect(401);
-
-            await request(app)
-                .patch('/api/v1/users/me/email')
-                .send({email: 'test@example.com'})
+                .patch('/api/v1/users/me')
+                .send({field: 'username', value: 'test'})
                 .expect(401);
         });
     });

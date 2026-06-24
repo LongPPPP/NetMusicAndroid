@@ -28,6 +28,9 @@ export const SingerErrorMessage = {
 
 export const CommentErrorMessage = {
     SONG_NOT_FOUND: '歌曲不存在',
+    NOT_FOUND: '评论不存在',
     CONTENT_TOO_LONG: '评论内容过长',
     CREATE_FAILED: '发表评论失败',
+    DELETE_FAILED: '删除评论失败',
+    NOT_AUTHOR: '只能删除自己的评论',
 } as const;

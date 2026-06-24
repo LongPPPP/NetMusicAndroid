@@ -27,11 +27,7 @@ describe('Auth API', () => {
                 .expect(201);
 
             expect(res.body.code).toBe(201);
-            expect(res.body.data.accessToken).toBeDefined();
-            expect(res.body.data.refreshToken).toBeDefined();
-            expect(res.body.data.user).toBeDefined();
-            expect(res.body.data.user.email).toBe(testUser.email);
-            expect(res.body.data.user.role).toBe('USER');
+            expect(res.body.data).toBeNull();
         });
 
         it('should reject duplicate email', async () => {
@@ -66,12 +62,12 @@ describe('Auth API', () => {
                 .expect(200);
 
             expect(res.body.code).toBe(200);
-            expect(res.body.data.accessToken).toBeDefined();
-            expect(res.body.data.refreshToken).toBeDefined();
+            expect(res.body.data.access_token).toBeDefined();
+            expect(res.body.data.refresh_token).toBeDefined();
             expect(res.body.data.user.email).toBe(testUser.email);
 
-            accessToken = res.body.data.accessToken;
-            refreshToken = res.body.data.refreshToken;
+            accessToken = res.body.data.access_token;
+            refreshToken = res.body.data.refresh_token;
         });
 
         it('should reject wrong password', async () => {
@@ -102,8 +98,8 @@ describe('Auth API', () => {
                 .expect(200);
 
             expect(res.body.code).toBe(200);
-            expect(res.body.data.accessToken).toBeDefined();
-            expect(res.body.data.expiresIn).toBeDefined();
+            expect(res.body.data.access_token).toBeDefined();
+            expect(res.body.data.expires_in).toBeDefined();
         });
 
         it('should reject invalid refresh token', async () => {

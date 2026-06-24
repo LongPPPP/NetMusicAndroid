@@ -32,15 +32,14 @@ export async function register({confirmPassword: _confirmPassword, ...data}: Reg
     const accessToken = signAccessToken(user.id, user.role);
     const refreshToken = signRefreshToken(user.id, user.role);
     return {
-        userId: user.id,
-        accessToken,
-        refreshToken,
+        user_id: user.id,
+        access_token: accessToken,
+        refresh_token: refreshToken,
         user: {
             id: user.id,
             username: user.username,
             email: user.email,
             avatar: user.avatar,
-            gender: user.gender,
             signature: user.signature,
             role: user.role,
         },
@@ -61,15 +60,14 @@ export async function login(params: LoginInput) {
     const accessToken = signAccessToken(user.id, user.role);
     const refreshToken = signRefreshToken(user.id, user.role);
     return {
-        userId: user.id,
-        accessToken,
-        refreshToken,
+        user_id: user.id,
+        access_token: accessToken,
+        refresh_token: refreshToken,
         user: {
             id: user.id,
             username: user.username,
             email: user.email,
             avatar: user.avatar,
-            gender: user.gender,
             signature: user.signature,
             role: user.role,
         },
@@ -92,7 +90,7 @@ export async function refresh(refreshToken: string) {
     // 签发新的 Access Token
     const newAccessToken = signAccessToken(user.id, user.role);
     return {
-        accessToken: newAccessToken,
-        expiresIn: config.jwt.expiresIn,
+        access_token: newAccessToken,
+        expires_in: config.jwt.expiresIn,
     };
 }
