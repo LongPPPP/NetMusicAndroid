@@ -11,17 +11,27 @@ export const registerSchema = z.object({
     password: z
         .string()
         .min(6, '密码至少 6 个字符')
-        .max(20, '密码最多 20 个字符'),
+        .max(20, '密码最多 20 个字符')
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_\-+.+=]{6,20}$/,
+            '密码必须包含大小写字母、数字，可使用 !@#$%^&*()_.-+=')
+        .refine(pwd => !/\s/.test(pwd), '密码不能包含空格'),
+    confirmPassword: z
+        .string()
+        .min(1, '确认密码不能为空'),
     email: z
         .email('邮箱格式不正确'),
+}).refine(data => data.password === data.confirmPassword, {
+    message: '两次密码不一致',
+    path: ['confirmPassword'],
 });
 
-// 登录参数校验
+// 登录参数校验（使用邮箱登录）
 export const loginSchema = z.object({
-    username: z
+    email: z
         .string()
         .trim()
-        .min(1, '用户名不能为空'),
+        .min(1, '邮箱不能为空')
+        .email('邮箱格式不正确'),
     password: z
         .string()
         .min(1, '密码不能为空'),
@@ -30,3 +40,9 @@ export const loginSchema = z.object({
 // 从 schema 推导 TypeScript 类型
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+
+// Refresh Token 校验
+export const refreshTokenSchema = z.object({
+    refreshToken: z.string().min(1, 'refreshToken 不能为空'),
+});
+export type RefreshTokenInput = z.infer<typeof refreshTokenSchema>;

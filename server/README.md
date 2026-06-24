@@ -142,12 +142,12 @@ done
 
 ### 常见错误
 
-| 现象 | 原因 | 解决 |
-|------|------|------|
-| `404 接口不存在` | 用 GET 请求了 POST 接口 | 改成 POST |
-| `ECONNREFUSED` | 服务器没启动 | 先运行 `npm run dev` |
-| `用户名已被占用` | 该用户名已存在 | 换个用户名，或用 `npx prisma db seed` 重置 |
-| `请求过于频繁` | 15 分钟内请求超过 10 次 | 等 15 分钟，或重启服务器 |
+| 现象             | 原因                | 解决                               |
+|----------------|-------------------|----------------------------------|
+| `404 接口不存在`    | 用 GET 请求了 POST 接口 | 改成 POST                          |
+| `ECONNREFUSED` | 服务器没启动            | 先运行 `npm run dev`                |
+| `用户名已被占用`      | 该用户名已存在           | 换个用户名，或用 `npx prisma db seed` 重置 |
+| `请求过于频繁`       | 15 分钟内请求超过 10 次   | 等 15 分钟，或重启服务器                   |
 
 ---
 
@@ -180,7 +180,7 @@ server/
 │   │   ├── error.middleware.ts # 全局错误处理
 │   │   └── logger.middleware.ts
 │   ├── constants/
-│   │   └── auth.errors.ts     # 错误码枚举
+│   │   └── errorString.ts     # 错误码枚举
 │   └── utils/
 │       ├── password.ts         # bcrypt 加密
 │       ├── jwt.ts              # JWT 签发/验证
@@ -198,12 +198,12 @@ server/
 
 运行 `npx prisma db seed` 后，以下用户可用于登录测试：
 
-| 用户名 | 密码 | 昵称 | 邮箱 |
-|--------|------|------|------|
-| `alice` | `alice123` | 爱丽丝 | alice@example.com |
-| `bob` | `bob123456` | 鲍勃 | bob@example.com |
-| `charlie` | `charlie123` | 查理 | charlie@example.com |
-| `admin` | `admin123` | 管理员 | admin@netmusic.com |
+| 用户名       | 密码           | 昵称  | 邮箱                  |
+|-----------|--------------|-----|---------------------|
+| `alice`   | `alice123`   | 爱丽丝 | alice@example.com   |
+| `bob`     | `bob123456`  | 鲍勃  | bob@example.com     |
+| `charlie` | `charlie123` | 查理  | charlie@example.com |
+| `admin`   | `admin123`   | 管理员 | admin@netmusic.com  |
 
 ---
 

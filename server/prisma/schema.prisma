@@ -5,16 +5,28 @@ generator client {
 
 datasource db {
   provider = "sqlite"
+  // url 已在 prisma.config.ts 中配置（Prisma 7）
+}
+
+enum Role {
+  USER
+  ARTIST
+}
+
+enum Gender {
+  UNKNOWN
+  MALE
+  FEMALE
 }
 
 model User {
   id        Int      @id @default(autoincrement())
-  username  String   @unique
+  username  String
   password  String
-  nickname  String?
   email     String   @unique
   avatar    String?
-  gender    Int      @default(0) // 0-未知 1-男 2-女
+  role      Role     @default(USER)
+  gender    Gender   @default(UNKNOWN)
   signature String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
