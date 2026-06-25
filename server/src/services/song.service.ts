@@ -168,3 +168,36 @@ export async function deleteComment(songId: number, commentId: number, userId: n
 
     await prisma.comment.delete({where: {id: commentId}});
 }
+
+// 获取当前用户的所有评论（按时间倒序）
+export async function getUserComments(userId: number, page: number, pageSize: number) {
+    const skip = (page - 1) * pageSize;
+
+    const [comments, total] = await Promise.all([
+        prisma.comment.findMany({
+            where: {userId},
+            select: {
+                id: true,
+                content: true,
+                createdAt: true,
+                song: {select: {id: true, name: true}},
+            },
+            skip,
+            take: pageSize,
+            orderBy: {createdAt: 'desc'},
+        }),
+        prisma.comment.count({where: {userId}}),
+    ]);
+
+    return {
+        list: comments.map(c => ({
+            comment_id: c.id,
+            content: c.content,
+            created_at: c.createdAt,
+            song: {song_id: c.song.id, song_name: c.song.name},
+        })),
+        total,
+        page,
+        page_size: pageSize,
+    };
+}

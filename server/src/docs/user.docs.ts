@@ -205,6 +205,72 @@ registry.registerPath({
     },
 });
 
+// ===== GET /users/me/comments =====
+registry.registerPath({
+    method: 'get',
+    path: '/users/me/comments',
+    summary: '获取我的所有评论',
+    description: '需登录认证，分页返回当前用户发表过的所有评论（按时间倒序）',
+    security: [{bearerAuth: []}],
+    tags: ['用户'],
+    request: {
+        query: z.object({
+            page: z.coerce.number().int().positive().optional().describe('页码，默认 1'),
+            page_size: z.coerce.number().int().positive().max(100).optional().describe('每页数量，默认 20'),
+        }),
+    },
+    responses: {
+        200: {
+            description: '返回当前用户的评论列表',
+            content: {
+                'application/json': {
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            code: {type: 'integer', example: 200},
+                            data: {
+                                type: 'object',
+                                properties: {
+                                    list: {
+                                        type: 'array',
+                                        items: {
+                                            type: 'object',
+                                            properties: {
+                                                comment_id: {type: 'integer'},
+                                                content: {type: 'string'},
+                                                created_at: {type: 'string', format: 'date-time'},
+                                                song: {
+                                                    type: 'object',
+                                                    properties: {
+                                                        song_id: {type: 'integer'},
+                                                        song_name: {type: 'string'},
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                    total: {type: 'integer'},
+                                    page: {type: 'integer'},
+                                    page_size: {type: 'integer'},
+                                },
+                                example: {
+                                    list: [
+                                        {comment_id: 1, content: '这首歌太好听了', created_at: '2024-01-15T08:30:00.000Z', song: {song_id: 1, song_name: '七里香'}},
+                                    ],
+                                    total: 1,
+                                    page: 1,
+                                    page_size: 20,
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+        401: {description: '未登录'},
+    },
+});
+
 // ===== PUT /users/me/avatar =====
 registry.registerPath({
     method: 'put',
@@ -263,7 +329,7 @@ registry.registerPath({
     method: 'patch',
     path: '/users/me',
     summary: '统一修改用户信息',
-    description: '通过数据字典方式修改用户信息，支持字段：avatar, signature, username, email',
+    description: '通过数据字典方式修改用户信息，支持字段：avatar, signature, password',
     security: [{bearerAuth: []}],
     tags: ['用户'],
     request: {

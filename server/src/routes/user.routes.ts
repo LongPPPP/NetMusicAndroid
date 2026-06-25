@@ -11,6 +11,7 @@ const router = Router();
 // 需鉴权 — 放在 /:userId 前面，避免被通配匹配
 router.get('/me', authMiddleware, userController.getMyProfile);
 router.get('/me/playlists', authMiddleware, playlistController.getMyPlaylists);
+router.get('/me/comments', authMiddleware, userController.getMyComments);
 router.put('/me/avatar', authMiddleware, uploadAvatarMiddleware, userController.updateAvatar);
 
 // 公开

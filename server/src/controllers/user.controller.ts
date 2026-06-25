@@ -1,3 +1,4 @@
+import * as songService from '../services/song.service';
 import * as userService from '../services/user.service';
 import {asyncHandler} from '../utils/asyncHandler';
 import {success} from '../utils/response';
@@ -36,4 +37,12 @@ export const updateAvatar = asyncHandler(async (req, res) => {
     await userService.updateAvatar(req.userId!, avatarUrl);
 
     return success(res, {url: avatarUrl}, '上传成功');
+});
+
+// 获取当前用户的所有评论
+export const getMyComments = asyncHandler(async (req, res) => {
+    const page = parseInt(String(req.query.page)) || 1;
+    const pageSize = parseInt(String(req.query.page_size)) || 20;
+    const result = await songService.getUserComments(req.userId!, page, pageSize);
+    return success(res, result);
 });

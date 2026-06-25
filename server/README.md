@@ -137,10 +137,11 @@ npx prisma studio
 | POST | `/auth/login` | 登录（邮箱+密码） | 无 |
 | POST | `/auth/refresh` | 刷新 Access Token | 无 |
 | GET | `/users/me` | 获取当前用户信息 | Bearer Token |
-| GET | `/users/:userId` | 获取用户公开信息 | 无 |
-| PATCH | `/users/me` | 修改用户信息 | Bearer Token |
-| PUT | `/users/me/avatar` | 上传/替换头像 (multipart) | Bearer Token |
 | GET | `/users/me/playlists` | 获取我的歌单列表 | Bearer Token |
+| GET | `/users/me/comments` | 获取我的所有评论（分页） | Bearer Token |
+| PUT | `/users/me/avatar` | 上传/替换头像 (multipart) | Bearer Token |
+| PATCH | `/users/me` | 修改用户信息 | Bearer Token |
+| GET | `/users/:userId` | 获取用户公开信息 | 无 |
 | GET | `/users/:userId/playlists` | 获取指定用户的歌单列表 | 无 |
 | GET | `/songs` | 歌曲列表（分页，支持按歌手筛选） | 无 |
 | GET | `/songs/:songId` | 歌曲详情 | 无 |
@@ -260,10 +261,10 @@ server/
 │   ├── validators/
 │   │   ├── auth.validator.ts      # registerSchema / loginSchema
 │   │   ├── user.validator.ts      # updateUserSchema
-│   │   ├── singer.validator.ts    # createSingerSchema / updateSingerSchema
-│   │   ├── song.validator.ts      # createSongSchema / updateSongSchema
-│   │   ├── playlist.validator.ts  # createPlaylistSchema / updatePlaylistSchema
-│   │   └── search.validator.ts    # searchSchema
+│   │   ├── singer.validator.ts    # getSingersSchema
+│   │   ├── song.validator.ts      # createCommentSchema / getSongsSchema / getCommentsSchema
+│   │   ├── playlist.validator.ts  # createPlaylistSchema / updatePlaylistSchema / addPlaylistSongSchema
+│   │   └── search.validator.ts    # searchSongsSchema / searchSingersSchema / searchPlaylistsSchema
 │   ├── docs/
 │   │   ├── index.ts               # OpenAPI 文档聚合
 │   │   ├── auth.docs.ts           # 认证接口文档
@@ -321,29 +322,40 @@ server/
 
 | 歌手 | 描述 |
 |------|------|
-| Edvard Grieg | 挪威浪漫主义作曲家 |
-| Rick Astley | 80 年代英伦流行 / 蓝眼灵魂 |
+| 周杰伦 | 华语乐坛天王 |
+| Taylor Swift | 美国流行天后 |
+| 陈奕迅 | 香港实力派歌手 |
+| 邓紫棋 | 香港唱作天后 |
+| 林俊杰 | 新加坡歌手 |
 
 ### 歌曲
 
 | 歌曲 | 歌手 | 时长 |
 |------|------|------|
-| Anitra's Dance | Edvard Grieg | 3:19 |
-| Never Gonna Give You Up | Rick Astley | 3:34 |
+| 七里香 | 周杰伦 | 4:59 |
+| 青花瓷 | 周杰伦 | 4:33 |
+| 稻香 | 周杰伦 | 4:25 |
+| Love Story | Taylor Swift | 3:56 |
+| 十年 | 陈奕迅 | 3:35 |
+| 泡沫 | 邓紫棋 | 4:18 |
+| 江南 | 林俊杰 | 4:24 |
 
 ### 歌单
 
 | 歌单名 | 所属用户 |
 |--------|----------|
-| 我最喜欢的歌 | alice |
-| 摇滚精选 | bob |
+| 我的最爱 | alice |
+| 华语经典 | alice |
+| 跑步必备 | charlie |
 
 ### 评论
 
 | 评论内容 | 歌曲 | 用户 |
 |----------|------|------|
-| 这首歌太好听了！ | Anitra's Dance | alice |
-| Classic! | Never Gonna Give You Up | bob |
+| 夏天的味道，满满的回忆！ | 七里香 | alice |
+| 经典永不过时 | 七里香 | bob |
+| 天青色等烟雨，而我在等你 | 青花瓷 | charlie |
+| Taylor Swift 永远的神！ | Love Story | alice |
 
 ---
 
