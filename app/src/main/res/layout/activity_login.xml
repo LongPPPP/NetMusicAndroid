@@ -41,11 +41,11 @@
             android:layout_marginTop="8dp"/>
 
         <EditText
-            android:id="@+id/etUsername"
+            android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="40dp"
-            android:hint="请输入用户名"
+            android:hint="请输入email"
             android:background="@drawable/bg_edittext"
             android:paddingHorizontal="16dp"
             android:inputType="text"/>

@@ -2,4 +2,9 @@
 <resources>
     <!--应用全局主题,改用 AppCompat 主题，避免闪退-->
     <style name="Theme.NetMusicAndroid" parent="Theme.AppCompat.Light.NoActionBar" />
+    <!-- Base application theme. -->
+    <style name="Base.Theme.NetMusicAndroid" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
 </resources>
