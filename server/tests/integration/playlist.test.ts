@@ -28,9 +28,9 @@ afterAll(async () => {
 
 describe('GET /playlists/:playlistId', () => {
     it('should return playlist detail with songs', async () => {
-        const res = await request(app).get('/api/v1/playlists/4').expect(200);
+        const res = await request(app).get('/api/v1/playlists/1').expect(200);
         expect(res.body.code).toBe(200);
-        expect(res.body.data.playlist_id).toBe(4);
+        expect(res.body.data.playlist_id).toBe(1);
         expect(res.body.data.playlist_name).toBeDefined();
         expect(Array.isArray(res.body.data.songs)).toBe(true);
         expect(res.body.data.songs.length).toBeGreaterThan(0);
@@ -93,7 +93,7 @@ describe('POST /playlists/:playlistId/songs', () => {
         await request(app)
             .post(`/api/v1/playlists/${playlistId}/songs`)
             .set('Authorization', `Bearer ${accessToken}`)
-            .send({song_id: 17})
+            .send({song_id: 1})
             .expect(201);
     });
 
@@ -101,7 +101,7 @@ describe('POST /playlists/:playlistId/songs', () => {
         await request(app)
             .post(`/api/v1/playlists/${playlistId}/songs`)
             .set('Authorization', `Bearer ${accessToken}`)
-            .send({song_id: 17})
+            .send({song_id: 1})
             .expect(409);
     });
 
@@ -116,7 +116,7 @@ describe('POST /playlists/:playlistId/songs', () => {
     it('should reject without auth', async () => {
         await request(app)
             .post(`/api/v1/playlists/${playlistId}/songs`)
-            .send({song_id: 18})
+            .send({song_id: 2})
             .expect(401);
     });
 });
@@ -124,14 +124,14 @@ describe('POST /playlists/:playlistId/songs', () => {
 describe('DELETE /playlists/:playlistId/songs/:songId', () => {
     it('should remove song from playlist', async () => {
         await request(app)
-            .delete(`/api/v1/playlists/${playlistId}/songs/17`)
+            .delete(`/api/v1/playlists/${playlistId}/songs/1`)
             .set('Authorization', `Bearer ${accessToken}`)
             .expect(200);
     });
 
     it('should return 404 for already removed song', async () => {
         await request(app)
-            .delete(`/api/v1/playlists/${playlistId}/songs/17`)
+            .delete(`/api/v1/playlists/${playlistId}/songs/1`)
             .set('Authorization', `Bearer ${accessToken}`)
             .expect(404);
     });
@@ -172,7 +172,7 @@ describe('DELETE /playlists/:playlistId', () => {
 
     it('should reject other user\'s playlist', async () => {
         await request(app)
-            .delete('/api/v1/playlists/4')
+            .delete('/api/v1/playlists/2')
             .set('Authorization', `Bearer ${accessToken}`)
             .expect(403);
     });

@@ -24,26 +24,9 @@ export async function register({confirmPassword: _confirmPassword, ...data}: Reg
     const hashedPassword = await hashPassword(password);
 
     // 创建用户（默认角色 USER）
-    const user = await prisma.user.create({
+    await prisma.user.create({
         data: {username, password: hashedPassword, email},
     });
-
-    // 签发双 Token
-    const accessToken = signAccessToken(user.id, user.role);
-    const refreshToken = signRefreshToken(user.id, user.role);
-    return {
-        user_id: user.id,
-        access_token: accessToken,
-        refresh_token: refreshToken,
-        user: {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            avatar: user.avatar,
-            signature: user.signature,
-            role: user.role,
-        },
-    };
 }
 
 // 登录（使用邮箱和密码）

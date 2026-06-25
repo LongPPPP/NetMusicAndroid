@@ -20,9 +20,9 @@ describe('GET /singers', () => {
 
 describe('GET /singers/:singerId', () => {
     it('should return singer detail with hot songs', async () => {
-        const res = await request(app).get('/api/v1/singers/6').expect(200);
+        const res = await request(app).get('/api/v1/singers/1').expect(200);
         expect(res.body.code).toBe(200);
-        expect(res.body.data.singer_id).toBe(6);
+        expect(res.body.data.singer_id).toBe(1);
         expect(res.body.data.singer_name).toBeDefined();
         expect(res.body.data.avatar_url).toBeDefined();
         expect(Array.isArray(res.body.data.hot_songs)).toBe(true);

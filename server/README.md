@@ -51,7 +51,7 @@ npm run dev
 | 地址 | 说明 |
 |------|------|
 | `http://localhost:3000/api/v1` | API 根路径 |
-| `http://localhost:3000/api-docs` | Swagger UI 接口文档 |
+| `http://localhost:3000/api-docs` | Swagger UI 接口文档（**浏览器打开即可查看并调试所有接口**） |
 | `http://localhost:3000/api-docs.json` | OpenAPI JSON |
 | `http://localhost:3000/static/` | 静态文件（头像、封面、歌曲） |
 
@@ -292,7 +292,7 @@ server/
 │       ├── response.ts            # 统一 JSON 响应 { code, message, data }
 │       └── sanitize.ts            # XSS 过滤
 │
-├── storage/                       # 上传文件存储目录
+├── static/                        # 静态文件与上传存储目录
 │   ├── avatars/
 │   ├── covers/
 │   └── songs/
@@ -322,40 +322,36 @@ server/
 
 | 歌手 | 描述 |
 |------|------|
-| 周杰伦 | 华语乐坛天王 |
-| Taylor Swift | 美国流行天后 |
-| 陈奕迅 | 香港实力派歌手 |
-| 邓紫棋 | 香港唱作天后 |
-| 林俊杰 | 新加坡歌手 |
+| Edvard Grieg | 挪威浪漫主义作曲家 |
+| Rick Astley | 80 年代英伦流行 / 蓝眼灵魂 |
 
 ### 歌曲
 
 | 歌曲 | 歌手 | 时长 |
 |------|------|------|
-| 七里香 | 周杰伦 | 4:59 |
-| 青花瓷 | 周杰伦 | 4:33 |
-| 稻香 | 周杰伦 | 4:25 |
-| Love Story | Taylor Swift | 3:56 |
-| 十年 | 陈奕迅 | 3:35 |
-| 泡沫 | 邓紫棋 | 4:18 |
-| 江南 | 林俊杰 | 4:24 |
+| Anitra's Dance | Edvard Grieg | 3:19 |
+| Never Gonna Give You Up | Rick Astley | 3:34 |
 
 ### 歌单
 
 | 歌单名 | 所属用户 |
 |--------|----------|
-| 我的最爱 | alice |
-| 华语经典 | alice |
-| 跑步必备 | charlie |
+| 我最喜欢的歌 | alice |
+| 摇滚精选 | bob |
+
+### 歌单-歌曲关联
+
+| 歌单 | 包含歌曲 |
+|------|----------|
+| 我最喜欢的歌 | Anitra's Dance, Never Gonna Give You Up |
+| 摇滚精选 | Never Gonna Give You Up |
 
 ### 评论
 
 | 评论内容 | 歌曲 | 用户 |
 |----------|------|------|
-| 夏天的味道，满满的回忆！ | 七里香 | alice |
-| 经典永不过时 | 七里香 | bob |
-| 天青色等烟雨，而我在等你 | 青花瓷 | charlie |
-| Taylor Swift 永远的神！ | Love Story | alice |
+| 这首歌太好听了！ | Anitra's Dance | alice |
+| Classic! | Never Gonna Give You Up | bob |
 
 ---
 

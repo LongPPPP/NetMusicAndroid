@@ -26,6 +26,10 @@ async function main() {
     const deletedUsers = await prisma.user.deleteMany();
     console.log(`  ✅ 已清除 ${deletedUsers.count} 个用户`);
 
+    // 重置 SQLite 自增序列，确保 ID 从 1 开始
+    await prisma.$executeRawUnsafe(`DELETE FROM sqlite_sequence`);
+    console.log('  ✅ 已重置自增序列');
+
     // ===== 1. 用户 =====
     console.log('\n━━━ 1. 创建用户 ━━━');
     const usersData = [

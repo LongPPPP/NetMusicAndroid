@@ -329,7 +329,7 @@ registry.registerPath({
     method: 'patch',
     path: '/users/me',
     summary: '统一修改用户信息',
-    description: '通过数据字典方式修改用户信息，支持字段：avatar, signature, password',
+    description: '通过数据字典方式修改用户信息，支持字段：avatar, signature, username, email',
     security: [{bearerAuth: []}],
     tags: ['用户'],
     request: {
