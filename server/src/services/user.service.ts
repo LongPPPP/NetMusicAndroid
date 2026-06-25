@@ -94,7 +94,7 @@ export async function updateAvatar(userId: number, avatarUrl: string) {
     });
 
     if (oldUser?.avatar?.startsWith('/static/avatars/')) {
-        const oldPath = path.resolve(__dirname, '../../storage/avatars', path.basename(oldUser.avatar));
+        const oldPath = path.resolve(__dirname, '../../static/avatars', path.basename(oldUser.avatar));
         fs.unlink(oldPath, () => {}); // 忽略删除失败
     }
 

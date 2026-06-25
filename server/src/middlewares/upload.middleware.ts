@@ -7,7 +7,7 @@ const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
 const storage = multer.diskStorage({
     destination: (_req, _file, cb) => {
-        cb(null, path.resolve(__dirname, '../../storage/avatars'));
+        cb(null, path.resolve(__dirname, '../../static/avatars'));
     },
     filename: (_req, file, cb) => {
         const ext = path.extname(file.originalname) || '.jpg';

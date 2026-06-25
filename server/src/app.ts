@@ -20,7 +20,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDoc));
 app.get('/api-docs.json', (_req, res) => res.json(openapiDoc));
 
 // ===== 静态文件托管 =====
-app.use('/static', express.static('storage'));
+app.use('/static', express.static('static'));
 
 // ===== 路由 =====
 app.use('/api/v1', routes);
