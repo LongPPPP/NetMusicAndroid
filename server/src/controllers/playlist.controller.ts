@@ -8,9 +8,9 @@ export const getMyPlaylists = asyncHandler(async (req, res) => {
     return success(res, result);
 });
 
-// 获取用户收藏的歌单列表
+// 获取指定用户的歌单列表
 export const getPlaylistsByUser = asyncHandler(async (req, res) => {
-    const userId = parseInt(String(req.query.user_id), 10);
+    const userId = parseInt(String(req.params.userId), 10);
     const result = await playlistService.getPlaylistsByUser(userId);
     return success(res, result);
 });

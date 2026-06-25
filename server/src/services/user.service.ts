@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import prisma from '../config/database';
 import {AuthErrorMessage} from '../constants/errorString';
 import {ConflictError, NotFoundError, ValidationError} from '../errors/AppError';
@@ -81,4 +83,27 @@ export async function updateUser(userId: number, field: string, value: string) {
         default:
             throw new ValidationError('不支持修改的字段');
     }
+}
+
+// 上传/替换头像（含旧本地文件清理）
+export async function updateAvatar(userId: number, avatarUrl: string) {
+    // 查出旧头像，清理本地旧文件
+    const oldUser = await prisma.user.findUnique({
+        where: {id: userId},
+        select: {avatar: true},
+    });
+
+    if (oldUser?.avatar?.startsWith('/static/avatars/')) {
+        const oldPath = path.resolve(__dirname, '../../storage/avatars', path.basename(oldUser.avatar));
+        fs.unlink(oldPath, () => {}); // 忽略删除失败
+    }
+
+    // 更新数据库
+    const user = await prisma.user.update({
+        where: {id: userId},
+        data: {avatar: avatarUrl},
+        select: userSelect,
+    });
+
+    return user;
 }

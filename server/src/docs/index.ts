@@ -1,5 +1,4 @@
 import './auth.docs';
-import './upload.docs';
 import './user.docs';
 import './playlist.docs';
 import './song.docs';

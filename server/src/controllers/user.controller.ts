@@ -25,3 +25,15 @@ export const updateUser = asyncHandler(async (req, res) => {
     const user = await userService.updateUser(req.userId!, field, value);
     return success(res, user, '修改成功');
 });
+
+// 上传/替换头像
+export const updateAvatar = asyncHandler(async (req, res) => {
+    if (!req.file) {
+        return success(res, null, '请选择要上传的文件', 400);
+    }
+
+    const avatarUrl = `/static/avatars/${req.file.filename}`;
+    await userService.updateAvatar(req.userId!, avatarUrl);
+
+    return success(res, {url: avatarUrl}, '上传成功');
+});

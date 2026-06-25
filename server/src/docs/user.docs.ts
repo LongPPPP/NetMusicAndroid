@@ -107,6 +107,157 @@ registry.registerPath({
     },
 });
 
+// ===== GET /users/:userId/playlists =====
+registry.registerPath({
+    method: 'get',
+    path: '/users/{userId}/playlists',
+    summary: '获取指定用户的歌单列表',
+    description: '公开接口，无需登录即可查看用户的歌单',
+    tags: ['用户', '歌单'],
+    request: {params: userIdParam},
+    responses: {
+        200: {
+            description: '返回用户的歌单列表',
+            content: {
+                'application/json': {
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            code: {type: 'integer', example: 200},
+                            data: {
+                                type: 'object',
+                                properties: {
+                                    list: {
+                                        type: 'array',
+                                        items: {
+                                            type: 'object',
+                                            properties: {
+                                                playlist_id: {type: 'integer'},
+                                                playlist_name: {type: 'string'},
+                                                song_count: {type: 'integer', description: '歌内歌曲数量'},
+                                                created_at: {type: 'string', format: 'date-time'},
+                                            },
+                                        },
+                                    },
+                                },
+                                example: {
+                                    list: [
+                                        {playlist_id: 1, playlist_name: '我的最爱', song_count: 15, created_at: '2024-01-15T08:30:00.000Z'},
+                                        {playlist_id: 2, playlist_name: '跑步歌单', song_count: 8, created_at: '2024-02-20T12:00:00.000Z'},
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+        400: {description: '参数校验失败（用户 ID 必须为正整数）'},
+        404: {description: '用户不存在'},
+    },
+});
+
+// ===== GET /users/me/playlists =====
+registry.registerPath({
+    method: 'get',
+    path: '/users/me/playlists',
+    summary: '获取我的歌单列表',
+    description: '需登录认证，返回当前登录用户的歌单列表',
+    security: [{bearerAuth: []}],
+    tags: ['用户', '歌单'],
+    responses: {
+        200: {
+            description: '返回当前用户的歌单列表',
+            content: {
+                'application/json': {
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            code: {type: 'integer', example: 200},
+                            data: {
+                                type: 'object',
+                                properties: {
+                                    list: {
+                                        type: 'array',
+                                        items: {
+                                            type: 'object',
+                                            properties: {
+                                                playlist_id: {type: 'integer'},
+                                                playlist_name: {type: 'string'},
+                                                song_count: {type: 'integer', description: '歌内歌曲数量'},
+                                                created_at: {type: 'string', format: 'date-time'},
+                                            },
+                                        },
+                                    },
+                                },
+                                example: {
+                                    list: [
+                                        {playlist_id: 1, playlist_name: '我的最爱', song_count: 15, created_at: '2024-01-15T08:30:00.000Z'},
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+        401: {description: '未登录'},
+    },
+});
+
+// ===== PUT /users/me/avatar =====
+registry.registerPath({
+    method: 'put',
+    path: '/users/me/avatar',
+    summary: '上传/替换头像',
+    description: '上传新头像图片，自动替换用户头像（旧本地文件将被清理）。支持的格式：JPG/PNG/GIF/WebP，最大 5MB',
+    security: [{bearerAuth: []}],
+    tags: ['用户'],
+    request: {
+        body: {
+            content: {
+                'multipart/form-data': {
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            file: {
+                                type: 'string',
+                                format: 'binary',
+                                description: '头像图片文件',
+                            },
+                        },
+                        required: ['file'],
+                    },
+                },
+            },
+        },
+    },
+    responses: {
+        200: {
+            description: '上传成功',
+            content: {
+                'application/json': {
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            code: {type: 'integer', example: 200},
+                            message: {type: 'string', example: '上传成功'},
+                            data: {
+                                type: 'object',
+                                properties: {
+                                    url: {type: 'string', example: '/static/avatars/uuid.jpg'},
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+        400: {description: '未选择文件 / 文件格式不支持'},
+        401: {description: '未登录'},
+    },
+});
+
 // ===== PATCH /users/me =====
 registry.registerPath({
     method: 'patch',

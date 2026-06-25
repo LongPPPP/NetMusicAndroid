@@ -154,12 +154,12 @@ export async function createComment(songId: number, userId: number, data: Create
 }
 
 // 删除评论
-export async function deleteComment(commentId: number, userId: number) {
+export async function deleteComment(songId: number, commentId: number, userId: number) {
     const comment = await prisma.comment.findUnique({
         where: {id: commentId},
-        select: {userId: true},
+        select: {songId: true, userId: true},
     });
-    if (!comment) {
+    if (!comment || comment.songId !== songId) {
         throw new NotFoundError(CommentErrorMessage.NOT_FOUND);
     }
     if (comment.userId !== userId) {

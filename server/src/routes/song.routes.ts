@@ -10,6 +10,6 @@ router.get('/', validateQuery(getSongsSchema), songController.listSongs);
 router.get('/:songId', songController.getSongDetail);
 router.get('/:songId/comments', validateQuery(getCommentsSchema), songController.getSongComments);
 router.post('/:songId/comments', authMiddleware, validate(createCommentSchema), songController.createComment);
-router.delete('/comments/:commentId', authMiddleware, songController.deleteComment);
+router.delete('/:songId/comments/:commentId', authMiddleware, songController.deleteComment);
 
 export default router;

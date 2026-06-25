@@ -31,7 +31,8 @@ export const createComment = asyncHandler(async (req, res) => {
 
 // 删除评论
 export const deleteComment = asyncHandler(async (req, res) => {
+    const songId = parseInt(String(req.params.songId), 10);
     const commentId = parseInt(String(req.params.commentId), 10);
-    await songService.deleteComment(commentId, req.userId!);
+    await songService.deleteComment(songId, commentId, req.userId!);
     return success(res, null, '删除成功');
 });

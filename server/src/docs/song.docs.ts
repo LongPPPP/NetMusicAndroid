@@ -247,19 +247,20 @@ registry.registerPath({
     },
 });
 
-// ===== DELETE /comments/:commentId =====
-const commentIdParam = z.object({
+// ===== DELETE /songs/:songId/comments/:commentId =====
+const commentParams = z.object({
+    songId: z.coerce.number().int().positive().describe('歌曲 ID'),
     commentId: z.coerce.number().int().positive().describe('评论 ID'),
 });
 
 registry.registerPath({
     method: 'delete',
-    path: '/comments/{commentId}',
+    path: '/songs/{songId}/comments/{commentId}',
     summary: '删除评论',
     description: '仅评论作者可删除自己的评论',
     security: [{bearerAuth: []}],
     tags: ['歌曲'],
-    request: {params: commentIdParam},
+    request: {params: commentParams},
     responses: {
         200: {
             description: '删除成功',

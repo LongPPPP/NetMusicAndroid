@@ -6,8 +6,6 @@ import {addPlaylistSongSchema, createPlaylistSchema, updatePlaylistSchema} from 
 
 const router = Router();
 
-router.get('/', playlistController.getPlaylistsByUser);
-router.get('/me', authMiddleware, playlistController.getMyPlaylists);
 router.get('/:playlistId', playlistController.getPlaylistDetail);
 router.post('/', authMiddleware, validate(createPlaylistSchema), playlistController.createPlaylist);
 router.patch('/:playlistId', authMiddleware, validate(updatePlaylistSchema), playlistController.renamePlaylist);
