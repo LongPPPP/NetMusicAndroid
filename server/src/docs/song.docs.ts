@@ -1,6 +1,6 @@
 import {z} from 'zod';
 import {registry} from '../config/openapi';
-import {createCommentSchema, createSongSchema, getCommentsSchema, getSongsSchema} from '../validators/song.validator';
+import {createCommentSchema, getCommentsSchema, getSongsSchema} from '../validators/song.validator';
 
 const songIdParam = z.object({songId: z.coerce.number().int().positive().describe('歌曲 ID')});
 
@@ -288,70 +288,5 @@ registry.registerPath({
         401: {description: '未登录'},
         403: {description: '无权删除他人评论'},
         404: {description: '评论不存在'},
-    },
-});
-
-// ===== POST /songs (ARTIST only) =====
-registry.registerPath({
-    method: 'post',
-    path: '/songs',
-    summary: '上架歌曲',
-    description: '仅 ARTIST 角色可上架歌曲，歌手需先关联账号',
-    security: [{bearerAuth: []}],
-    tags: ['歌曲'],
-    request: {
-        body: {
-            content: {
-                'application/json': {schema: createSongSchema},
-            },
-        },
-    },
-    responses: {
-        201: {
-            description: '上架成功',
-            content: {
-                'application/json': {
-                    schema: {
-                        type: 'object',
-                        properties: {
-                            code: {type: 'integer', example: 201},
-                            message: {type: 'string', example: '上架成功'},
-                            data: {
-                                type: 'object',
-                                properties: {
-                                    song_id: {type: 'integer'},
-                                    song_name: {type: 'string'},
-                                    singer_name: {type: 'string'},
-                                    play_url: {type: 'string', nullable: true},
-                                    cover_url: {type: 'string', nullable: true},
-                                    duration: {type: 'integer', nullable: true},
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        },
-        400: {description: '参数校验失败'},
-        401: {description: '未登录'},
-        403: {description: '非 ARTIST 角色无权限'},
-    },
-});
-
-// ===== DELETE /songs/:songId (ARTIST only) =====
-registry.registerPath({
-    method: 'delete',
-    path: '/songs/{songId}',
-    summary: '删除歌曲',
-    description: '仅 ARTIST 角色可删除自己的歌曲',
-    security: [{bearerAuth: []}],
-    tags: ['歌曲'],
-    request: {params: songIdParam},
-    responses: {
-        200: {description: '删除成功'},
-        400: {description: '参数校验失败'},
-        401: {description: '未登录'},
-        403: {description: '非 ARTIST 角色 / 非本人歌曲'},
-        404: {description: '歌曲不存在'},
     },
 });

@@ -51,14 +51,13 @@ async function main() {
     // ===== 2. 歌手 =====
     console.log('\n━━━ 2. 创建歌手 ━━━');
     const singersData = [
-        {name: 'Rick Astley', avatarUrl: '/static/avatars/Rick Astley.webp',  description: '80 年代英伦流行 / 蓝眼灵魂', userId: createdUsers[1].id},
-        {name: 'Edvard Grieg', description: '挪威浪漫主义作曲家', userId: createdUsers[3].id},
+        {name: 'Edvard Grieg', description: '挪威浪漫主义作曲家'},
+        {name: 'Rick Astley', avatarUrl: '/static/avatars/Rick Astley.webp', description: '80 年代英伦流行 / 蓝眼灵魂'},
     ];
 
     const createdSingers: Array<{id: number; name: string}> = [];
     for (const s of singersData) {
-        const {userId, ...singerData} = s;
-        const singer = await prisma.singer.create({data: {...singerData, userId}});
+        const singer = await prisma.singer.create({data: s});
         createdSingers.push({id: singer.id, name: singer.name});
         console.log(`  ✅ ${singer.name}`);
     }

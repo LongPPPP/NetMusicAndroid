@@ -27,7 +27,6 @@ model User {
 
   playlists Playlist[]
   comments  Comment[]
-  singer    Singer?
 }
 
 // 歌手表
@@ -40,8 +39,6 @@ model Singer {
   updatedAt   DateTime @updatedAt
 
   songs Song[]
-  user   User?   @relation(fields: [userId], references: [id])
-  userId Int?    @unique @map("user_id")
 
   @@map("singers")
 }

@@ -86,7 +86,7 @@ async function assertPlaylistOwner(playlistId: number, userId: number) {
         throw new NotFoundError(PlaylistErrorMessage.NOT_FOUND);
     }
     if (playlist.userId !== userId) {
-        throw new ForbiddenError(PlaylistErrorMessage.NO_PERMISSION);
+        throw new ForbiddenError('无权操作此歌单');
     }
 }
 
@@ -99,14 +99,14 @@ export async function addSongToPlaylist(playlistId: number, songId: number, user
         select: {id: true},
     });
     if (!song) {
-        throw new NotFoundError(PlaylistErrorMessage.SONG_NOT_FOUND);
+        throw new NotFoundError('歌曲不存在');
     }
 
     const existing = await prisma.playlistSong.findUnique({
         where: {playlistId_songId: {playlistId, songId}},
     });
     if (existing) {
-        throw new ConflictError(PlaylistErrorMessage.SONG_ALREADY_IN_PLAYLIST);
+        throw new ConflictError('歌曲已在歌单中');
     }
 
     await prisma.playlistSong.create({data: {playlistId, songId}});
@@ -120,7 +120,7 @@ export async function removeSongFromPlaylist(playlistId: number, songId: number,
         where: {playlistId_songId: {playlistId, songId}},
     });
     if (!link) {
-        throw new NotFoundError(PlaylistErrorMessage.SONG_NOT_IN_PLAYLIST);
+        throw new NotFoundError('歌曲不在该歌单中');
     }
 
     await prisma.playlistSong.delete({
