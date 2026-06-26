@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:paddingHorizontal="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 顶部通知、设置图标 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:paddingVertical="20dp">
+
+        </LinearLayout>
+
+        <!-- 用户头像 + 昵称编辑区域 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <!-- 圆形头像 -->
+            <ImageView
+                android:id="@+id/iv_avatar"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/avatar_sketch"
+                android:background="@drawable/shape_circle"/>
+
+            <!-- 昵称、签名、等级 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/tv_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="26sp"
+                        android:textColor="#111111"
+                        tools:text="Music_Lover"/>
+
+                    <ImageView
+                        android:id="@+id/iv_edit_name"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="8dp"
+                        android:src="@drawable/ic_edit"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_signature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:textColor="#000000"
+                    android:layout_marginTop="4dp"
+                    tools:text="音乐是生活的一部分。"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 收藏 / 我的评论 数据统计行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="32dp">
+
+            <!-- 收藏 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_collect_count"
+                    android:layout_width="37dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="#111111"
+                    android:textSize="24sp"
+                    tools:text="56" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="收藏"
+                    android:textSize="14sp"
+                    android:textColor="#777777"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+
+            <!-- 分割线 -->
+            <View
+                android:layout_width="1dp"
+                android:layout_height="40dp"
+                android:background="#EEEEEE"/>
+
+            <!-- 我的评论 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_comment_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:textColor="#111111"
+                    tools:text="23"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="我的评论"
+                    android:textSize="14sp"
+                    android:textColor="#777777"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 功能菜单卡片容器 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/shape_menu_card"
+            android:paddingVertical="8dp">
+
+            <!-- 1. 最近播放 -->
+            <LinearLayout
+                android:id="@+id/ll_recent_play"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_clock"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="最近播放"
+                    android:textSize="16sp"
+                    android:textColor="#222222"
+                    android:layout_marginStart="14dp"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_right"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#EEEEEE"
+                android:layout_marginHorizontal="16dp"/>
+
+            <!-- 2. 我的歌单（点击跳转PlaylistActivity） -->
+            <LinearLayout
+                android:id="@+id/ll_my_playlist"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_music_list"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="我的歌单"
+                    android:textSize="16sp"
+                    android:textColor="#222222"
+                    android:layout_marginStart="14dp"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_right"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#EEEEEE"
+                android:layout_marginHorizontal="16dp"/>
+
+            <!-- 3. 设置 -->
+            <LinearLayout
+                android:id="@+id/ll_setting"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_setting"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="设置"
+                    android:textSize="16sp"
+                    android:textColor="#222222"
+                    android:layout_marginStart="14dp"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_right"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#EEEEEE"
+                android:layout_marginHorizontal="16dp"/>
+
+            <!-- 4. 帮助与反馈 -->
+            <LinearLayout
+                android:id="@+id/ll_feedback"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_question"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="帮助与反馈"
+                    android:textSize="16sp"
+                    android:textColor="#222222"
+                    android:layout_marginStart="14dp"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_right"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 底部留白，避开全局播放器 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="120dp"/>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

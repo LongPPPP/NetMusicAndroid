@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 圆角 + 底部悬浮阴影 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 阴影层：向下偏移制造悬浮效果 -->
+    <item
+        android:left="4dp"
+        android:top="2dp"
+        android:right="4dp"
+        android:bottom="6dp">
+        <shape>
+            <solid android:color="#22111111"/>
+            <corners android:radius="24dp"/>
+        </shape>
+    </item>
+    <!-- 主体白色圆角面板 -->
+    <item>
+        <shape>
+            <solid android:color="#FFFFFF"/>
+            <!-- 顶部大圆角化悬浮卡片效果 -->
+            <corners
+                android:topLeftRadius="24dp"
+                android:topRightRadius="24dp"
+                android:bottomLeftRadius="0dp"
+                android:bottomRightRadius="0dp"/>
+        </shape>
+    </item>
+</layer-list>

@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--应用全局主题,改用 AppCompat 主题，避免闪退-->
-    <style name="Theme.NetMusicAndroid" parent="Theme.AppCompat.Light.NoActionBar" />
-    <!-- Base application theme. -->
+    <!-- 主应用生效主题（你原有AppCompat方案，兼容性最强，默认启用） -->
+    <style name="Theme.NetMusicAndroid" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- 全局去掉标题栏，全屏布局 -->
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <!-- 队友提供的Material3基础主题（备用，如需M3组件可切换主主题parent到此） -->
     <style name="Base.Theme.NetMusicAndroid" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
+        <!-- 如需自定义M3配色在这里添加 -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 </resources>

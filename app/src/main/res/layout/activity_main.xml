@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 直接LinearLayout作为根，删掉外面<layout>标签 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- Fragment切换容器（主页/猜你听/我的） -->
+    <FrameLayout
+        android:id="@+id/fl_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <!-- 全局底部悬浮播放器（所有页面共用，include复用） -->
+    <include
+        android:id="@+id/layout_bottom_player"
+        layout="@layout/layout_bottom_player"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"/>
+
+    <!-- 底部三Tab导航栏 -->
+    <LinearLayout
+        android:id="@+id/ll_tab_bar"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <!-- Tab1 主页 -->
+        <LinearLayout
+            android:id="@+id/tab_home"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/iv_home_icon"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/ic_home"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="主页"
+                android:textSize="12sp"
+                android:textColor="#222222"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+
+        <!-- Tab2 猜你听 -->
+        <LinearLayout
+            android:id="@+id/tab_guess"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/iv_guess_icon"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/ic_guess"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="猜你听"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+
+        <!-- Tab3 我的 -->
+        <LinearLayout
+            android:id="@+id/tab_mine"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/iv_mine_icon"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/ic_mine"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="我的"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
