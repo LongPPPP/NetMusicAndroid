@@ -2,7 +2,7 @@ import prisma from '../config/database';
 import {CommentErrorMessage, SongErrorMessage} from '../constants/errorString';
 import {ForbiddenError, NotFoundError} from '../errors/AppError';
 import {sanitize} from '../utils/sanitize';
-import type {CreateCommentInput, GetCommentsInput, GetSongsInput} from '../validators/song.validator';
+import type {CreateCommentInput, CreateSongInput, GetCommentsInput, GetSongsInput} from '../validators/song.validator';
 
 // 获取歌曲详情
 export async function getSongDetail(songId: number) {
@@ -200,4 +200,75 @@ export async function getUserComments(userId: number, page: number, pageSize: nu
         page,
         page_size: pageSize,
     };
+}
+
+// ===== ARTIST 歌曲管理 =====
+
+// 校验用户是否为 ARTIST 并获取其 Singer 记录
+async function assertArtist(userId: number) {
+    const user = await prisma.user.findUnique({
+        where: {id: userId},
+        select: {role: true, singer: {select: {id: true, name: true}}},
+    });
+    if (!user || user.role !== 'ARTIST') {
+        throw new ForbiddenError(SongErrorMessage.ARTIST_ONLY);
+    }
+
+    const singer = user.singer;
+    if (!singer) {
+        throw new NotFoundError(SongErrorMessage.NO_SINGER_PROFILE);
+    }
+    return singer;
+}
+
+// 上架歌曲
+export async function createSong(userId: number, data: CreateSongInput) {
+    const singer = await assertArtist(userId);
+
+    const name = sanitize(data.name);
+    const song = await prisma.song.create({
+        data: {
+            name,
+            singerId: singer.id,
+            singerName: data.singer_name || singer.name,
+            playUrl: data.play_url,
+            coverUrl: data.cover_url,
+            duration: data.duration,
+        },
+        select: {
+            id: true,
+            name: true,
+            singerName: true,
+            playUrl: true,
+            coverUrl: true,
+            duration: true,
+        },
+    });
+
+    return {
+        song_id: song.id,
+        song_name: song.name,
+        singer_name: song.singerName,
+        play_url: song.playUrl,
+        cover_url: song.coverUrl,
+        duration: song.duration,
+    };
+}
+
+// 删除歌曲（仅歌手本人可删）
+export async function deleteSong(songId: number, userId: number) {
+    const singer = await assertArtist(userId);
+
+    const song = await prisma.song.findUnique({
+        where: {id: songId},
+        select: {singerId: true},
+    });
+    if (!song) {
+        throw new NotFoundError(SongErrorMessage.NOT_FOUND);
+    }
+    if (song.singerId !== singer.id) {
+        throw new ForbiddenError(SongErrorMessage.CANNOT_DELETE_OTHERS_SONG);
+    }
+
+    await prisma.song.delete({where: {id: songId}});
 }

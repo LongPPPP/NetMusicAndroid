@@ -140,3 +140,86 @@ describe('Comment API', () => {
         });
     });
 });
+
+// ============================================================
+// ARTIST 歌曲管理
+// ============================================================
+describe('Song Management (ARTIST)', () => {
+    let artistToken = '';
+    let artistSongId = 0;
+
+    beforeAll(async () => {
+        const res = await request(app)
+            .post('/api/v1/auth/login')
+            .send({email: 'bob@example.com', password: 'bob123456'});
+        artistToken = res.body.data.access_token;
+    });
+
+    describe('POST /songs', () => {
+        it('should allow ARTIST to create a song', async () => {
+            const res = await request(app)
+                .post('/api/v1/songs')
+                .set('Authorization', `Bearer ${artistToken}`)
+                .send({name: 'ARTIST测试歌曲', duration: 180})
+                .expect(201);
+
+            expect(res.body.code).toBe(201);
+            expect(res.body.data.song_id).toBeGreaterThan(0);
+            expect(res.body.data.song_name).toBe('ARTIST测试歌曲');
+            expect(res.body.data.singer_name).toBe('Rick Astley');
+            artistSongId = res.body.data.song_id;
+        });
+
+        it('should reject empty name', async () => {
+            await request(app)
+                .post('/api/v1/songs')
+                .set('Authorization', `Bearer ${artistToken}`)
+                .send({name: ''})
+                .expect(400);
+        });
+
+        it('should reject USER role', async () => {
+            await request(app)
+                .post('/api/v1/songs')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({name: 'test'})
+                .expect(403);
+        });
+
+        it('should reject without auth', async () => {
+            await request(app)
+                .post('/api/v1/songs')
+                .send({name: 'test'})
+                .expect(401);
+        });
+    });
+
+    describe('DELETE /songs/:songId', () => {
+        it('should allow ARTIST to delete own song', async () => {
+            await request(app)
+                .delete(`/api/v1/songs/${artistSongId}`)
+                .set('Authorization', `Bearer ${artistToken}`)
+                .expect(200);
+        });
+
+        it('should return 404 for deleted song', async () => {
+            await request(app)
+                .delete(`/api/v1/songs/${artistSongId}`)
+                .set('Authorization', `Bearer ${artistToken}`)
+                .expect(404);
+        });
+
+        it('should reject USER role', async () => {
+            await request(app)
+                .delete('/api/v1/songs/1')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .expect(403);
+        });
+
+        it('should reject without auth', async () => {
+            await request(app)
+                .delete('/api/v1/songs/1')
+                .expect(401);
+        });
+    });
+});

@@ -148,6 +148,8 @@ npx prisma studio
 | GET | `/songs/:songId/comments` | 歌曲评论列表（分页） | 无 |
 | POST | `/songs/:songId/comments` | 发表评论 | Bearer Token |
 | DELETE | `/songs/:songId/comments/:commentId` | 删除评论（仅作者） | Bearer Token |
+| POST | `/songs` | 上架歌曲 | Bearer Token + ARTIST |
+| DELETE | `/songs/:songId` | 删除歌曲（仅本人） | Bearer Token + ARTIST |
 | GET | `/singers` | 歌手列表（分页） | 无 |
 | GET | `/singers/:singerId` | 歌手详情（含歌曲列表） | 无 |
 | GET | `/playlists/:playlistId` | 歌单详情（含歌曲列表） | 无 |

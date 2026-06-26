@@ -22,6 +22,20 @@ export const getCommentsSchema = z.object({
     page_size: z.coerce.number().int().positive().max(100).optional().default(20),
 });
 
+// 创建歌曲（仅 ARTIST）
+export const createSongSchema = z.object({
+    name: z
+        .string()
+        .trim()
+        .min(1, '歌曲名不能为空')
+        .max(200, '歌曲名最多 200 个字符'),
+    singer_name: z.string().trim().min(1, '歌手名不能为空').optional(),
+    play_url: z.string().trim().optional(),
+    cover_url: z.string().trim().optional(),
+    duration: z.number().int().positive('时长必须为正整数').optional(),
+});
+
 export type CreateCommentInput = z.infer<typeof createCommentSchema>;
 export type GetSongsInput = z.infer<typeof getSongsSchema>;
 export type GetCommentsInput = z.infer<typeof getCommentsSchema>;
+export type CreateSongInput = z.infer<typeof createSongSchema>;

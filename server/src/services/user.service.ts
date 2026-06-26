@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import prisma from '../config/database';
-import {AuthErrorMessage} from '../constants/errorString';
+import {AuthErrorMessage, UserErrorMessage} from '../constants/errorString';
 import {ConflictError, NotFoundError, ValidationError} from '../errors/AppError';
 import {sanitize} from '../utils/sanitize';
 
@@ -36,7 +36,7 @@ export async function updateUser(userId: number, field: string, value: string) {
         case 'username': {
             const sanitized = sanitize(value);
             if (sanitized.length < 1 || sanitized.length > 16) {
-                throw new ValidationError('用户名长度需在 1-16 个字符之间');
+                throw new ValidationError(UserErrorMessage.USERNAME_LENGTH);
             }
             return prisma.user.update({
                 where: {id: userId},
@@ -46,7 +46,7 @@ export async function updateUser(userId: number, field: string, value: string) {
         }
         case 'avatar': {
             if (!/^https?:\/\/.+/.test(value)) {
-                throw new ValidationError('头像地址格式不正确');
+                throw new ValidationError(UserErrorMessage.AVATAR_FORMAT);
             }
             return prisma.user.update({
                 where: {id: userId},
@@ -56,7 +56,7 @@ export async function updateUser(userId: number, field: string, value: string) {
         }
         case 'signature': {
             if (value.length > 100) {
-                throw new ValidationError('个性签名最多 100 个字符');
+                throw new ValidationError(UserErrorMessage.SIGNATURE_MAX);
             }
             const sanitized = sanitize(value);
             return prisma.user.update({
@@ -81,7 +81,7 @@ export async function updateUser(userId: number, field: string, value: string) {
             });
         }
         default:
-            throw new ValidationError('不支持修改的字段');
+            throw new ValidationError(UserErrorMessage.INVALID_FIELD);
     }
 }
 

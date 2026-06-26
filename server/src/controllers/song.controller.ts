@@ -36,3 +36,16 @@ export const deleteComment = asyncHandler(async (req, res) => {
     await songService.deleteComment(songId, commentId, req.userId!);
     return success(res, null, '删除成功');
 });
+
+// ===== ARTIST：上架歌曲 =====
+export const createSong = asyncHandler(async (req, res) => {
+    const result = await songService.createSong(req.userId!, req.body);
+    return success(res, result, '上架成功', 201);
+});
+
+// ===== ARTIST：删除歌曲 =====
+export const deleteSong = asyncHandler(async (req, res) => {
+    const songId = parseInt(String(req.params.songId), 10);
+    await songService.deleteSong(songId, req.userId!);
+    return success(res, null, '删除成功');
+});
