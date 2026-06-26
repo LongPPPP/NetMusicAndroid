@@ -63,5 +63,8 @@ dependencies {
     ksp(libs.room.compiler)   // 或使用 kapt，视项目配置而定
     // Room 协程扩展（方便在主线程外操作）
     implementation(libs.room.ktx)
-
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.moshi)
+    implementation(libs.okhttp.logging)
+    implementation(libs.moshi.kotlin)
 }

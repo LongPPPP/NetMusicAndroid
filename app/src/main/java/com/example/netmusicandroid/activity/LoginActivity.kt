@@ -15,13 +15,15 @@ class LoginActivity : AppCompatActivity() {
 
         val btnLogin = findViewById<Button>(R.id.btnLogin)
         val tvRegister = findViewById<TextView>(R.id.tvRegister)
-
+        // HomeFragment 是 Fragment，不是 Activity，不能通过 startActivity() 跳转；
+        // 应启动 BaseActivity，再由 BaseActivity 加载 HomeFragment。
         btnLogin.setOnClickListener {
 
             startActivity(
-                Intent(this, HomeActivity::class.java)
+                Intent(this, BaseActivity::class.java)
             )
 
+            finish()
         }
 
         tvRegister.setOnClickListener {

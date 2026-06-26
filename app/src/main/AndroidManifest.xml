@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- 网络权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -10,7 +13,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.NetMusicAndroid">
+        android:theme="@style/Theme.NetMusicAndroid"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
             android:exported="false" />
@@ -29,11 +33,11 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".activity.HomeActivity"
+            android:name=".activity.HomeFragment"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".activity.PlayerActivity"
+            android:name=".activity.PlayerFragment"
             android:exported="false"
             android:theme="@style/Theme.NetMusicAndroid"
             android:windowSoftInputMode="adjustResize" />
@@ -43,6 +47,10 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.SingerActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activity.BaseActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>
