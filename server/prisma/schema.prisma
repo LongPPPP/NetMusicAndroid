@@ -25,6 +25,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  singer    Singer?
   playlists Playlist[]
   comments  Comment[]
 }
@@ -35,9 +36,11 @@ model Singer {
   name        String
   avatarUrl   String?  @map("avatar_url")
   description String?
+  userId      Int?     @unique @map("user_id")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  user  User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
   songs Song[]
 
   @@map("singers")
@@ -63,11 +66,12 @@ model Song {
 
 // 歌单表
 model Playlist {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @map("user_id")
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  name       String
+  isFavorite Boolean  @default(false) @map("is_favorite")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   user          User           @relation(fields: [userId], references: [id])
   playlistSongs PlaylistSong[]

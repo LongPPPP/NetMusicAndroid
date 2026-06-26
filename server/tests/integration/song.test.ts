@@ -4,6 +4,8 @@ import prisma from '../../src/config/database';
 
 const ts = Date.now();
 let accessToken = '';
+let artistToken = '';
+let artistSingerId = 0;
 let commentId = 0;
 
 const testUser = {
@@ -19,10 +21,27 @@ beforeAll(async () => {
         .post('/api/v1/auth/login')
         .send({email: testUser.email, password: testUser.password});
     accessToken = loginRes.body.data.access_token;
+
+    // 登录 seed 中的 ARTIST 用户（bob）用于上架/下架测试
+    const artistLogin = await request(app)
+        .post('/api/v1/auth/login')
+        .send({email: 'bob@example.com', password: 'bob123456'});
+    artistToken = artistLogin.body.data.access_token;
+
+    const singer = await prisma.singer.findUnique({
+        where: {userId: artistLogin.body.data.user.id},
+        select: {id: true},
+    });
+    artistSingerId = singer!.id;
 });
 
 afterAll(async () => {
-    await prisma.user.deleteMany({where: {email: testUser.email}});
+    // 先删除关联歌单（含收藏歌单），再删用户
+    const user = await prisma.user.findUnique({where: {email: testUser.email}, select: {id: true}});
+    if (user) {
+        await prisma.playlist.deleteMany({where: {userId: user.id}});
+        await prisma.user.deleteMany({where: {email: testUser.email}});
+    }
     await prisma.$disconnect();
 });
 
@@ -135,6 +154,125 @@ describe('Comment API', () => {
         it('should return 404 for deleted comment', async () => {
             await request(app)
                 .delete(`/api/v1/songs/1/comments/${commentId}`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .expect(404);
+        });
+    });
+});
+
+// ===== 歌曲上架/下架（ARTIST 专属） =====
+describe('Song Management (ARTIST)', () => {
+    let uploadedSongId = 0;
+    const dummyMp3 = Buffer.from('dummy audio');
+
+    describe('POST /songs', () => {
+        it('should reject without auth', async () => {
+            await request(app).post('/api/v1/songs').expect(401);
+        });
+
+        it('should reject USER role', async () => {
+            await request(app)
+                .post('/api/v1/songs')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .field('name', 'test')
+                .expect(403);
+        });
+
+        it('should reject empty name', async () => {
+            await request(app)
+                .post('/api/v1/songs')
+                .set('Authorization', `Bearer ${artistToken}`)
+                .field('name', '')
+                .expect(400);
+        });
+
+        it('should reject missing song file', async () => {
+            const res = await request(app)
+                .post('/api/v1/songs')
+                .set('Authorization', `Bearer ${artistToken}`)
+                .field('name', '无文件歌曲')
+                .expect(400);
+            expect(res.body.message).toBeDefined();
+        });
+
+        it('should upload a song successfully', async () => {
+            const res = await request(app)
+                .post('/api/v1/songs')
+                .set('Authorization', `Bearer ${artistToken}`)
+                .field('name', '测试上架歌曲')
+                .attach('song', dummyMp3, 'test.mp3')
+                .expect(201);
+            expect(res.body.code).toBe(201);
+            expect(res.body.data.song_name).toBe('测试上架歌曲');
+            expect(res.body.data.singer_name).toBeDefined();
+            expect(res.body.data.play_url).toMatch(/^\/static\/songs\//);
+            uploadedSongId = res.body.data.song_id;
+        });
+    });
+
+    describe('DELETE /songs/:songId', () => {
+        it('should reject without auth', async () => {
+            await request(app).delete(`/api/v1/songs/${uploadedSongId}`).expect(401);
+        });
+
+        it('should reject USER role', async () => {
+            await request(app)
+                .delete(`/api/v1/songs/${uploadedSongId}`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .expect(403);
+        });
+
+        it('should reject deleting others song', async () => {
+            // song#1 是 Edvard Grieg 的，不属于 bob
+            await request(app)
+                .delete('/api/v1/songs/1')
+                .set('Authorization', `Bearer ${artistToken}`)
+                .expect(403);
+        });
+
+        it('should delete own song', async () => {
+            const res = await request(app)
+                .delete(`/api/v1/songs/${uploadedSongId}`)
+                .set('Authorization', `Bearer ${artistToken}`)
+                .expect(200);
+            expect(res.body.code).toBe(200);
+        });
+
+        it('should return 404 for deleted song', async () => {
+            await request(app)
+                .delete(`/api/v1/songs/${uploadedSongId}`)
+                .set('Authorization', `Bearer ${artistToken}`)
+                .expect(404);
+        });
+    });
+});
+
+// ===== 收藏（toggle） =====
+describe('Favorite API', () => {
+    describe('POST /songs/:songId/favorite', () => {
+        it('should reject without auth', async () => {
+            await request(app).post('/api/v1/songs/1/favorite').expect(401);
+        });
+
+        it('should toggle favorite on', async () => {
+            const res = await request(app)
+                .post('/api/v1/songs/1/favorite')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .expect(200);
+            expect(res.body.data.favorited).toBe(true);
+        });
+
+        it('should toggle favorite off', async () => {
+            const res = await request(app)
+                .post('/api/v1/songs/1/favorite')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .expect(200);
+            expect(res.body.data.favorited).toBe(false);
+        });
+
+        it('should return 404 for non-existent song', async () => {
+            await request(app)
+                .post('/api/v1/songs/99999/favorite')
                 .set('Authorization', `Bearer ${accessToken}`)
                 .expect(404);
         });

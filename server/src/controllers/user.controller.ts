@@ -46,3 +46,23 @@ export const getMyComments = asyncHandler(async (req, res) => {
     const result = await songService.getUserComments(req.userId!, page, pageSize);
     return success(res, result);
 });
+
+// 获取收藏列表（自己）
+export const getMyFavorites = asyncHandler(async (req, res) => {
+    const page = parseInt(String(req.query.page)) || 1;
+    const pageSize = parseInt(String(req.query.page_size)) || 20;
+    const result = await songService.getUserFavorites(req.userId!, page, pageSize);
+    return success(res, result);
+});
+
+// 获取收藏列表（公开）
+export const getFavorites = asyncHandler(async (req, res) => {
+    const userId = parseInt(String(req.params.userId), 10);
+    if (isNaN(userId)) {
+        return success(res, null, '用户 ID 格式不正确', 400);
+    }
+    const page = parseInt(String(req.query.page)) || 1;
+    const pageSize = parseInt(String(req.query.page_size)) || 20;
+    const result = await songService.getUserFavorites(userId, page, pageSize);
+    return success(res, result);
+});

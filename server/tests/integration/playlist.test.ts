@@ -22,7 +22,12 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    await prisma.user.deleteMany({where: {email: testUser.email}});
+    // 先删除关联歌单（含收藏歌单），再删用户
+    const user = await prisma.user.findUnique({where: {email: testUser.email}, select: {id: true}});
+    if (user) {
+        await prisma.playlist.deleteMany({where: {userId: user.id}});
+        await prisma.user.deleteMany({where: {email: testUser.email}});
+    }
     await prisma.$disconnect();
 });
 

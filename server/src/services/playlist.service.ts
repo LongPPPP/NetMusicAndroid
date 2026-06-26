@@ -76,11 +76,11 @@ export async function createPlaylist(userId: number, data: CreatePlaylistInput) 
     return {playlist_id: playlist.id};
 }
 
-// 校验歌单归属
+// 校验歌单归属，同时返回 isFavorite 供调用方判断
 async function assertPlaylistOwner(playlistId: number, userId: number) {
     const playlist = await prisma.playlist.findUnique({
         where: {id: playlistId},
-        select: {userId: true},
+        select: {userId: true, isFavorite: true},
     });
     if (!playlist) {
         throw new NotFoundError(PlaylistErrorMessage.NOT_FOUND);
@@ -88,6 +88,7 @@ async function assertPlaylistOwner(playlistId: number, userId: number) {
     if (playlist.userId !== userId) {
         throw new ForbiddenError('无权操作此歌单');
     }
+    return playlist;
 }
 
 // 歌单添加歌曲
@@ -130,7 +131,10 @@ export async function removeSongFromPlaylist(playlistId: number, songId: number,
 
 // 重命名歌单
 export async function renamePlaylist(playlistId: number, userId: number, data: UpdatePlaylistInput) {
-    await assertPlaylistOwner(playlistId, userId);
+    const pl = await assertPlaylistOwner(playlistId, userId);
+    if (pl.isFavorite) {
+        throw new ForbiddenError(PlaylistErrorMessage.FAVORITE_PROTECTED);
+    }
 
     const name = sanitize(data.name);
 
@@ -164,7 +168,10 @@ export async function renamePlaylist(playlistId: number, userId: number, data: U
 
 // 删除歌单
 export async function deletePlaylist(playlistId: number, userId: number) {
-    await assertPlaylistOwner(playlistId, userId);
+    const pl = await assertPlaylistOwner(playlistId, userId);
+    if (pl.isFavorite) {
+        throw new ForbiddenError(PlaylistErrorMessage.FAVORITE_PROTECTED);
+    }
 
     await prisma.playlist.delete({where: {id: playlistId}});
 }

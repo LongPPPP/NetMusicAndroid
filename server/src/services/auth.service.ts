@@ -23,9 +23,13 @@ export async function register({confirmPassword: _confirmPassword, ...data}: Reg
     // 加密密码
     const hashedPassword = await hashPassword(password);
 
-    // 创建用户（默认角色 USER）
-    await prisma.user.create({
+    // 创建用户（默认角色 USER），同时创建收藏歌单
+    const user = await prisma.user.create({
         data: {username, password: hashedPassword, email},
+    });
+
+    await prisma.playlist.create({
+        data: {userId: user.id, name: '我的收藏', isFavorite: true},
     });
 }
 
