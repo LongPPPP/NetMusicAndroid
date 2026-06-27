@@ -1,15 +1,16 @@
-package com.example.netmusicandroid.api
+package com.example.netmusicandroid.data.api
 
-import com.example.netmusicandroid.bean.UserBean
-import com.example.netmusicandroid.bean.CollectionData
-import com.example.netmusicandroid.bean.UserCollectionBean
-import com.example.netmusicandroid.bean.CreateCollectionReq
-import com.example.netmusicandroid.bean.CreateCollectionResp
+import com.example.netmusicandroid.data.model.ApiResponse
+import com.example.netmusicandroid.data.model.bean.CollectionData
+import com.example.netmusicandroid.data.model.bean.CreateCollectionReq
+import com.example.netmusicandroid.data.model.bean.CreateCollectionResp
+import com.example.netmusicandroid.data.model.bean.UserBean
+import com.example.netmusicandroid.data.model.bean.UserCollectionBean
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.POST
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 
 /**
@@ -23,6 +24,7 @@ interface MusicApi {
      * 获取当前登录用户信息，需要Bearer Token鉴权
      */
     @GET("users/me")
+
     suspend fun getCurrentUserInfo(): Response<ApiResponse<UserBean>>
 
     /**
@@ -41,6 +43,7 @@ interface MusicApi {
      */
     @DELETE("playlists/{collectionId}")
     suspend fun deleteCollection(@Path("collectionId") collectionId: Int): Response<ApiResponse<Any>>
+
 
     // 3. 创建歌单 POST /api/v1/playlists
     @POST("playlists")

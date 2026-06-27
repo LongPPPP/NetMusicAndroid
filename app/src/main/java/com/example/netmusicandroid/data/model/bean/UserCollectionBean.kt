@@ -1,4 +1,4 @@
-package com.example.netmusicandroid.bean
+package com.example.netmusicandroid.data.model.bean
 import com.google.gson.annotations.SerializedName
 
 /**

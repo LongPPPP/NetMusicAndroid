@@ -1,4 +1,4 @@
-package com.example.netmusicandroid.bean
+package com.example.netmusicandroid.data.model.bean
 
 /**
  * 获取用户信息接口 data 内部实体

@@ -15,7 +15,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.netmusicandroid.bean.UserCollectionBean
+import com.example.netmusicandroid.data.model.bean.UserCollectionBean
 import com.example.netmusicandroid.databinding.ItemUserCollectionBinding
 import java.io.InputStream
 import java.net.HttpURLConnection

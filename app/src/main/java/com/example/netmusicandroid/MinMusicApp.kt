@@ -1,7 +1,7 @@
 package com.example.netmusicandroid
 
 import android.app.Application
-import com.example.netmusicandroid.api.ApiClient
+import com.example.netmusicandroid.data.api.ApiClient
 
 /**
  * APP全局应用入口，APP进程创建时最先执行
@@ -19,7 +19,7 @@ class MinMusicApp : Application() {
         globalContext = this
 
         // 原有逻辑：提前触发Retrofit懒加载，提前初始化网络客户端
-        ApiClient.musicApi
+        ApiClient.client
 
         // 后续可在这里添加：Room数据库初始化、SP工具初始化、播放器单例初始化等
     }

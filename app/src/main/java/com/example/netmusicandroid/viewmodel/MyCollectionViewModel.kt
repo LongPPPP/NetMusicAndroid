@@ -4,11 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.netmusicandroid.api.ApiResponse
-import com.example.netmusicandroid.bean.CollectionData
-import com.example.netmusicandroid.bean.UserCollectionBean
-import com.example.netmusicandroid.repository.MineRepository
-import kotlinx.coroutines.Dispatchers
+import com.example.netmusicandroid.data.model.ApiResponse
+import com.example.netmusicandroid.data.model.bean.UserCollectionBean
+import com.example.netmusicandroid.data.repository.MineRepository
 import kotlinx.coroutines.launch
 import retrofit2.Response
 

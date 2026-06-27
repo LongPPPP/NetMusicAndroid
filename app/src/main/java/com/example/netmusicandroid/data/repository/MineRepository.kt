@@ -1,16 +1,17 @@
-package com.example.netmusicandroid.repository
+package com.example.netmusicandroid.data.repository
 
-import com.example.netmusicandroid.api.ApiClient
-import com.example.netmusicandroid.api.ApiResponse
-import com.example.netmusicandroid.bean.UserBean
-import com.example.netmusicandroid.bean.CollectionData
-import com.example.netmusicandroid.bean.UserCollectionBean
-import com.example.netmusicandroid.bean.CreateCollectionReq
-import com.example.netmusicandroid.bean.CreateCollectionResp
+import com.example.netmusicandroid.data.api.ApiClient
+import com.example.netmusicandroid.data.api.MusicApi
+import com.example.netmusicandroid.data.model.ApiResponse
+import com.example.netmusicandroid.data.model.bean.CollectionData
+import com.example.netmusicandroid.data.model.bean.CreateCollectionReq
+import com.example.netmusicandroid.data.model.bean.CreateCollectionResp
+import com.example.netmusicandroid.data.model.bean.UserBean
+import com.example.netmusicandroid.data.model.bean.UserCollectionBean
 import retrofit2.Response
 
 class MineRepository {
-    private val api = ApiClient.musicApi
+    private val api = ApiClient.createService<MusicApi>()
 
     suspend fun getUserInfo(): Response<ApiResponse<UserBean>> {
         return api.getCurrentUserInfo()
