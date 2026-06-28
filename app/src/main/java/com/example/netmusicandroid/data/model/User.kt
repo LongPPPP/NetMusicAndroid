@@ -1,7 +1,7 @@
 package com.example.netmusicandroid.data.model
 
 import com.squareup.moshi.JsonClass
-
+//各响应体的具体定义
 @JsonClass(generateAdapter = true)
 data class UserInfo(
     val id: Int,

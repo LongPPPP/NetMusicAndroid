@@ -79,7 +79,32 @@
                 android:id="@+id/seekBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:max="1000000"
+                android:progress="0" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="12dp">
+
+                <TextView
+                    android:id="@+id/tvCurrentTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:00"
+                    android:textColor="#999999"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvTotalTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="00:00"
+                    android:textColor="#999999"
+                    android:textSize="12sp" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -104,6 +129,6 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-        <!-- ❌ 底部导航栏已删除，因为现在由 MainActivity 统一提供 -->
+        <!-- 底部导航栏由 MainActivity 统一提供 -->
 
         </androidx.constraintlayout.widget.ConstraintLayout>

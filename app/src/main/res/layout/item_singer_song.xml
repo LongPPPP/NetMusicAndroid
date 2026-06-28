@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="20dp">
+
+    <!-- 序号 -->
+    <TextView
+        android:id="@+id/tvIndex"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textColor="#999999"
+        android:textSize="14sp" />
+
+    <!-- 歌名 -->
+    <TextView
+        android:id="@+id/tvSongName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="歌曲名称"
+        android:textColor="#333333"
+        android:textSize="15sp"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <!-- 播放图标 (黑色线条风格) -->
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_play"
+        android:alpha="0.5" />
+
+</LinearLayout>
