@@ -226,6 +226,47 @@
                 android:background="#EEEEEE"
                 android:layout_marginHorizontal="16dp"/>
 
+            <LinearLayout
+                android:id="@+id/llPublishSong"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone"> <!-- 默认隐藏，代码动态控制 -->
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_song_publish"
+                    android:contentDescription="已发布歌曲"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="我发表的歌曲"
+                    android:textSize="16sp"
+                    android:textColor="#222222"
+                    android:layout_marginStart="14dp"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:contentDescription="@string/cd_enter_detail"/>
+            </LinearLayout>
+
+
+            <View
+                android:id="@+id/dividerPublishSong"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#EEEEEE"
+                android:layout_marginHorizontal="16dp"
+                android:visibility="gone"/>
+
             <!-- 3. 设置 -->
             <LinearLayout
                 android:id="@+id/llSetting"

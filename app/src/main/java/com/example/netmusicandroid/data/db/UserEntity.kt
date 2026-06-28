@@ -3,15 +3,20 @@ package com.example.netmusicandroid.data.db
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-/*
-  本地用户信息表
-  用于实现：多账号登录记忆、记住密码、自动填充
- */
 @Entity(tableName = "local_users")
 data class UserEntity(
-    @PrimaryKey 
-    val email: String,        // 以邮箱作为主键，因为它是唯一的
+    @PrimaryKey
+    val email: String,
     val username: String,
     val password: String,
-    val lastLoginTime: Long   //最近登录的排在上面
+    val lastLoginTime: Long,
+    val avatar: String,
+    val signature: String,
+    val role: String,
+
+
+    // 登录返回鉴权凭证
+    val accessToken: String = "",
+    val refreshToken: String = "",
+    val tokenExpire: Long = 0L // access_token过期时间戳（后端exp）
 )

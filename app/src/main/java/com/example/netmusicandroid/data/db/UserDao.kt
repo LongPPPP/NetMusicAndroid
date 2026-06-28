@@ -1,6 +1,7 @@
 package com.example.netmusicandroid.data.db
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDao {
@@ -20,4 +21,8 @@ interface UserDao {
     // 查：根据邮箱查特定用户（用于校验等）
     @Query("SELECT * FROM local_users WHERE email = :email LIMIT 1")
     suspend fun findUserByEmail(email: String): UserEntity?
+
+    // 新增：流式监听指定邮箱用户的数据变化（UI自动刷新核心）
+    @Query("SELECT * FROM local_users WHERE email = :email LIMIT 1")
+    fun observeUserByEmail(email: String): Flow<UserEntity?>
 }

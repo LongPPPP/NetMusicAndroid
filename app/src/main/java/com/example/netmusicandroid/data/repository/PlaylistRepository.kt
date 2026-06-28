@@ -3,22 +3,22 @@ package com.example.netmusicandroid.data.repository
 import com.example.netmusicandroid.data.api.ApiClient
 import com.example.netmusicandroid.data.api.PlaylistApiService
 import com.example.netmusicandroid.data.model.ApiResponse
-import com.example.netmusicandroid.data.model.bean.PlaylistData
-import com.example.netmusicandroid.data.model.bean.createUserPlaylistReq
-import com.example.netmusicandroid.data.model.bean.createUserPlaylistResp
-import com.example.netmusicandroid.data.model.bean.UserBean
-import com.example.netmusicandroid.data.model.bean.UserPlaylistBean
+import com.example.netmusicandroid.data.model.UserInfo
+import com.example.netmusicandroid.data.model.PlaylistData
+import com.example.netmusicandroid.data.model.CreatePlaylistReq
+import com.example.netmusicandroid.data.model.CreatePlaylistResp
+import com.example.netmusicandroid.data.model.UserPlaylist
 import retrofit2.Response
 
 class PlaylistRepository {
     private val api = ApiClient.createService<PlaylistApiService>()
 
-    suspend fun getUserInfo(): Response<ApiResponse<UserBean>> {
+    suspend fun getUserInfo(): Response<ApiResponse<UserInfo>> {
         return api.getCurrentUserInfo()
     }
 
     // 获取用户全部自建歌单
-    suspend fun getUserPlaylist(userId: Int): Response<ApiResponse<PlaylistData<UserPlaylistBean>>> {
+    suspend fun getUserPlaylist(userId: Int): Response<ApiResponse<PlaylistData<UserPlaylist>>> {
         return api.getUserPlaylist(userId)
     }
 
@@ -28,8 +28,8 @@ class PlaylistRepository {
     }
 
     // 创建新歌单 POST
-    suspend fun createUserPlaylist(name: String): ApiResponse<createUserPlaylistResp>? {
-        val body = createUserPlaylistReq(name)
+    suspend fun createUserPlaylist(name: String): ApiResponse<CreatePlaylistResp>? {
+        val body = CreatePlaylistReq(name)
         val response = api.createUserPlaylist(body)
         return if (response.isSuccessful) response.body() else null
     }

@@ -5,17 +5,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.netmusicandroid.data.model.ApiResponse
-import com.example.netmusicandroid.data.model.bean.UserPlaylistBean
+import com.example.netmusicandroid.data.model.UserPlaylist
 import com.example.netmusicandroid.data.repository.PlaylistRepository
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import kotlinx.coroutines.delay
 
 class UserPlaylistViewModel : ViewModel() {
     private val mineRepo = PlaylistRepository()
 
     // 歌单列表数据源
-    private val _collectionList = MutableLiveData<List<UserPlaylistBean>>()
-    val collectionList: LiveData<List<UserPlaylistBean>> = _collectionList
+    private val _collectionList = MutableLiveData<List<UserPlaylist>>()
+    val collectionList: LiveData<List<UserPlaylist>> = _collectionList
 
     // 弹窗提示文字
     private val _toastMsg = MutableLiveData<String>()
@@ -45,9 +46,10 @@ class UserPlaylistViewModel : ViewModel() {
             try {
                 val resp = mineRepo.createUserPlaylist(name)
 
-                if (resp != null && resp.code == 200) {
+                if (resp != null && resp.code == 201) {
                     _toastMsg.postValue("创建成功")
                     // 创建成功后刷新列表
+                    delay(300)
                     loadUserCollection()
                 } else {
                     _toastMsg.postValue(resp?.message ?: "创建失败")

@@ -2,6 +2,8 @@ package com.example.netmusicandroid
 
 import android.app.Application
 import com.example.netmusicandroid.data.api.ApiClient
+import com.example.netmusicandroid.data.db.AppDatabase
+import com.example.netmusicandroid.data.repository.AuthRepository
 
 /**
  * APP全局应用入口，APP进程创建时最先执行
@@ -18,9 +20,16 @@ class MinMusicApp : Application() {
         // 赋值全局上下文
         globalContext = this
 
-        // 原有逻辑：提前触发Retrofit懒加载，提前初始化网络客户端
-        ApiClient.client
+        // 1. 初始化Room数据库
+        val db = AppDatabase.getDatabase(this)
+        val userDao = db.userDao()
+        // 赋值全局Dao给全局单例调用
+        AppDatabase.globalUserDao = userDao
 
-        // 后续可在这里添加：Room数据库初始化、SP工具初始化、播放器单例初始化等
+        // 2. 一次性初始化AuthRepository单例（使用新的initRepo方法）
+        AuthRepository.initRepo(userDao)
+
+        // 3. 最后再触发Retrofit懒加载，避免拦截器提前执行造成递归崩溃
+        ApiClient.client
     }
 }

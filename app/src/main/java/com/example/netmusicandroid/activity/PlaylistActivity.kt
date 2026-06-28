@@ -3,12 +3,15 @@ package com.example.netmusicandroid.activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.netmusicandroid.adapter.UserPlaylistAdapter
+import com.example.netmusicandroid.data.repository.AuthRepository
 import com.example.netmusicandroid.databinding.ActivityPlaylistBinding
 import com.example.netmusicandroid.dialog.CreatePlaylistDialog
 import com.example.netmusicandroid.viewmodel.UserPlaylistViewModel
 import com.example.netmusicandroid.utils.ToastUtil
+import kotlinx.coroutines.launch
 
 class PlaylistActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlaylistBinding

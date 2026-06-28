@@ -15,7 +15,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.netmusicandroid.data.model.bean.UserPlaylistBean
+import com.example.netmusicandroid.constant.ApiConst
+import com.example.netmusicandroid.data.model.UserPlaylist
 import com.example.netmusicandroid.databinding.ItemUserCollectionBinding
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -24,21 +25,31 @@ import java.util.concurrent.Executors
 
 class UserPlaylistAdapter(
     private val onDeleteClick: (Int) -> Unit
-) : ListAdapter<UserPlaylistBean, UserPlaylistAdapter.CollectionVH>(CollectionDiffCallback()) {
+) : ListAdapter<UserPlaylist, UserPlaylistAdapter.CollectionVH>(CollectionDiffCallback()) {
 
     private val executor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
 
     inner class CollectionVH(val binding: ItemUserCollectionBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: UserPlaylistBean) {
+        fun bind(item: UserPlaylist) {
             // 文本赋值
-            binding.tvCollectionName.text = item.collectionName
-            binding.tvSongNum.text = "${item.songCount}首"
-            // 原生加载网络封面，无Glide
-            loadCircleCover(binding.ivCover, item.coverUrl)
-            // 删除点击
+            binding.tvCollectionName.text = item.playlist_name
+            binding.tvSongNum.text = "${item.song_count}首"
+
+            // 默认兜底封面
+            val defaultCoverUrl = "https://picsum.photos/id/237/200/300"
+            val realUrl = if (!item.cover_url.isNullOrBlank()) {
+                // 数据库返回格式：/static/xxx，直接拼接静态资源根域名，不会产生双斜杠
+                "${ApiConst.STATIC_BASE}${item.cover_url}"
+            } else {
+                defaultCoverUrl
+            }
+
+            loadCircleCover(iv = binding.ivCover, urlStr = realUrl)
+
+            // 删除点击事件
             binding.ivDelete.setOnClickListener {
-                onDeleteClick.invoke(item.collectionId)
+                onDeleteClick.invoke(item.playlist_id)
             }
         }
 
@@ -99,12 +110,12 @@ class UserPlaylistAdapter(
         holder.bind(getItem(position))
     }
 
-    class CollectionDiffCallback : DiffUtil.ItemCallback<UserPlaylistBean>() {
-        override fun areItemsTheSame(oldItem: UserPlaylistBean, newItem: UserPlaylistBean): Boolean {
-            return oldItem.collectionId == newItem.collectionId
+    class CollectionDiffCallback : DiffUtil.ItemCallback<UserPlaylist>() {
+        override fun areItemsTheSame(oldItem: UserPlaylist, newItem: UserPlaylist): Boolean {
+            return oldItem.playlist_id == newItem.playlist_id
         }
 
-        override fun areContentsTheSame(oldItem: UserPlaylistBean, newItem: UserPlaylistBean): Boolean {
+        override fun areContentsTheSame(oldItem: UserPlaylist, newItem: UserPlaylist): Boolean {
             return oldItem == newItem
         }
     }

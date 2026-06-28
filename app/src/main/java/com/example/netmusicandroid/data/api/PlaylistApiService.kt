@@ -1,11 +1,11 @@
 package com.example.netmusicandroid.data.api
 
 import com.example.netmusicandroid.data.model.ApiResponse
-import com.example.netmusicandroid.data.model.bean.PlaylistData
-import com.example.netmusicandroid.data.model.bean.createUserPlaylistReq
-import com.example.netmusicandroid.data.model.bean.createUserPlaylistResp
-import com.example.netmusicandroid.data.model.bean.UserBean
-import com.example.netmusicandroid.data.model.bean.UserPlaylistBean
+import com.example.netmusicandroid.data.model.UserInfo // 导入队友的UserInfo
+import com.example.netmusicandroid.data.model.PlaylistData
+import com.example.netmusicandroid.data.model.CreatePlaylistReq
+import com.example.netmusicandroid.data.model.CreatePlaylistResp
+import com.example.netmusicandroid.data.model.UserPlaylist
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -24,8 +24,7 @@ interface PlaylistApiService {
      * 获取当前登录用户信息，需要Bearer Token鉴权
      */
     @GET("users/me")
-
-    suspend fun getCurrentUserInfo(): Response<ApiResponse<UserBean>>
+    suspend fun getCurrentUserInfo(): Response<ApiResponse<UserInfo>> // 替换UserBean为UserInfo
 
     /**
      * GET /api/v1/user/collections
@@ -34,7 +33,7 @@ interface PlaylistApiService {
     @GET("users/{userId}/playlists")
     suspend fun getUserPlaylist(
         @Path("userId") userId: Int
-    ): Response<ApiResponse<PlaylistData<UserPlaylistBean>>>
+    ): Response<ApiResponse<PlaylistData<UserPlaylist>>>
 
     /**
      * DELETE /api/v1/playlists/{collectionId}
@@ -48,6 +47,6 @@ interface PlaylistApiService {
     // 3. 创建歌单 POST /api/v1/playlists
     @POST("playlists")
     suspend fun createUserPlaylist(
-        @Body body: createUserPlaylistReq
-    ): Response<ApiResponse<createUserPlaylistResp>>
+        @Body body: CreatePlaylistReq
+    ): Response<ApiResponse<CreatePlaylistResp>>
 }

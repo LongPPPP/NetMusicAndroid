@@ -2,6 +2,10 @@
 # AGP & Kotlin 基础
 agp = "9.2.1"
 
+# 协程版本
+coroutines = "1.7.3"
+
+
 # AndroidX 基础组件
 coreKtx = "1.19.0"
 appcompat = "1.7.1"
@@ -70,6 +74,12 @@ moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.re
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+
+# 协程核心（含Mutex锁）
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+# Android平台协程适配
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -2,13 +2,14 @@ package com.example.netmusicandroid.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.netmusicandroid.data.db.AppDatabase
 import com.example.netmusicandroid.data.repository.AuthRepository
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import org.json.JSONObject
-class RegisterViewModel : ViewModel() {
 
-    private val repository = AuthRepository()
+class RegisterViewModel : ViewModel() {
+    private val repository = AuthRepository.getInstance()
 
     fun register(
         username: String,
@@ -20,8 +21,8 @@ class RegisterViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val result = repository.register(username, password, confirmPassword, email)
-                onResult(result.code == 200 ||result.code == 201, result.message ?: "")
-            } catch (e: HttpException) {  //显示错误信息message的内容
+                onResult(result.code == 200 || result.code == 201, result.message ?: "")
+            } catch (e: HttpException) {
                 val errorBody = e.response()?.errorBody()?.string()
                 val message = try {
                     JSONObject(errorBody ?: "").getString("message")

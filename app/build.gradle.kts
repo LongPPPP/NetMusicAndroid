@@ -65,6 +65,10 @@ dependencies {
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
 
+    // 协程库，提供Mutex
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+
     // ========== 测试依赖 ==========
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

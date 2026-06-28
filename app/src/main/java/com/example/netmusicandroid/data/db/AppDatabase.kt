@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [UserEntity::class], version = 1, exportSchema = false)
+@Database(entities = [UserEntity::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
@@ -13,6 +13,7 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
+        lateinit var globalUserDao: UserDao
 
         // 获取数据库单例（保证全局只有一个数据库连接）
         fun getDatabase(context: Context): AppDatabase {
@@ -21,7 +22,8 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "net_music_db"
-                ).build()
+                )
+                    .build()
                 INSTANCE = instance
                 instance
             }
