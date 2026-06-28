@@ -27,7 +27,12 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    await prisma.user.deleteMany({where: {email: testUser.email}});
+    // 先删除关联歌单（含收藏歌单），再删用户
+    const user = await prisma.user.findUnique({where: {email: testUser.email}, select: {id: true}});
+    if (user) {
+        await prisma.playlist.deleteMany({where: {userId: user.id}});
+        await prisma.user.deleteMany({where: {email: testUser.email}});
+    }
     await prisma.$disconnect();
 });
 
@@ -43,6 +48,10 @@ describe('User API', () => {
             expect(res.body.data.username).toBe(testUser.username);
             expect(res.body.data.email).toBe(testUser.email);
             expect(res.body.data.role).toBe('USER');
+            expect(res.body.data).toHaveProperty('comment_count');
+            expect(res.body.data).toHaveProperty('favorite_count');
+            expect(typeof res.body.data.comment_count).toBe('number');
+            expect(typeof res.body.data.favorite_count).toBe('number');
         });
 
         it('should return 404 for non-existent user', async () => {
@@ -155,6 +164,58 @@ describe('User API', () => {
                 .patch('/api/v1/users/me')
                 .send({field: 'username', value: 'test'})
                 .expect(401);
+        });
+    });
+
+    // ===== Favorites =====
+    describe('GET /users/me/favorites', () => {
+        it('should return my favorite playlist', async () => {
+            const res = await request(app)
+                .get('/api/v1/users/me/favorites')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .expect(200);
+
+            expect(res.body.code).toBe(200);
+            expect(res.body.data).toHaveProperty('playlist_id');
+            expect(res.body.data).toHaveProperty('songs');
+            expect(res.body.data.playlist_name).toBe('我的收藏');
+            expect(Array.isArray(res.body.data.songs)).toBe(true);
+        });
+
+        it('should reject without auth', async () => {
+            await request(app)
+                .get('/api/v1/users/me/favorites')
+                .expect(401);
+        });
+    });
+
+    describe('GET /users/:userId/favorites', () => {
+        it('should return public user favorite playlist', async () => {
+            // 先收藏一首歌，确保有数据
+            await request(app)
+                .post('/api/v1/songs/1/favorite')
+                .set('Authorization', `Bearer ${accessToken}`);
+
+            const res = await request(app)
+                .get(`/api/v1/users/${userId}/favorites`)
+                .expect(200);
+
+            expect(res.body.code).toBe(200);
+            expect(res.body.data).toHaveProperty('playlist_id');
+            expect(res.body.data).toHaveProperty('songs');
+            expect(res.body.data.playlist_name).toBe('我的收藏');
+            expect(res.body.data.total).toBeGreaterThanOrEqual(1);
+
+            // 清理：取消收藏
+            await request(app)
+                .post('/api/v1/songs/1/favorite')
+                .set('Authorization', `Bearer ${accessToken}`);
+        });
+
+        it('should return 400 for invalid user id', async () => {
+            await request(app)
+                .get('/api/v1/users/abc/favorites')
+                .expect(400);
         });
     });
 });

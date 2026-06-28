@@ -50,16 +50,21 @@ async function main() {
 
     // ===== 2. 歌手 =====
     console.log('\n━━━ 2. 创建歌手 ━━━');
+    const bobsUser = createdUsers.find(u => u.username === 'bob')!;
+    const adminsUser = createdUsers.find(u => u.username === 'admin')!;
+
     const singersData = [
         {name: 'Edvard Grieg', description: '挪威浪漫主义作曲家'},
         {name: 'Rick Astley', avatarUrl: '/static/avatars/Rick Astley.webp', description: '80 年代英伦流行 / 蓝眼灵魂'},
+        {name: 'Bob 摇滚', userId: bobsUser.id, description: '独立摇滚音乐人'},
+        {name: 'Admin 官方', userId: adminsUser.id, description: '官方推荐账号'},
     ];
 
     const createdSingers: Array<{id: number; name: string}> = [];
     for (const s of singersData) {
         const singer = await prisma.singer.create({data: s});
         createdSingers.push({id: singer.id, name: singer.name});
-        console.log(`  ✅ ${singer.name}`);
+        console.log(`  ✅ ${singer.name}${s.userId ? ` (link → user#${s.userId})` : ''}`);
     }
 
     // ===== 3. 歌曲 =====
@@ -90,6 +95,17 @@ async function main() {
         console.log(`  ✅ ${playlist.name} — ${createdUsers.find(x => x.id === p.userId)!.username}`);
     }
 
+    // ===== 4b. 收藏歌单（每个用户自动创建） =====
+    console.log('\n━━━ 4b. 创建收藏歌单 ━━━');
+    const favoritePlaylists: Array<{id: number; userId: number}> = [];
+    for (const u of createdUsers) {
+        const fav = await prisma.playlist.create({
+            data: {userId: u.id, name: '我的收藏', isFavorite: true},
+        });
+        favoritePlaylists.push({id: fav.id, userId: u.id});
+        console.log(`  ✅ 我的收藏 — ${u.username}`);
+    }
+
     // ===== 5. 歌单-歌曲关联 =====
     console.log('\n━━━ 5. 创建歌单-歌曲关联 ━━━');
     await prisma.playlistSong.createMany({
@@ -97,9 +113,14 @@ async function main() {
             {playlistId: createdPlaylists[0].id, songId: createdSongs[0].id},
             {playlistId: createdPlaylists[0].id, songId: createdSongs[1].id},
             {playlistId: createdPlaylists[1].id, songId: createdSongs[1].id},
+            // 收藏数据：alice 收藏了 2 首歌
+            {playlistId: favoritePlaylists[0].id, songId: createdSongs[0].id},
+            {playlistId: favoritePlaylists[0].id, songId: createdSongs[1].id},
+            // bob 收藏了 1 首歌
+            {playlistId: favoritePlaylists[1].id, songId: createdSongs[1].id},
         ],
     });
-    console.log('  ✅ 已创建 3 条关联');
+    console.log('  ✅ 已创建 6 条关联（含收藏）');
 
     // ===== 6. 评论 =====
     console.log('\n━━━ 6. 创建评论 ━━━');

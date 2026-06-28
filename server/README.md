@@ -136,24 +136,29 @@ npx prisma studio
 | POST | `/auth/register` | 注册 | 无 |
 | POST | `/auth/login` | 登录（邮箱+密码） | 无 |
 | POST | `/auth/refresh` | 刷新 Access Token | 无 |
-| GET | `/users/me` | 获取当前用户信息 | Bearer Token |
+| GET | `/users/me` | 获取当前用户信息（含评论数/收藏数） | Bearer Token |
 | GET | `/users/me/playlists` | 获取我的歌单列表 | Bearer Token |
 | GET | `/users/me/comments` | 获取我的所有评论（分页） | Bearer Token |
+| GET | `/users/me/favorites` | 获取我的收藏歌单（含歌曲列表） | Bearer Token |
 | PUT | `/users/me/avatar` | 上传/替换头像 (multipart) | Bearer Token |
 | PATCH | `/users/me` | 修改用户信息 | Bearer Token |
-| GET | `/users/:userId` | 获取用户公开信息 | 无 |
+| GET | `/users/:userId` | 获取用户公开信息（含评论数/收藏数） | 无 |
 | GET | `/users/:userId/playlists` | 获取指定用户的歌单列表 | 无 |
+| GET | `/users/:userId/favorites` | 获取指定用户的收藏歌单 | 无 |
 | GET | `/songs` | 歌曲列表（分页，支持按歌手筛选） | 无 |
 | GET | `/songs/:songId` | 歌曲详情 | 无 |
 | GET | `/songs/:songId/comments` | 歌曲评论列表（分页） | 无 |
 | POST | `/songs/:songId/comments` | 发表评论 | Bearer Token |
 | DELETE | `/songs/:songId/comments/:commentId` | 删除评论（仅作者） | Bearer Token |
+| POST | `/songs/:songId/favorite` | 收藏/取消收藏（toggle） | Bearer Token |
+| POST | `/songs` | 上架歌曲（multipart: cover+song+name） | Bearer Token (ARTIST) |
+| DELETE | `/songs/:songId` | 下架歌曲（仅自己的歌曲） | Bearer Token (ARTIST) |
 | GET | `/singers` | 歌手列表（分页） | 无 |
 | GET | `/singers/:singerId` | 歌手详情（含歌曲列表） | 无 |
 | GET | `/playlists/:playlistId` | 歌单详情（含歌曲列表） | 无 |
 | POST | `/playlists` | 创建歌单 | Bearer Token |
-| PATCH | `/playlists/:playlistId` | 重命名歌单 | Bearer Token |
-| DELETE | `/playlists/:playlistId` | 删除歌单 | Bearer Token |
+| PATCH | `/playlists/:playlistId` | 重命名歌单（收藏歌单不可改名） | Bearer Token |
+| DELETE | `/playlists/:playlistId` | 删除歌单（收藏歌单不可删除） | Bearer Token |
 | POST | `/playlists/:playlistId/songs` | 歌单添加歌曲 | Bearer Token |
 | DELETE | `/playlists/:playlistId/songs/:songId` | 歌单移除歌曲 | Bearer Token |
 | GET | `/search/songs` | 搜索歌曲 | 无 |
@@ -225,7 +230,7 @@ done
 ```
 server/
 ├── prisma/
-│   ├── schema.prisma              # 数据模型（6 个模型）
+│   ├── schema.prisma              # 数据模型（6 个模型 + 1 枚举）
 │   ├── seed.ts                    # 测试数据播种脚本
 │   └── migrations/                # 数据库迁移历史
 │
@@ -320,10 +325,12 @@ server/
 
 ### 歌手
 
-| 歌手 | 描述 |
-|------|------|
-| Edvard Grieg | 挪威浪漫主义作曲家 |
-| Rick Astley | 80 年代英伦流行 / 蓝眼灵魂 |
+| 歌手 | 描述 | 关联用户 |
+|------|------|----------|
+| Edvard Grieg | 挪威浪漫主义作曲家 | —（系统管理） |
+| Rick Astley | 80 年代英伦流行 / 蓝眼灵魂 | —（系统管理） |
+| Bob 摇滚 | 独立摇滚音乐人 | bob (ARTIST) |
+| Admin 官方 | 官方推荐账号 | admin (ARTIST) |
 
 ### 歌曲
 
@@ -334,10 +341,14 @@ server/
 
 ### 歌单
 
-| 歌单名 | 所属用户 |
-|--------|----------|
-| 我最喜欢的歌 | alice |
-| 摇滚精选 | bob |
+| 歌单名 | 所属用户 | 类型 |
+|--------|----------|------|
+| 我最喜欢的歌 | alice | 普通歌单 |
+| 摇滚精选 | bob | 普通歌单 |
+| 我的收藏 | alice | 收藏歌单（自动创建） |
+| 我的收藏 | bob | 收藏歌单（自动创建） |
+| 我的收藏 | charlie | 收藏歌单（自动创建） |
+| 我的收藏 | admin | 收藏歌单（自动创建） |
 
 ### 歌单-歌曲关联
 
@@ -345,6 +356,8 @@ server/
 |------|----------|
 | 我最喜欢的歌 | Anitra's Dance, Never Gonna Give You Up |
 | 摇滚精选 | Never Gonna Give You Up |
+| 我的收藏 (alice) | Anitra's Dance, Never Gonna Give You Up |
+| 我的收藏 (bob) | Never Gonna Give You Up |
 
 ### 评论
 

@@ -22,6 +22,16 @@ export const getCommentsSchema = z.object({
     page_size: z.coerce.number().int().positive().max(100).optional().default(20),
 });
 
+// 上架歌曲（body 仅 name，文件由 multer 处理）
+export const createSongSchema = z.object({
+    name: z
+        .string()
+        .trim()
+        .min(1, '歌曲名不能为空')
+        .max(100, '歌曲名最多 100 个字符'),
+});
+
 export type CreateCommentInput = z.infer<typeof createCommentSchema>;
+export type CreateSongInput = z.infer<typeof createSongSchema>;
 export type GetSongsInput = z.infer<typeof getSongsSchema>;
 export type GetCommentsInput = z.infer<typeof getCommentsSchema>;

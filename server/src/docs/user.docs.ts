@@ -27,6 +27,8 @@ const userResponseSchema = {
         signature: {type: 'string' as const, nullable: true},
         role: {type: 'string' as const, enum: ['USER', 'ARTIST'] as string[], example: 'USER' as const},
         createdAt: {type: 'string' as const, format: 'date-time' as const},
+        comment_count: {type: 'integer' as const, description: '评论数量'},
+        favorite_count: {type: 'integer' as const, description: '收藏歌曲数量'},
     },
     example: {
         id: 1,
@@ -36,6 +38,8 @@ const userResponseSchema = {
         signature: '音乐是我的生命',
         role: 'USER',
         createdAt: '2024-01-15T08:30:00.000Z',
+        comment_count: 12,
+        favorite_count: 5,
     },
 };
 
@@ -321,6 +325,122 @@ registry.registerPath({
         },
         400: {description: '未选择文件 / 文件格式不支持'},
         401: {description: '未登录'},
+    },
+});
+
+// ===== GET /users/me/favorites =====
+registry.registerPath({
+    method: 'get',
+    path: '/users/me/favorites',
+    summary: '获取我的收藏歌单',
+    description: '需登录认证，返回当前用户的收藏歌单（含歌曲列表，分页）',
+    security: [{bearerAuth: []}],
+    tags: ['用户'],
+    request: {
+        query: z.object({
+            page: z.coerce.number().int().positive().optional().describe('页码，默认 1'),
+            page_size: z.coerce.number().int().positive().max(100).optional().describe('每页数量，默认 20'),
+        }),
+    },
+    responses: {
+        200: {
+            description: '返回收藏歌单及歌曲列表',
+            content: {
+                'application/json': {
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            code: {type: 'integer', example: 200},
+                            data: {
+                                type: 'object',
+                                properties: {
+                                    playlist_id: {type: 'integer'},
+                                    playlist_name: {type: 'string', example: '我的收藏'},
+                                    user_id: {type: 'integer'},
+                                    songs: {
+                                        type: 'array',
+                                        items: {
+                                            type: 'object',
+                                            properties: {
+                                                song_id: {type: 'integer'},
+                                                song_name: {type: 'string'},
+                                                singer_name: {type: 'string', nullable: true},
+                                                play_url: {type: 'string', nullable: true},
+                                                cover_url: {type: 'string', nullable: true},
+                                                duration: {type: 'integer', nullable: true},
+                                                added_at: {type: 'string', format: 'date-time'},
+                                            },
+                                        },
+                                    },
+                                    total: {type: 'integer'},
+                                    page: {type: 'integer'},
+                                    page_size: {type: 'integer'},
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+        401: {description: '未登录'},
+    },
+});
+
+// ===== GET /users/:userId/favorites =====
+registry.registerPath({
+    method: 'get',
+    path: '/users/{userId}/favorites',
+    summary: '获取指定用户的收藏歌单',
+    description: '公开接口，无需登录即可查看用户的收藏歌单',
+    tags: ['用户'],
+    request: {
+        params: userIdParam,
+        query: z.object({
+            page: z.coerce.number().int().positive().optional().describe('页码，默认 1'),
+            page_size: z.coerce.number().int().positive().max(100).optional().describe('每页数量，默认 20'),
+        }),
+    },
+    responses: {
+        200: {
+            description: '返回收藏歌单及歌曲列表',
+            content: {
+                'application/json': {
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            code: {type: 'integer', example: 200},
+                            data: {
+                                type: 'object',
+                                properties: {
+                                    playlist_id: {type: 'integer'},
+                                    playlist_name: {type: 'string', example: '我的收藏'},
+                                    user_id: {type: 'integer'},
+                                    songs: {
+                                        type: 'array',
+                                        items: {
+                                            type: 'object',
+                                            properties: {
+                                                song_id: {type: 'integer'},
+                                                song_name: {type: 'string'},
+                                                singer_name: {type: 'string', nullable: true},
+                                                play_url: {type: 'string', nullable: true},
+                                                cover_url: {type: 'string', nullable: true},
+                                                duration: {type: 'integer', nullable: true},
+                                                added_at: {type: 'string', format: 'date-time'},
+                                            },
+                                        },
+                                    },
+                                    total: {type: 'integer'},
+                                    page: {type: 'integer'},
+                                    page_size: {type: 'integer'},
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+        400: {description: '参数校验失败'},
     },
 });
 

@@ -12,11 +12,13 @@ const router = Router();
 router.get('/me', authMiddleware, userController.getMyProfile);
 router.get('/me/playlists', authMiddleware, playlistController.getMyPlaylists);
 router.get('/me/comments', authMiddleware, userController.getMyComments);
+router.get('/me/favorites', authMiddleware, userController.getMyFavorites);
 router.put('/me/avatar', authMiddleware, uploadAvatarMiddleware, userController.updateAvatar);
 
 // 公开
 router.get('/:userId', userController.getProfile);
 router.get('/:userId/playlists', playlistController.getPlaylistsByUser);
+router.get('/:userId/favorites', userController.getFavorites);
 
 // 数据字典统一修改接口
 router.patch('/me', authMiddleware, validate(updateUserSchema), userController.updateUser);
