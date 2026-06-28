@@ -54,6 +54,8 @@ describe('GET /songs', () => {
         expect(res.body.data.list[0]).toHaveProperty('song_id');
         expect(res.body.data.list[0]).toHaveProperty('song_name');
         expect(res.body.data.list[0]).toHaveProperty('singer_name');
+        expect(res.body.data.list[0]).toHaveProperty('cover_url');
+        expect(res.body.data.list[0]).not.toHaveProperty('play_url');
     });
 
     it('should filter by singer_id', async () => {

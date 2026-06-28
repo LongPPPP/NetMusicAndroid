@@ -14,7 +14,7 @@ export async function searchSongs(keyword: string, page: number, page_size: numb
     const [songs, total] = await Promise.all([
         prisma.song.findMany({
             where,
-            select: {id: true, name: true, singerName: true},
+            select: {id: true, name: true, singerId: true, singerName: true, coverUrl: true},
             skip,
             take: page_size,
             orderBy: {id: 'asc'},
@@ -26,7 +26,9 @@ export async function searchSongs(keyword: string, page: number, page_size: numb
         list: songs.map(s => ({
             song_id: s.id,
             song_name: s.name,
+            singer_id: s.singerId,
             singer_name: s.singerName,
+            cover_url: s.coverUrl,
         })),
         total,
         page,
@@ -72,7 +74,16 @@ export async function searchPlaylists(keyword: string, page: number, page_size: 
     const [playlists, total] = await Promise.all([
         prisma.playlist.findMany({
             where,
-            select: {id: true, name: true},
+            select: {
+                id: true,
+                name: true,
+                _count: {select: {playlistSongs: true}},
+                playlistSongs: {
+                    select: {song: {select: {coverUrl: true}}},
+                    orderBy: {addedAt: 'asc'},
+                    take: 5,
+                },
+            },
             skip,
             take: page_size,
             orderBy: {id: 'asc'},
@@ -84,6 +95,8 @@ export async function searchPlaylists(keyword: string, page: number, page_size: 
         list: playlists.map(p => ({
             playlist_id: p.id,
             playlist_name: p.name,
+            song_count: p._count.playlistSongs,
+            cover_url: p.playlistSongs.map(ps => ps.song.coverUrl).find(url => url) ?? null,
         })),
         total,
         page,

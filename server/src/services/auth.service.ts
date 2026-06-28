@@ -47,6 +47,7 @@ export async function login(params: LoginInput) {
             avatar: true,
             signature: true,
             role: true,
+            createdAt: true,
             _count: {
                 select: {comments: true},
             },

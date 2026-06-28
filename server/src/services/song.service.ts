@@ -13,6 +13,7 @@ export async function getSongDetail(songId: number) {
         select: {
             id: true,
             name: true,
+            singerId: true,
             singerName: true,
             playUrl: true,
             coverUrl: true,
@@ -27,6 +28,7 @@ export async function getSongDetail(songId: number) {
     return {
         song_id: song.id,
         song_name: song.name,
+        singer_id: song.singerId,
         singer_name: song.singerName,
         play_url: song.playUrl,
         cover_url: song.coverUrl,
@@ -47,8 +49,9 @@ export async function listSongs(params: GetSongsInput) {
             select: {
                 id: true,
                 name: true,
+                singerId: true,
                 singerName: true,
-                playUrl: true,
+                coverUrl: true,
                 duration: true,
             },
             skip,
@@ -62,8 +65,9 @@ export async function listSongs(params: GetSongsInput) {
         list: songs.map(s => ({
             song_id: s.id,
             song_name: s.name,
+            singer_id: s.singerId,
             singer_name: s.singerName,
-            play_url: s.playUrl,
+            cover_url: s.coverUrl,
             duration: s.duration,
         })),
         total,
@@ -93,6 +97,7 @@ export async function getSongComments(songId: number, params: GetCommentsInput) 
                 userId: true,
                 username: true,
                 content: true,
+                createdAt: true,
             },
             skip,
             take: page_size,
@@ -107,6 +112,7 @@ export async function getSongComments(songId: number, params: GetCommentsInput) 
             user_id: c.userId,
             username: c.username,
             content: c.content,
+            created_at: c.createdAt,
         })),
         total,
         page,
@@ -152,6 +158,7 @@ export async function createComment(songId: number, userId: number, data: Create
         user_id: comment.userId,
         username: comment.username,
         content: comment.content,
+        created_at: comment.createdAt,
     };
 }
 
@@ -208,12 +215,13 @@ export async function getUserComments(userId: number, page: number, pageSize: nu
 export async function createSong(name: string, singerId: number, singerName: string, playUrl: string, coverUrl: string | null) {
     const song = await prisma.song.create({
         data: {name, singerId, singerName, playUrl, coverUrl},
-        select: {id: true, name: true, singerName: true, playUrl: true, coverUrl: true, duration: true},
+        select: {id: true, name: true, singerId: true, singerName: true, playUrl: true, coverUrl: true, duration: true},
     });
 
     return {
         song_id: song.id,
         song_name: song.name,
+        singer_id: song.singerId,
         singer_name: song.singerName,
         play_url: song.playUrl,
         cover_url: song.coverUrl,
@@ -304,8 +312,8 @@ export async function getUserFavorites(userId: number, page: number, pageSize: n
                         select: {
                             id: true,
                             name: true,
+                            singerId: true,
                             singerName: true,
-                            playUrl: true,
                             coverUrl: true,
                             duration: true,
                         },
@@ -332,8 +340,8 @@ export async function getUserFavorites(userId: number, page: number, pageSize: n
         songs: pagedSongs.map(ps => ({
             song_id: ps.song.id,
             song_name: ps.song.name,
+            singer_id: ps.song.singerId,
             singer_name: ps.song.singerName,
-            play_url: ps.song.playUrl,
             cover_url: ps.song.coverUrl,
             duration: ps.song.duration,
             added_at: ps.addedAt,

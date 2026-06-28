@@ -180,6 +180,10 @@ describe('User API', () => {
             expect(res.body.data).toHaveProperty('songs');
             expect(res.body.data.playlist_name).toBe('我的收藏');
             expect(Array.isArray(res.body.data.songs)).toBe(true);
+            if (res.body.data.songs.length > 0) {
+                expect(res.body.data.songs[0]).toHaveProperty('cover_url');
+                expect(res.body.data.songs[0]).not.toHaveProperty('play_url');
+            }
         });
 
         it('should reject without auth', async () => {
@@ -205,6 +209,10 @@ describe('User API', () => {
             expect(res.body.data).toHaveProperty('songs');
             expect(res.body.data.playlist_name).toBe('我的收藏');
             expect(res.body.data.total).toBeGreaterThanOrEqual(1);
+            if (res.body.data.songs.length > 0) {
+                expect(res.body.data.songs[0]).toHaveProperty('cover_url');
+                expect(res.body.data.songs[0]).not.toHaveProperty('play_url');
+            }
 
             // 清理：取消收藏
             await request(app)

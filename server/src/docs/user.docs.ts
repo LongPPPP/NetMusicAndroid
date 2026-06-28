@@ -366,8 +366,8 @@ registry.registerPath({
                                             properties: {
                                                 song_id: {type: 'integer'},
                                                 song_name: {type: 'string'},
+                                                singer_id: {type: 'integer', nullable: true},
                                                 singer_name: {type: 'string', nullable: true},
-                                                play_url: {type: 'string', nullable: true},
                                                 cover_url: {type: 'string', nullable: true},
                                                 duration: {type: 'integer', nullable: true},
                                                 added_at: {type: 'string', format: 'date-time'},
@@ -424,8 +424,8 @@ registry.registerPath({
                                             properties: {
                                                 song_id: {type: 'integer'},
                                                 song_name: {type: 'string'},
+                                                singer_id: {type: 'integer', nullable: true},
                                                 singer_name: {type: 'string', nullable: true},
-                                                play_url: {type: 'string', nullable: true},
                                                 cover_url: {type: 'string', nullable: true},
                                                 duration: {type: 'integer', nullable: true},
                                                 added_at: {type: 'string', format: 'date-time'},
