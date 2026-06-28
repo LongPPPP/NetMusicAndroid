@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FF">
+    android:background="#F8F9FF"
+    android:importantForAutofill="noExcludeDescendants">
 
     <LinearLayout
         android:id="@+id/contentLayout"
@@ -21,7 +22,8 @@
         <ImageView
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@mipmap/ic_launcher_round"/>
+            android:src="@mipmap/ic_launcher_round"
+            android:contentDescription="App Logo"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -40,15 +42,35 @@
             android:textSize="14sp"
             android:layout_marginTop="8dp"/>
 
-        <EditText
-            android:id="@+id/etEmail"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="40dp"
-            android:hint="请输入email"
             android:background="@drawable/bg_edittext"
-            android:paddingHorizontal="16dp"
-            android:inputType="text"/>
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <EditText
+                android:id="@+id/etEmail"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="请输入email"
+                android:inputType="textEmailAddress"
+                android:importantForAutofill="no"
+                android:autofillHints="@null" />
+
+            <ImageView
+                android:id="@+id/ivShowHistory"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:padding="2dp"
+                android:src="@drawable/ic_arrow_right"
+                android:rotation="90"
+                android:contentDescription="查看历史账号" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/etPassword"
@@ -58,7 +80,9 @@
             android:hint="请输入密码"
             android:background="@drawable/bg_edittext"
             android:paddingHorizontal="16dp"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword"
+            android:importantForAutofill="no"
+            android:autofillHints="@null" />
 
         <Button
             android:id="@+id/btnLogin"

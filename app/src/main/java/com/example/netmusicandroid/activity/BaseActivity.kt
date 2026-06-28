@@ -9,11 +9,20 @@ import com.example.netmusicandroid.fragment.HomeFragment
 import com.example.netmusicandroid.fragment.MineFragment
 import com.example.netmusicandroid.fragment.PlayerFragment
 
+import androidx.lifecycle.ViewModelProvider
+import com.example.netmusicandroid.viewmodel.MainViewModel
+
 class BaseActivity : AppCompatActivity() {
+
+    lateinit var mainViewModel: MainViewModel
+    private lateinit var bottomNav: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
+
+        // 初始化共享 ViewModel
+        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         // 默认显示首页
         if (savedInstanceState == null) {
@@ -23,7 +32,7 @@ class BaseActivity : AppCompatActivity() {
         }
 
         // 底部导航切换
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
+        bottomNav = findViewById(R.id.bottomNav)
         bottomNav.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_home -> {
@@ -43,7 +52,12 @@ class BaseActivity : AppCompatActivity() {
         }
     }
 
-    private fun replaceFragment(fragment: Fragment) {
+    // 提供给 Fragment 调用：跳转到播放页并选中底部按钮
+    fun navigateToPlayer() {
+        bottomNav.selectedItemId = R.id.menu_play
+    }
+
+    fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
             .commit()
