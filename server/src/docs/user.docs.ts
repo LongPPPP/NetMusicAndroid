@@ -139,6 +139,7 @@ registry.registerPath({
                                                 playlist_id: {type: 'integer'},
                                                 playlist_name: {type: 'string'},
                                                 song_count: {type: 'integer', description: '歌内歌曲数量'},
+                                                cover_url: {type: 'string', nullable: true, description: '封面图 URL（取自歌单前5首中第一首有封面的歌曲）'},
                                                 created_at: {type: 'string', format: 'date-time'},
                                             },
                                         },
@@ -146,8 +147,8 @@ registry.registerPath({
                                 },
                                 example: {
                                     list: [
-                                        {playlist_id: 1, playlist_name: '我的最爱', song_count: 15, created_at: '2024-01-15T08:30:00.000Z'},
-                                        {playlist_id: 2, playlist_name: '跑步歌单', song_count: 8, created_at: '2024-02-20T12:00:00.000Z'},
+                                        {playlist_id: 1, playlist_name: '我的最爱', song_count: 15, cover_url: '/static/songs/xxx.webp', created_at: '2024-01-15T08:30:00.000Z'},
+                                        {playlist_id: 2, playlist_name: '跑步歌单', song_count: 8, cover_url: null, created_at: '2024-02-20T12:00:00.000Z'},
                                     ],
                                 },
                             },
@@ -189,6 +190,7 @@ registry.registerPath({
                                                 playlist_id: {type: 'integer'},
                                                 playlist_name: {type: 'string'},
                                                 song_count: {type: 'integer', description: '歌内歌曲数量'},
+                                                cover_url: {type: 'string', nullable: true, description: '封面图 URL（取自歌单前5首中第一首有封面的歌曲）'},
                                                 created_at: {type: 'string', format: 'date-time'},
                                             },
                                         },
@@ -196,7 +198,7 @@ registry.registerPath({
                                 },
                                 example: {
                                     list: [
-                                        {playlist_id: 1, playlist_name: '我的最爱', song_count: 15, created_at: '2024-01-15T08:30:00.000Z'},
+                                        {playlist_id: 1, playlist_name: '我的最爱', song_count: 15, cover_url: '/static/songs/xxx.webp', created_at: '2024-01-15T08:30:00.000Z'},
                                     ],
                                 },
                             },
