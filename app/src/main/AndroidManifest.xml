@@ -33,9 +33,8 @@
             </intent-filter>
         </activity>
 
-        <!-- 我的歌单页面 -->
         <activity
-            android:name=".activity.MyCollectionActivity"
+            android:name=".activity.PlaylistActivity"
             android:exported="false"/>
 
         <activity

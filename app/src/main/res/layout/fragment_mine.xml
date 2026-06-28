@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,14 +29,15 @@
 
             <!-- 圆形头像 -->
             <ImageView
-                android:id="@+id/iv_avatar"
+                android:id="@+id/ivAvatar"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:scaleType="centerCrop"
+                android:contentDescription="@string/cd_user_avatar"
                 tools:src="@drawable/avatar_sketch"
                 android:background="@drawable/shape_circle"/>
 
-            <!-- 昵称、签名、等级 -->
+            <!-- 昵称、签名区域 -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -49,29 +51,30 @@
                     android:gravity="center_vertical">
 
                     <TextView
-                        android:id="@+id/tv_username"
+                        android:id="@+id/tvUsername"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="26sp"
                         android:textColor="#111111"
-                        tools:text="Music_Lover"/>
+                        tools:text="@string/toast_demo_username"/>
 
                     <ImageView
-                        android:id="@+id/iv_edit_name"
+                        android:id="@+id/ivEditName"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_marginStart="8dp"
-                        android:src="@drawable/ic_edit"/>
+                        android:src="@drawable/ic_edit"
+                        android:contentDescription="@string/cd_edit_username"/>
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/tv_signature"
+                    android:id="@+id/tvSignature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
                     android:textColor="#000000"
                     android:layout_marginTop="4dp"
-                    tools:text="音乐是生活的一部分。"/>
+                    tools:text="@string/toast_demo_signature"/>
 
             </LinearLayout>
         </LinearLayout>
@@ -82,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_marginVertical="32dp">
 
-            <!-- 收藏 -->
+            <!-- 收藏模块 -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -91,7 +94,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_collect_count"
+                    android:id="@+id/tvCollectCount"
                     android:layout_width="37dp"
                     android:layout_height="wrap_content"
                     android:textColor="#111111"
@@ -101,7 +104,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="收藏"
+                    android:text="@string/text_collect"
                     android:textSize="14sp"
                     android:textColor="#777777"
                     android:layout_marginTop="4dp"/>
@@ -113,7 +116,7 @@
                 android:layout_height="40dp"
                 android:background="#EEEEEE"/>
 
-            <!-- 我的评论 -->
+            <!-- 我的评论模块 -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -122,7 +125,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_comment_count"
+                    android:id="@+id/tvCommentCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="24sp"
@@ -132,7 +135,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="我的评论"
+                    android:text="@string/text_my_comment"
                     android:textSize="14sp"
                     android:textColor="#777777"
                     android:layout_marginTop="4dp"/>
@@ -149,7 +152,7 @@
 
             <!-- 1. 最近播放 -->
             <LinearLayout
-                android:id="@+id/ll_recent_play"
+                android:id="@+id/llRecentPlay"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:gravity="center_vertical"
@@ -160,13 +163,14 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_clock"/>
+                    android:src="@drawable/ic_clock"
+                    android:contentDescription="@string/cd_icon_recent_play"/>
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="最近播放"
+                    android:text="@string/text_recent_play"
                     android:textSize="16sp"
                     android:textColor="#222222"
                     android:layout_marginStart="14dp"/>
@@ -174,7 +178,8 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_arrow_right"/>
+                    android:src="@drawable/ic_arrow_right"
+                    android:contentDescription="@string/cd_enter_detail"/>
             </LinearLayout>
 
             <View
@@ -183,9 +188,9 @@
                 android:background="#EEEEEE"
                 android:layout_marginHorizontal="16dp"/>
 
-            <!-- 2. 我的歌单（点击跳转PlaylistActivity） -->
+            <!-- 2. 我的歌单 -->
             <LinearLayout
-                android:id="@+id/ll_my_playlist"
+                android:id="@+id/llMyPlaylist"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:gravity="center_vertical"
@@ -196,13 +201,14 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_music_list"/>
+                    android:src="@drawable/ic_music_list"
+                    android:contentDescription="@string/cd_icon_my_playlist"/>
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="我的歌单"
+                    android:text="@string/text_my_playlist"
                     android:textSize="16sp"
                     android:textColor="#222222"
                     android:layout_marginStart="14dp"/>
@@ -210,7 +216,8 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_arrow_right"/>
+                    android:src="@drawable/ic_arrow_right"
+                    android:contentDescription="@string/cd_enter_detail"/>
             </LinearLayout>
 
             <View
@@ -221,7 +228,7 @@
 
             <!-- 3. 设置 -->
             <LinearLayout
-                android:id="@+id/ll_setting"
+                android:id="@+id/llSetting"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:gravity="center_vertical"
@@ -232,13 +239,14 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_setting"/>
+                    android:src="@drawable/ic_setting"
+                    android:contentDescription="@string/cd_icon_setting"/>
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="设置"
+                    android:text="@string/text_setting"
                     android:textSize="16sp"
                     android:textColor="#222222"
                     android:layout_marginStart="14dp"/>
@@ -246,7 +254,8 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_arrow_right"/>
+                    android:src="@drawable/ic_arrow_right"
+                    android:contentDescription="@string/cd_enter_detail"/>
             </LinearLayout>
 
             <View
@@ -257,7 +266,7 @@
 
             <!-- 4. 帮助与反馈 -->
             <LinearLayout
-                android:id="@+id/ll_feedback"
+                android:id="@+id/llFeedback"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:gravity="center_vertical"
@@ -268,13 +277,14 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_question"/>
+                    android:src="@drawable/ic_question"
+                    android:contentDescription="@string/cd_icon_feedback"/>
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="帮助与反馈"
+                    android:text="@string/text_feedback"
                     android:textSize="16sp"
                     android:textColor="#222222"
                     android:layout_marginStart="14dp"/>
@@ -282,7 +292,8 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_arrow_right"/>
+                    android:src="@drawable/ic_arrow_right"
+                    android:contentDescription="@string/cd_enter_detail"/>
             </LinearLayout>
         </LinearLayout>
 

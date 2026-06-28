@@ -42,4 +42,44 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+
+
+
+
+    <!-- ===================== 无障碍 contentDescription ===================== -->
+    <string name="cd_user_avatar">用户头像</string>
+    <string name="cd_edit_username">编辑昵称</string>
+    <string name="cd_icon_recent_play">最近播放图标</string>
+    <string name="cd_icon_my_playlist">我的歌单图标</string>
+    <string name="cd_icon_setting">设置图标</string>
+    <string name="cd_icon_feedback">帮助反馈图标</string>
+    <string name="cd_enter_detail">进入详情页面</string>
+    <string name="cd_back_btn">返回上一页</string>
+    <string name="cd_add_playlist_icon">新建歌单添加图标</string>
+    <string name="cd_close_dialog">关闭弹窗</string>
+
+    <!-- ===================== 页面展示固定文本 ===================== -->
+    <string name="text_collect">收藏</string>
+    <string name="text_my_comment">我的评论</string>
+    <string name="text_recent_play">最近播放</string>
+    <string name="text_my_playlist">我的歌单</string>
+    <string name="text_setting">设置</string>
+    <string name="text_feedback">帮助与反馈</string>
+    <!-- Playlist 歌单页面专属 -->
+    <string name="text_my_playlist_title">我的歌单</string>
+    <string name="text_create_playlist">新建歌单</string>
+    <string name="text_playlist_total_count">共 6 个歌单</string>
+
+    <!-- ===================== tools 预览占位文本（仅编辑器预览） ===================== -->
+    <string name="toast_demo_username">Music_Lover</string>
+    <string name="toast_demo_signature">音乐是生活的一部分。</string>
+
+    <!-- ===================== 新建歌单弹窗文本（当前布局新增） ===================== -->
+    <string name="text_dialog_create_playlist_title">新建歌单</string>
+    <string name="text_playlist_name_label">歌单名称</string>
+    <string name="hint_input_playlist_name">请输入歌单名称</string>
+    <string name="text_word_count_default">0/30</string>
+    <string name="text_btn_cancel">取消</string>
+    <string name="text_btn_confirm">确认</string>
+
 </resources>

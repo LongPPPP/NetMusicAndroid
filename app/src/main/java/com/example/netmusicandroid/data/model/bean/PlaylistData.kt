@@ -1,5 +1,5 @@
 package com.example.netmusicandroid.data.model.bean
 
-data class CollectionData<T>(
+data class PlaylistData<T>(
     val list: List<T>
 )

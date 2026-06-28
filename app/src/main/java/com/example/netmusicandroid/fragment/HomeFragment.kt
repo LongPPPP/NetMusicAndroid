@@ -1,4 +1,4 @@
-package com.example.netmusicandroid.activity.fragment
+package com.example.netmusicandroid.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -1,24 +1,24 @@
 package com.example.netmusicandroid.activity
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.netmusicandroid.adapter.UserCollectionAdapter
-import com.example.netmusicandroid.databinding.ActivityMyCollectionBinding
-import com.example.netmusicandroid.viewmodel.MyCollectionViewModel
+import com.example.netmusicandroid.adapter.UserPlaylistAdapter
+import com.example.netmusicandroid.databinding.ActivityPlaylistBinding
+import com.example.netmusicandroid.dialog.CreatePlaylistDialog
+import com.example.netmusicandroid.viewmodel.UserPlaylistViewModel
 import com.example.netmusicandroid.utils.ToastUtil
 
-class MyCollectionActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMyCollectionBinding
-    private lateinit var collectionVm: MyCollectionViewModel
-    private lateinit var collectionAdapter: UserCollectionAdapter
+class PlaylistActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityPlaylistBinding
+    private lateinit var collectionVm: UserPlaylistViewModel
+    private lateinit var collectionAdapter: UserPlaylistAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMyCollectionBinding.inflate(layoutInflater)
+        binding = ActivityPlaylistBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         initViewModel()
@@ -30,13 +30,13 @@ class MyCollectionActivity : AppCompatActivity() {
     }
 
     private fun initViewModel() {
-        collectionVm = ViewModelProvider(this)[MyCollectionViewModel::class.java]
+        collectionVm = ViewModelProvider(this)[UserPlaylistViewModel::class.java]
     }
 
     private fun initAdapter() {
         // 删除按钮回调：拿到歌单ID执行DELETE接口
-        collectionAdapter = UserCollectionAdapter { targetCollectionId ->
-            collectionVm.deleteCollection(targetCollectionId)
+        collectionAdapter = UserPlaylistAdapter { targetCollectionId ->
+            collectionVm.deleteUserPlaylist(targetCollectionId)
         }
         // 修复列表空白警告核心代码
         binding.rvCollectionList.layoutManager = LinearLayoutManager(this)
@@ -55,16 +55,17 @@ class MyCollectionActivity : AppCompatActivity() {
         }
     }
 
-
-
     private fun initClick() {
         // 返回我的页面
         binding.ivBack.setOnClickListener {
             finish()
         }
-        // 新建歌单（预留弹窗/跳转逻辑）
-        binding.llCreateCollection.setOnClickListener {
-            // TODO 弹出新建歌单弹窗
+
+        // 新建歌单：弹出独立 Dialog，通过回调调用 ViewModel
+        binding.llCreateUserPlaylist.setOnClickListener {
+            CreatePlaylistDialog(this) { playlistName ->
+                collectionVm.createUserPlaylist(playlistName)
+            }.show()
         }
     }
 }

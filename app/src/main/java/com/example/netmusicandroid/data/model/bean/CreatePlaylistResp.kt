@@ -1,5 +1,5 @@
 package com.example.netmusicandroid.data.model.bean
 
-data class CreateCollectionResp(
+data class createUserPlaylistResp(
     val playlist_id: Int
 )

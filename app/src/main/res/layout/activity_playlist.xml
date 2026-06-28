@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 直接把内层RelativeLayout提升为根，删除全部layout标签 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".activity.MyCollectionActivity">
+    tools:context=".activity.PlaylistActivity">
 
     <!-- 滚动容器 + 底部播放器 -->
     <androidx.core.widget.NestedScrollView
@@ -26,24 +25,25 @@
 
                 <!-- 返回箭头 -->
                 <ImageView
-                    android:id="@+id/iv_back"
+                    android:id="@+id/ivBack"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/ic_back"/>
+                    android:src="@drawable/ic_back"
+                    android:contentDescription="@string/cd_back_btn"/>
 
                 <!-- 页面标题 -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="我的歌单"
+                    android:text="@string/text_my_playlist_title"
                     android:textColor="#111111"
                     android:textSize="21sp"/>
 
                 <!-- 右上角新建歌单按钮 -->
                 <LinearLayout
-                    android:id="@+id/ll_create_collection"
+                    android:id="@+id/llCreateUserPlaylist"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -54,12 +54,13 @@
                     <ImageView
                         android:layout_width="26dp"
                         android:layout_height="26dp"
-                        android:src="@drawable/ic_add"/>
+                        android:src="@drawable/ic_add"
+                        android:contentDescription="@string/cd_add_playlist_icon"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="新建歌单"
+                        android:text="@string/text_create_playlist"
                         android:textColor="#666666"
                         android:textSize="11sp"
                         android:layout_marginTop="2dp"/>
@@ -68,17 +69,17 @@
 
             <!-- 歌单总数提示 -->
             <TextView
-                android:id="@+id/tv_total_count"
+                android:id="@+id/tvTotalCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="共 6 个歌单"
+                android:text="@string/text_playlist_total_count"
                 android:textColor="#777777"
                 android:textSize="14sp"
                 android:layout_marginTop="8dp"/>
 
             <!-- 歌单RecyclerView列表 -->
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_collection_list"
+                android:id="@+id/rvCollectionList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"

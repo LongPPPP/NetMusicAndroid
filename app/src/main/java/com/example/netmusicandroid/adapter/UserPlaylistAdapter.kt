@@ -15,22 +15,22 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.netmusicandroid.data.model.bean.UserCollectionBean
+import com.example.netmusicandroid.data.model.bean.UserPlaylistBean
 import com.example.netmusicandroid.databinding.ItemUserCollectionBinding
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.Executors
 
-class UserCollectionAdapter(
+class UserPlaylistAdapter(
     private val onDeleteClick: (Int) -> Unit
-) : ListAdapter<UserCollectionBean, UserCollectionAdapter.CollectionVH>(CollectionDiffCallback()) {
+) : ListAdapter<UserPlaylistBean, UserPlaylistAdapter.CollectionVH>(CollectionDiffCallback()) {
 
     private val executor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
 
     inner class CollectionVH(val binding: ItemUserCollectionBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: UserCollectionBean) {
+        fun bind(item: UserPlaylistBean) {
             // 文本赋值
             binding.tvCollectionName.text = item.collectionName
             binding.tvSongNum.text = "${item.songCount}首"
@@ -99,12 +99,12 @@ class UserCollectionAdapter(
         holder.bind(getItem(position))
     }
 
-    class CollectionDiffCallback : DiffUtil.ItemCallback<UserCollectionBean>() {
-        override fun areItemsTheSame(oldItem: UserCollectionBean, newItem: UserCollectionBean): Boolean {
+    class CollectionDiffCallback : DiffUtil.ItemCallback<UserPlaylistBean>() {
+        override fun areItemsTheSame(oldItem: UserPlaylistBean, newItem: UserPlaylistBean): Boolean {
             return oldItem.collectionId == newItem.collectionId
         }
 
-        override fun areContentsTheSame(oldItem: UserCollectionBean, newItem: UserCollectionBean): Boolean {
+        override fun areContentsTheSame(oldItem: UserPlaylistBean, newItem: UserPlaylistBean): Boolean {
             return oldItem == newItem
         }
     }

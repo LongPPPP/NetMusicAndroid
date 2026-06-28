@@ -5,9 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.example.netmusicandroid.R
-import com.example.netmusicandroid.activity.fragment.HomeFragment
-import com.example.netmusicandroid.activity.fragment.MineFragment
-import com.example.netmusicandroid.activity.fragment.PlayerFragment
+import com.example.netmusicandroid.fragment.HomeFragment
+import com.example.netmusicandroid.fragment.MineFragment
+import com.example.netmusicandroid.fragment.PlayerFragment
 
 class BaseActivity : AppCompatActivity() {
 
@@ -35,7 +35,6 @@ class BaseActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menu_mine -> {
-                    // 如果还没有 MineFragment，暂时用 HomeFragment 占位
                     replaceFragment(MineFragment())
                     true
                 }

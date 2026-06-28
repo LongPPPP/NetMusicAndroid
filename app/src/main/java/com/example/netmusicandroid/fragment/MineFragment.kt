@@ -1,4 +1,4 @@
-package com.example.netmusicandroid.activity.fragment
+package com.example.netmusicandroid.fragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,88 +6,82 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.example.netmusicandroid.R
-import com.example.netmusicandroid.activity.MyCollectionActivity
+import com.example.netmusicandroid.activity.PlaylistActivity
 import com.example.netmusicandroid.databinding.FragmentMineBinding
 import com.example.netmusicandroid.viewmodel.MineViewModel
 
 class MineFragment : Fragment() {
+    // ViewBinding 标准空安全写法
     private var _binding: FragmentMineBinding? = null
     private val binding get() = _binding!!
-    private lateinit var mineViewModel: MineViewModel
+
+    // 共享Activity级别的ViewModel
+    private val mineViewModel: MineViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        // inflate 三个参数标准Fragment写法，对应你改造后的 fragment_mine.xml
         _binding = FragmentMineBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViewModel()
-        initObserver()
-        initClickEvent()
-        // 页面加载请求用户信息接口
+        // 初始化监听、点击、加载用户数据
+        setupObserver()
+        setupClickListener()
         mineViewModel.loadUserInfo()
     }
 
-    // 初始化ViewModel：使用Activity作用域，多Fragment共享数据
-    private fun initViewModel() {
-        mineViewModel = ViewModelProvider(requireActivity())[MineViewModel::class.java]
-    }
-
-    // 监听用户数据渲染UI（适配后端返回字段，移除nickname、level等不存在字段）
-    private fun initObserver() {
+    // 监听ViewModel用户信息LiveData，自动刷新UI
+    private fun setupObserver() {
         mineViewModel.userInfo.observe(viewLifecycleOwner) { user ->
-            // 头像：avatar为null时展示默认占位图
+            // 头像Glide圆形加载
             Glide.with(this)
                 .load(user.avatar)
-                .circleCrop()
                 .placeholder(R.drawable.avatar_sketch)
+                .circleCrop()
                 .into(binding.ivAvatar)
 
-            // 用户名（后端必返回，非空）
+            // 赋值用户名、个性签名
             binding.tvUsername.text = user.username
-            // 个性签名，空值兜底展示默认文案
             binding.tvSignature.text = user.signature ?: "这个人很懒，什么都没写"
 
+            // 统计数据（接口完善后取消注释）
             // binding.tvCollectCount.text = user.collectCount.toString()
             // binding.tvCommentCount.text = user.commentCount.toString()
         }
     }
 
-    // 全部点击事件
-    private fun initClickEvent() {
-        // 我的歌单 跳转二级页面MyCollectionActivity歌单列表
+    // 页面全部点击事件
+    private fun setupClickListener() {
+        // 跳转我的歌单页面
         binding.llMyPlaylist.setOnClickListener {
-            val intent = Intent(requireContext(), MyCollectionActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(requireContext(), PlaylistActivity::class.java))
         }
-
-        // 最近播放（预留跳转）
+        // 最近播放
         binding.llRecentPlay.setOnClickListener {
-            // TODO 跳转最近播放页面
+            // TODO 最近播放页面跳转
         }
-
         // 设置
         binding.llSetting.setOnClickListener {
-            // TODO 跳转设置页面
+            // TODO 设置页面
         }
-
         // 帮助反馈
         binding.llFeedback.setOnClickListener {
-            // TODO 跳转反馈页面
+            // TODO 反馈弹窗/页面
         }
     }
 
+    // Fragment销毁置空binding，防止内存泄漏
     override fun onDestroyView() {
         super.onDestroyView()
-        // 释放binding，防止内存泄漏
         _binding = null
     }
 }

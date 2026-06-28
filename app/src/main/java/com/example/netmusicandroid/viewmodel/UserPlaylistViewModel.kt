@@ -5,17 +5,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.netmusicandroid.data.model.ApiResponse
-import com.example.netmusicandroid.data.model.bean.UserCollectionBean
-import com.example.netmusicandroid.data.repository.MineRepository
+import com.example.netmusicandroid.data.model.bean.UserPlaylistBean
+import com.example.netmusicandroid.data.repository.PlaylistRepository
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
-class MyCollectionViewModel : ViewModel() {
-    private val mineRepo = MineRepository()
+class UserPlaylistViewModel : ViewModel() {
+    private val mineRepo = PlaylistRepository()
 
     // 歌单列表数据源
-    private val _collectionList = MutableLiveData<List<UserCollectionBean>>()
-    val collectionList: LiveData<List<UserCollectionBean>> = _collectionList
+    private val _collectionList = MutableLiveData<List<UserPlaylistBean>>()
+    val collectionList: LiveData<List<UserPlaylistBean>> = _collectionList
 
     // 弹窗提示文字
     private val _toastMsg = MutableLiveData<String>()
@@ -26,7 +26,7 @@ class MyCollectionViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val userId = 1 // 替换成你登录接口拿到的真实用户id
-                val resp = mineRepo.getUserCollection(userId)
+                val resp = mineRepo.getUserPlaylist(userId)
                 if (resp.isSuccessful) {
                     val list = resp.body()?.data?.list ?: emptyList()
                     _collectionList.postValue(list)
@@ -39,11 +39,32 @@ class MyCollectionViewModel : ViewModel() {
         }
     }
 
-    // 删除歌单接口 DELETE /api/v1/playlists/{collectionId}
-    fun deleteCollection(collectionId: Int) {
+    // 创建歌单
+    fun createUserPlaylist(name: String) {
         viewModelScope.launch {
             try {
-                val resp: Response<ApiResponse<Any>> = mineRepo.deleteCollection(collectionId)
+                val resp = mineRepo.createUserPlaylist(name)
+
+                if (resp != null && resp.code == 200) {
+                    _toastMsg.postValue("创建成功")
+                    // 创建成功后刷新列表
+                    loadUserCollection()
+                } else {
+                    _toastMsg.postValue(resp?.message ?: "创建失败")
+                }
+
+            } catch (e: Exception) {
+                _toastMsg.postValue("网络异常：${e.message}")
+            }
+        }
+    }
+
+
+    // 删除歌单接口 DELETE /api/v1/playlists/{collectionId}
+    fun deleteUserPlaylist(collectionId: Int) {
+        viewModelScope.launch {
+            try {
+                val resp: Response<ApiResponse<Any>> = mineRepo.deleteUserPlaylist(collectionId)
                 if (resp.isSuccessful && resp.body()?.code == 200) {
                     _toastMsg.postValue("删除成功")
                     // 删除后刷新列表

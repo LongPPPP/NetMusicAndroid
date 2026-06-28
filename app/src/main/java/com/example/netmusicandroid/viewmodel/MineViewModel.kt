@@ -6,12 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.netmusicandroid.data.model.ApiResponse
 import com.example.netmusicandroid.data.model.bean.UserBean
-import com.example.netmusicandroid.data.repository.MineRepository
+import com.example.netmusicandroid.data.repository.PlaylistRepository
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
 class MineViewModel : ViewModel() {
-    private val repo = MineRepository()
+    private val repo = PlaylistRepository()
     // 私有可变数据源
     private val _userInfo = MutableLiveData<UserBean>()
     // 对外只读暴露

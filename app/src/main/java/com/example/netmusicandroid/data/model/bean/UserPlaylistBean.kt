@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 /**
  * 我的收藏歌单实体，接口 /api/v1/user/collections 返回
  */
-data class UserCollectionBean(
+data class UserPlaylistBean(
     @SerializedName("playlist_id")
     val collectionId: Int,     // 歌单唯一ID，删除接口路径参数
 

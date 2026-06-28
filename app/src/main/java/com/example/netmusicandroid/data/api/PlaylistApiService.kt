@@ -1,11 +1,11 @@
 package com.example.netmusicandroid.data.api
 
 import com.example.netmusicandroid.data.model.ApiResponse
-import com.example.netmusicandroid.data.model.bean.CollectionData
-import com.example.netmusicandroid.data.model.bean.CreateCollectionReq
-import com.example.netmusicandroid.data.model.bean.CreateCollectionResp
+import com.example.netmusicandroid.data.model.bean.PlaylistData
+import com.example.netmusicandroid.data.model.bean.createUserPlaylistReq
+import com.example.netmusicandroid.data.model.bean.createUserPlaylistResp
 import com.example.netmusicandroid.data.model.bean.UserBean
-import com.example.netmusicandroid.data.model.bean.UserCollectionBean
+import com.example.netmusicandroid.data.model.bean.UserPlaylistBean
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -17,7 +17,7 @@ import retrofit2.http.Path
  * 后端API接口定义
  * 统一基础路径前缀：/api/v1
  */
-interface MusicApi {
+interface PlaylistApiService {
 
     /**
      * GET /api/v1/users/me
@@ -32,9 +32,9 @@ interface MusicApi {
      * 获取用户所有自建歌单
      */
     @GET("users/{userId}/playlists")
-    suspend fun getUserCollection(
+    suspend fun getUserPlaylist(
         @Path("userId") userId: Int
-    ): Response<ApiResponse<CollectionData<UserCollectionBean>>>
+    ): Response<ApiResponse<PlaylistData<UserPlaylistBean>>>
 
     /**
      * DELETE /api/v1/playlists/{collectionId}
@@ -42,12 +42,12 @@ interface MusicApi {
      * @param collectionId 歌单ID
      */
     @DELETE("playlists/{collectionId}")
-    suspend fun deleteCollection(@Path("collectionId") collectionId: Int): Response<ApiResponse<Any>>
+    suspend fun deleteUserPlaylist(@Path("collectionId") collectionId: Int): Response<ApiResponse<Any>>
 
 
     // 3. 创建歌单 POST /api/v1/playlists
     @POST("playlists")
-    suspend fun createCollection(
-        @Body body: CreateCollectionReq
-    ): Response<ApiResponse<CreateCollectionResp>>
+    suspend fun createUserPlaylist(
+        @Body body: createUserPlaylistReq
+    ): Response<ApiResponse<createUserPlaylistResp>>
 }
