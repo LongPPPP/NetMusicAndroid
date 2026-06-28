@@ -37,7 +37,9 @@ registry.registerPath({
                                             properties: {
                                                 song_id: {type: 'integer'},
                                                 song_name: {type: 'string'},
+                                                singer_id: {type: 'integer', nullable: true},
                                                 singer_name: {type: 'string'},
+                                                cover_url: {type: 'string', nullable: true},
                                             },
                                         },
                                     },
@@ -47,8 +49,8 @@ registry.registerPath({
                                 },
                                 example: {
                                     list: [
-                                        {song_id: 1, song_name: '稻香', singer_name: '周杰伦'},
-                                        {song_id: 2, song_name: '晴天', singer_name: '周杰伦'},
+                                        {song_id: 1, song_name: '稻香', singer_id: 1, singer_name: '周杰伦', cover_url: '/static/covers/daoxiang.jpg'},
+                                        {song_id: 2, song_name: '晴天', singer_id: 1, singer_name: '周杰伦', cover_url: null},
                                     ],
                                     total: 2,
                                     page: 1,
@@ -158,6 +160,8 @@ registry.registerPath({
                                             properties: {
                                                 playlist_id: {type: 'integer'},
                                                 playlist_name: {type: 'string'},
+                                                song_count: {type: 'integer', description: '歌单内歌曲数量'},
+                                                cover_url: {type: 'string', nullable: true, description: '封面图 URL'},
                                             },
                                         },
                                     },
@@ -167,7 +171,7 @@ registry.registerPath({
                                 },
                                 example: {
                                     list: [
-                                        {playlist_id: 1, playlist_name: '周杰伦精选'},
+                                        {playlist_id: 1, playlist_name: '周杰伦精选', song_count: 15, cover_url: '/static/songs/xxx.webp'},
                                     ],
                                     total: 1,
                                     page: 1,

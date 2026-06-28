@@ -13,6 +13,11 @@ export async function getPlaylistsByUser(userId: number) {
             name: true,
             createdAt: true,
             _count: {select: {playlistSongs: true}},
+            playlistSongs: {
+                select: {song: {select: {coverUrl: true}}},
+                orderBy: {addedAt: 'asc'},
+                take: 5,
+            },
         },
         orderBy: {createdAt: 'desc'},
     });
@@ -22,6 +27,7 @@ export async function getPlaylistsByUser(userId: number) {
             playlist_id: p.id,
             playlist_name: p.name,
             song_count: p._count.playlistSongs,
+            cover_url: p.playlistSongs.map(ps => ps.song.coverUrl).find(url => url) ?? null,
             created_at: p.createdAt,
         })),
     };
@@ -34,10 +40,13 @@ export async function getPlaylistDetail(playlistId: number) {
         select: {
             id: true,
             name: true,
+            userId: true,
+            createdAt: true,
             playlistSongs: {
                 select: {
+                    addedAt: true,
                     song: {
-                        select: {id: true, name: true, singerName: true},
+                        select: {id: true, name: true, singerName: true, coverUrl: true, playUrl: true, duration: true},
                     },
                 },
                 orderBy: {addedAt: 'asc'},
@@ -52,10 +61,17 @@ export async function getPlaylistDetail(playlistId: number) {
     return {
         playlist_id: playlist.id,
         playlist_name: playlist.name,
+        user_id: playlist.userId,
+        cover_url: playlist.playlistSongs.map(ps => ps.song.coverUrl).find(url => url) ?? null,
+        created_at: playlist.createdAt,
         songs: playlist.playlistSongs.map(ps => ({
             song_id: ps.song.id,
             song_name: ps.song.name,
             singer_name: ps.song.singerName,
+            cover_url: ps.song.coverUrl,
+            play_url: ps.song.playUrl,
+            duration: ps.song.duration,
+            added_at: ps.addedAt,
         })),
     };
 }
@@ -155,6 +171,11 @@ export async function renamePlaylist(playlistId: number, userId: number, data: U
             name: true,
             createdAt: true,
             _count: {select: {playlistSongs: true}},
+            playlistSongs: {
+                select: {song: {select: {coverUrl: true}}},
+                orderBy: {addedAt: 'asc'},
+                take: 5,
+            },
         },
     });
 
@@ -162,6 +183,7 @@ export async function renamePlaylist(playlistId: number, userId: number, data: U
         playlist_id: playlist.id,
         playlist_name: playlist.name,
         song_count: playlist._count.playlistSongs,
+        cover_url: playlist.playlistSongs.map(ps => ps.song.coverUrl).find(url => url) ?? null,
         created_at: playlist.createdAt,
     };
 }

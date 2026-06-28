@@ -39,8 +39,9 @@ registry.registerPath({
                                             properties: {
                                                 song_id: {type: 'integer'},
                                                 song_name: {type: 'string'},
+                                                singer_id: {type: 'integer', nullable: true},
                                                 singer_name: {type: 'string'},
-                                                play_url: {type: 'string', nullable: true},
+                                                cover_url: {type: 'string', nullable: true},
                                                 duration: {type: 'integer', nullable: true},
                                             },
                                         },
@@ -51,8 +52,8 @@ registry.registerPath({
                                 },
                                 example: {
                                     list: [
-                                        {song_id: 1, song_name: '稻香', singer_name: '周杰伦', play_url: '/static/songs/daoxiang.mp3', duration: 244},
-                                        {song_id: 2, song_name: '晴天', singer_name: '周杰伦', play_url: '/static/songs/qingtian.mp3', duration: 267},
+                                        {song_id: 1, song_name: '稻香', singer_id: 1, singer_name: '周杰伦', cover_url: '/static/covers/daoxiang.jpg', duration: 244},
+                                        {song_id: 2, song_name: '晴天', singer_id: 1, singer_name: '周杰伦', cover_url: null, duration: 267},
                                     ],
                                     total: 2,
                                     page: 1,
@@ -96,6 +97,7 @@ registry.registerPath({
                                 properties: {
                                     song_id: {type: 'integer'},
                                     song_name: {type: 'string'},
+                                    singer_id: {type: 'integer', nullable: true},
                                     singer_name: {type: 'string'},
                                     play_url: {type: 'string', nullable: true},
                                     cover_url: {type: 'string', nullable: true},
@@ -104,6 +106,7 @@ registry.registerPath({
                                 example: {
                                     song_id: 1,
                                     song_name: '稻香',
+                                    singer_id: 1,
                                     singer_name: '周杰伦',
                                     play_url: '/static/songs/daoxiang.mp3',
                                     cover_url: '/static/covers/daoxiang.jpg',
@@ -155,6 +158,7 @@ registry.registerPath({
                                                 user_id: {type: 'integer'},
                                                 username: {type: 'string', nullable: true},
                                                 content: {type: 'string'},
+                                                created_at: {type: 'string', format: 'date-time'},
                                             },
                                         },
                                     },
@@ -164,8 +168,8 @@ registry.registerPath({
                                 },
                                 example: {
                                     list: [
-                                        {comment_id: 1, user_id: 1, username: '小明', content: '这首歌太好听了！'},
-                                        {comment_id: 2, user_id: 2, username: '小红', content: '经典永流传'},
+                                        {comment_id: 1, user_id: 1, username: '小明', content: '这首歌太好听了！', created_at: '2024-01-15T08:30:00.000Z'},
+                                        {comment_id: 2, user_id: 2, username: '小红', content: '经典永流传', created_at: '2024-01-15T09:00:00.000Z'},
                                     ],
                                     total: 2,
                                     page: 1,
@@ -221,12 +225,14 @@ registry.registerPath({
                                     user_id: {type: 'integer'},
                                     username: {type: 'string', nullable: true},
                                     content: {type: 'string'},
+                                    created_at: {type: 'string', format: 'date-time'},
                                 },
                                 example: {
                                     comment_id: 1,
                                     user_id: 1,
                                     username: '小明',
                                     content: '这首歌太好听了！',
+                                    created_at: '2024-01-15T08:30:00.000Z',
                                 },
                             },
                         },
@@ -331,6 +337,7 @@ registry.registerPath({
                                 properties: {
                                     song_id: {type: 'integer'},
                                     song_name: {type: 'string'},
+                                    singer_id: {type: 'integer', nullable: true},
                                     singer_name: {type: 'string'},
                                     play_url: {type: 'string', nullable: true},
                                     cover_url: {type: 'string', nullable: true},

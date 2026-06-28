@@ -28,6 +28,7 @@ describe('GET /singers/:singerId', () => {
         expect(Array.isArray(res.body.data.hot_songs)).toBe(true);
         expect(res.body.data.hot_songs[0]).toHaveProperty('song_id');
         expect(res.body.data.hot_songs[0]).toHaveProperty('song_name');
+        expect(res.body.data.hot_songs[0]).toHaveProperty('cover_url');
     });
 
     it('should return 404 for non-existent singer', async () => {

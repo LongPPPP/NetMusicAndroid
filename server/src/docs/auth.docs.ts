@@ -85,7 +85,9 @@ registry.registerPath({
                                 properties: {
                                     user_id: {type: 'integer', example: 1},
                                     access_token: {type: 'string', example: 'eyJhbGciOiJIUzI1NiIs...'},
+                                    expires_in: {type: 'integer', example: 900, description: 'Access Token 有效期（秒）'},
                                     refresh_token: {type: 'string', example: 'eyJhbGciOiJIUzI1NiIs...'},
+                                    refresh_expires_in: {type: 'integer', example: 604800, description: 'Refresh Token 有效期（秒）'},
                                     user: {
                                         type: 'object',
                                         properties: {
@@ -95,6 +97,8 @@ registry.registerPath({
                                             avatar: {type: 'string', nullable: true},
                                             signature: {type: 'string', nullable: true},
                                             role: {type: 'string', enum: ['USER', 'ARTIST'], example: 'USER'},
+                                            comment_count: {type: 'integer', description: '评论数量'},
+                                            favorite_count: {type: 'integer', description: '收藏歌曲数量'},
                                         },
                                         example: {
                                             id: 1,
@@ -103,13 +107,17 @@ registry.registerPath({
                                             avatar: null,
                                             signature: '音乐是我的生命',
                                             role: 'USER',
+                                            comment_count: 12,
+                                            favorite_count: 5,
                                         },
                                     },
                                 },
                                 example: {
                                     user_id: 1,
                                     access_token: 'eyJhbGciOiJIUzI1NiIs...',
+                                    expires_in: 900,
                                     refresh_token: 'eyJhbGciOiJIUzI1NiIs...',
+                                    refresh_expires_in: 604800,
                                     user: {
                                         id: 1,
                                         username: '小明',
@@ -117,6 +125,8 @@ registry.registerPath({
                                         avatar: null,
                                         signature: '音乐是我的生命',
                                         role: 'USER',
+                                        comment_count: 12,
+                                        favorite_count: 5,
                                     },
                                 },
                             },

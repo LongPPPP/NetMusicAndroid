@@ -38,6 +38,9 @@ registry.registerPath({
                                 properties: {
                                     playlist_id: {type: 'integer'},
                                     playlist_name: {type: 'string'},
+                                    user_id: {type: 'integer'},
+                                    cover_url: {type: 'string', nullable: true, description: '封面图 URL（取自歌单第一首有封面的歌曲）'},
+                                    created_at: {type: 'string', format: 'date-time'},
                                     songs: {
                                         type: 'array',
                                         items: {
@@ -45,7 +48,12 @@ registry.registerPath({
                                             properties: {
                                                 song_id: {type: 'integer'},
                                                 song_name: {type: 'string'},
+                                                singer_id: {type: 'integer', nullable: true},
                                                 singer_name: {type: 'string'},
+                                                cover_url: {type: 'string', nullable: true},
+                                                play_url: {type: 'string', nullable: true},
+                                                duration: {type: 'integer', nullable: true},
+                                                added_at: {type: 'string', format: 'date-time'},
                                             },
                                         },
                                     },
@@ -53,9 +61,12 @@ registry.registerPath({
                                 example: {
                                     playlist_id: 1,
                                     playlist_name: '我的最爱',
+                                    user_id: 1,
+                                    cover_url: '/static/songs/xxx.webp',
+                                    created_at: '2024-01-15T08:30:00.000Z',
                                     songs: [
-                                        {song_id: 1, song_name: '稻香', singer_name: '周杰伦'},
-                                        {song_id: 2, song_name: '晴天', singer_name: '周杰伦'},
+                                        {song_id: 1, song_name: '稻香', singer_id: 1, singer_name: '周杰伦', cover_url: '/static/songs/xxx.webp', play_url: '/static/songs/xxx.mp3', duration: 243, added_at: '2024-01-15T08:30:00.000Z'},
+                                        {song_id: 2, song_name: '晴天', singer_id: 1, singer_name: '周杰伦', cover_url: '/static/songs/yyy.webp', play_url: '/static/songs/yyy.mp3', duration: 269, added_at: '2024-01-16T10:00:00.000Z'},
                                     ],
                                 },
                             },
@@ -246,12 +257,14 @@ registry.registerPath({
                                     playlist_id: {type: 'integer'},
                                     playlist_name: {type: 'string'},
                                     song_count: {type: 'integer'},
+                                    cover_url: {type: 'string', nullable: true, description: '封面图 URL'},
                                     created_at: {type: 'string', format: 'date-time'},
                                 },
                                 example: {
                                     playlist_id: 1,
                                     playlist_name: '新歌单名称',
                                     song_count: 5,
+                                    cover_url: '/static/songs/xxx.webp',
                                     created_at: '2024-01-15T08:30:00.000Z',
                                 },
                             },
