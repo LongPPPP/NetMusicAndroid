@@ -12,7 +12,7 @@ export const apiLimiter = rateLimit({
 // 认证接口限流（登录/注册）：每 IP 每 15 分钟最多 10 次尝试
 export const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 分钟窗口
-    max: 10,
+    max: 100,
     message: {code: 429, message: '登录尝试过于频繁，请 15 分钟后再试', data: null},
     standardHeaders: true,
     legacyHeaders: false,

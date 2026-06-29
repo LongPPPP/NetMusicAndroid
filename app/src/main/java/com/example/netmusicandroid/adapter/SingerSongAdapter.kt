@@ -3,6 +3,7 @@ package com.example.netmusicandroid.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.netmusicandroid.R
@@ -10,7 +11,8 @@ import com.example.netmusicandroid.data.model.HotSong
 
 class SingerSongAdapter(
     private var songList: List<HotSong>,
-    private val onItemClick: (HotSong) -> Unit
+    private val onItemClick: (HotSong) -> Unit,
+    private val onDeleteClick: (HotSong) -> Unit // 新增删除回调
 ) : RecyclerView.Adapter<SingerSongAdapter.SongViewHolder>() {
 
     fun updateData(newList: List<HotSong>) {
@@ -31,6 +33,11 @@ class SingerSongAdapter(
         holder.itemView.setOnClickListener {
             onItemClick(song)
         }
+
+        // 下架点击
+        holder.btnDelete.setOnClickListener {
+            onDeleteClick(song)
+        }
     }
 
     override fun getItemCount(): Int = songList.size
@@ -38,5 +45,6 @@ class SingerSongAdapter(
     class SongViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvIndex: TextView = view.findViewById(R.id.tvIndex)
         val tvSongName: TextView = view.findViewById(R.id.tvSongName)
+        val btnDelete: ImageButton = view.findViewById(R.id.btnDeleteSong)
     }
 }

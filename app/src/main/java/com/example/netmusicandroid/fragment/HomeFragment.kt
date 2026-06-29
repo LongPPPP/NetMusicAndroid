@@ -46,28 +46,11 @@ class HomeFragment : Fragment() {
 
     private fun loadSongs() {
         viewLifecycleOwner.lifecycleScope.launch {
-            // 1. 先获取列表
             val result = songRepository.fetchSongs(1)
             result.onSuccess { list ->
-                // 象征性只取前 3 首，并转为可变列表以便后续补全数据
-                val displayList = (if (list.size > 3) list.take(3) else list).toMutableList()
-                
-                // 先显示出名字（此时封面还是占位图）
+                // 只显示前 3 首，简单直接
+                val displayList = if (list.size > 3) list.take(3) else list
                 songAdapter.updateData(displayList)
-
-                // 2. 【方案 B 核心】：针对显示的这几首歌，挨个去取详情（拿到封面）
-                displayList.forEachIndexed { index, song ->
-                    launch { // 开启子协程并行获取，速度更快
-                        val detailResult = songRepository.fetchSongDetail(song.song_id)
-                        detailResult.onSuccess { fullDetail ->
-                            // 用含有封面的完整对象替换旧对象
-                            displayList[index] = fullDetail
-                            // 刷新适配器显示封面
-                            songAdapter.updateData(displayList.toList())
-                        }
-                    }
-                }
-
             }.onFailure { ex ->
                 Toast.makeText(requireContext(), "获取歌曲失败: ${ex.message}", Toast.LENGTH_SHORT).show()
             }
