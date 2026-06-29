@@ -1,10 +1,11 @@
 package com.example.netmusicandroid.data.repository
 
-import com.example.netmusicandroid.data.api.ApiClient
+import com.example.netmusicandroid.data.api.cachedAccessToken
 import com.example.netmusicandroid.data.api.AuthApiService
 import com.example.netmusicandroid.data.api.LoginRequest
 import com.example.netmusicandroid.data.api.RefreshRequest
 import com.example.netmusicandroid.data.api.RegisterRequest
+import com.example.netmusicandroid.data.api.UpdateUserRequest
 import com.example.netmusicandroid.data.db.UserDao
 import com.example.netmusicandroid.data.db.UserEntity
 import com.example.netmusicandroid.sp.SpManager
@@ -14,7 +15,7 @@ import kotlinx.coroutines.flow.flowOf
 class AuthRepository private constructor(
     private val userDao: UserDao
 ) {
-    private val api = ApiClient.createService<AuthApiService>()
+    private val api = com.example.netmusicandroid.data.api.ApiClient.createService<AuthApiService>()
 
     companion object {
         @Volatile
@@ -59,6 +60,7 @@ class AuthRepository private constructor(
             SpManager.setCurrentLoginEmail(loginData.user.email)
             SpManager.setLoginStatus(true)
             SpManager.setUserId(loginData.user.id.toLong())
+            cachedAccessToken = loginData.access_token
         }
     }
 
@@ -84,6 +86,7 @@ class AuthRepository private constructor(
                 // 刷新失败，清空双Token，避免循环无效请求
                 val clearUser = user.copy(accessToken = "", refreshToken = "", tokenExpire = 0L)
                 userDao.saveUser(clearUser)
+                cachedAccessToken = null
                 return Result.failure(Throwable("RefreshToken已失效，请重新登录"))
             }
             val refreshData = res.data
@@ -93,6 +96,7 @@ class AuthRepository private constructor(
                 tokenExpire = newExpireTime
             )
             userDao.saveUser(updateUser)
+            cachedAccessToken = refreshData.access_token
             Result.success(refreshData.access_token)
         } catch (e: Exception) {
             // 网络/解析异常，清空过期accessToken
@@ -102,6 +106,7 @@ class AuthRepository private constructor(
                     userDao.saveUser(user.copy(accessToken = ""))
                 }
             }
+            cachedAccessToken = null
             Result.failure(e)
         }
     }
@@ -114,6 +119,7 @@ class AuthRepository private constructor(
         val now = System.currentTimeMillis()
         // Token未过期直接返回
         if (now < user.tokenExpire) {
+            cachedAccessToken = user.accessToken
             return Result.success(user.accessToken)
         }
         // 已过期自动执行刷新
@@ -125,10 +131,12 @@ class AuthRepository private constructor(
         val user = userDao.findUserByEmail(loginEmail) ?: return
         // 数据库清空双Token与过期时间
         userDao.saveUser(user.copy(accessToken = "", refreshToken = "", tokenExpire = 0L))
-        // 同步清空SP，保证拦截器立刻读取到登出状态
-        SpManager.clearAllSync()
+        // 精准清除登录相关SP，保留用户配置
+        SpManager.setCurrentLoginEmail("")
         SpManager.setLoginStatus(false)
         SpManager.setUserId(0)
+        // 清空网络层内存缓存token
+        cachedAccessToken = null
     }
 
     suspend fun getCurrentLoginUser(): UserEntity? {
@@ -136,6 +144,33 @@ class AuthRepository private constructor(
         return userDao.findUserByEmail(email)
     }
 
+    /**
+     * 修改当前登录用户信息（PATCH /users/me）。
+     * 成功后将最新的 UserInfo 同步更新到 Room 本地数据库。
+     */
+    suspend fun updateUser(field: String, value: String): Result<UserEntity> {
+        return try {
+            val resp = api.updateUser(UpdateUserRequest(field, value))
+            if (resp.code == 200 && resp.data != null) {
+                val info = resp.data
+                val email = SpManager.getCurrentLoginEmail()
+                    ?: return Result.failure(Throwable("未登录"))
+                val user = userDao.findUserByEmail(email)
+                    ?: return Result.failure(Throwable("本地数据丢失"))
+                val updated = user.copy(
+                    username = info.username,
+                    avatar = info.avatar ?: user.avatar,
+                    signature = info.signature ?: user.signature
+                )
+                userDao.saveUser(updated)
+                Result.success(updated)
+            } else {
+                Result.failure(Throwable(resp.message ?: "修改失败"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
     fun observeCurrentLoginUser(): Flow<UserEntity?> {
         val loginEmail = SpManager.getCurrentLoginEmail()

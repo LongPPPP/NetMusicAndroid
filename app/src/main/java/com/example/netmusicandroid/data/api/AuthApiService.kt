@@ -3,7 +3,9 @@ package com.example.netmusicandroid.data.api
 import com.example.netmusicandroid.data.model.ApiResponse
 import com.example.netmusicandroid.data.model.LoginData
 import com.example.netmusicandroid.data.model.RefreshTokenData
+import com.example.netmusicandroid.data.model.UserInfo
 import retrofit2.http.Body
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 //定义接口 登录和注册里各请求体的具体内容
 data class LoginRequest(
@@ -22,6 +24,11 @@ data class RefreshRequest(
     val refreshToken: String
 )
 
+data class UpdateUserRequest(
+    val field: String,
+    val value: String
+)
+
 interface AuthApiService {
 
     @POST("auth/register")
@@ -32,4 +39,8 @@ interface AuthApiService {
 
     @POST("auth/refresh")
     suspend fun refreshToken(@Body body: RefreshRequest): ApiResponse<RefreshTokenData>
+
+    /** 修改用户信息 PATCH /users/me — field ∈ {avatar, signature, username, email} */
+    @PATCH("users/me")
+    suspend fun updateUser(@Body body: UpdateUserRequest): ApiResponse<UserInfo>
 }

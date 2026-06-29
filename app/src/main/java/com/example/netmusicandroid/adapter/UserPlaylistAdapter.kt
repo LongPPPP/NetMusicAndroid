@@ -24,7 +24,10 @@ import java.net.URL
 import java.util.concurrent.Executors
 
 class UserPlaylistAdapter(
-    private val onDeleteClick: (Int) -> Unit
+    // 新增：条目整体点击回调，参数为歌单ID
+    private val onItemClick: (playlistId: Int) -> Unit,
+    // 原有删除按钮回调
+    private val onDeleteClick: (playlistId: Int) -> Unit
 ) : ListAdapter<UserPlaylist, UserPlaylistAdapter.CollectionVH>(CollectionDiffCallback()) {
 
     private val executor = Executors.newSingleThreadExecutor()
@@ -32,6 +35,11 @@ class UserPlaylistAdapter(
 
     inner class CollectionVH(val binding: ItemUserCollectionBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: UserPlaylist) {
+            // 条目整体点击，传递歌单ID
+            itemView.setOnClickListener {
+                onItemClick.invoke(item.playlist_id)
+            }
+
             // 文本赋值
             binding.tvCollectionName.text = item.playlist_name
             binding.tvSongNum.text = "${item.song_count}首"

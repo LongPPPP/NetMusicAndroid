@@ -44,8 +44,6 @@
     </string>
 
 
-
-
     <!-- ===================== 无障碍 contentDescription ===================== -->
     <string name="cd_user_avatar">用户头像</string>
     <string name="cd_edit_username">编辑昵称</string>
@@ -57,18 +55,33 @@
     <string name="cd_back_btn">返回上一页</string>
     <string name="cd_add_playlist_icon">新建歌单添加图标</string>
     <string name="cd_close_dialog">关闭弹窗</string>
+    <!-- 设置页新增无障碍描述 -->
+    <string name="cd_icon_user">个人信息图标</string>
+    <string name="cd_icon_logout">退出登录图标</string>
+    <string name="cd_icon_theme">主题设置图标</string>
+    <string name="cd_arrow_right">前往详情</string>
 
     <!-- ===================== 页面展示固定文本 ===================== -->
     <string name="text_collect">收藏</string>
     <string name="text_my_comment">我的评论</string>
     <string name="text_recent_play">最近播放</string>
+    <string name="text_recent_play_title">最近播放</string>
+    <string name="text_clear_all">清空</string>
+    <string name="text_empty_recent_play">暂无播放记录</string>
     <string name="text_my_playlist">我的歌单</string>
     <string name="text_setting">设置</string>
     <string name="text_feedback">帮助与反馈</string>
     <!-- Playlist 歌单页面专属 -->
     <string name="text_my_playlist_title">我的歌单</string>
     <string name="text_create_playlist">新建歌单</string>
-    <string name="text_playlist_total_count">共 6 个歌单</string>
+    <string name="text_playlist_total_count">共 %d 个歌单</string>
+    <!-- Setting 设置页面专属 -->
+    <string name="text_setting_title">设置</string>
+    <string name="text_group_account">账号</string>
+    <string name="text_group_common">通用</string>
+    <string name="text_modify_user_info">修改个人信息</string>
+    <string name="text_logout">退出登录</string>
+    <string name="text_modify_theme">修改主题</string>
 
     <!-- ===================== tools 预览占位文本（仅编辑器预览） ===================== -->
     <string name="toast_demo_username">Music_Lover</string>
@@ -81,5 +94,10 @@
     <string name="text_word_count_default">0/30</string>
     <string name="text_btn_cancel">取消</string>
     <string name="text_btn_confirm">确认</string>
+
+    <!-- ===================== Toast 提示文案 ===================== -->
+    <string name="toast_go_modify_info">前往修改个人信息页面</string>
+    <string name="toast_logout_success">已退出登录</string>
+    <string name="toast_go_modify_theme">前往主题设置页面</string>
 
 </resources>

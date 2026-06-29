@@ -148,7 +148,8 @@ class PlayerFragment : Fragment() {
                     tvTotal.text = formatTime(duration)
                     handler.post(updateProgressTask)
                 }
-                
+                // 播放完成回调由 BottomPlayerViewModel 统一管理（记录历史 + 自动切歌）
+
                 // 执行 play，只有是新歌时才会触发重播
                 val isNewPlay = MusicPlayerManager.play(playUrl)
                 

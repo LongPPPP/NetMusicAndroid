@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/shape_dialog_bg"
+    android:padding="24dp">
+
+    <!-- 标题栏：修改个人信息 + 关闭 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="修改个人信息"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/ivClose"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_close_x"
+            android:contentDescription="@string/cd_close_dialog" />
+    </RelativeLayout>
+
+    <!-- 当前头像预览 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="头像"
+            android:textColor="#333333"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:id="@+id/ivAvatarPreview"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="20dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/shape_dialog_et" />
+    </LinearLayout>
+
+    <!-- 头像URL输入 -->
+    <EditText
+        android:id="@+id/etAvatarUrl"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:hint="输入头像图片链接"
+        android:inputType="textUri"
+        android:textSize="14sp"
+        android:paddingHorizontal="14dp"
+        android:background="@drawable/shape_dialog_et" />
+
+    <!-- 昵称 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="昵称"
+        android:textColor="#333333"
+        android:textSize="15sp" />
+
+    <EditText
+        android:id="@+id/etNickname"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="6dp"
+        android:hint="输入新昵称"
+        android:inputType="text"
+        android:maxLength="30"
+        android:textSize="14sp"
+        android:paddingHorizontal="14dp"
+        android:background="@drawable/shape_dialog_et" />
+
+    <!-- 签名 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="签名"
+        android:textColor="#333333"
+        android:textSize="15sp" />
+
+    <EditText
+        android:id="@+id/etSignature"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="6dp"
+        android:hint="输入个性签名"
+        android:inputType="text"
+        android:maxLength="100"
+        android:textSize="14sp"
+        android:paddingHorizontal="14dp"
+        android:background="@drawable/shape_dialog_et" />
+
+    <!-- 底部按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="@string/text_btn_cancel"
+            android:textColor="#111111"
+            android:textSize="16sp"
+            android:background="@drawable/shape_btn_cancel" />
+
+        <View
+            android:layout_width="16dp"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="保存"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:background="@drawable/shape_btn_confirm" />
+    </LinearLayout>
+</LinearLayout>

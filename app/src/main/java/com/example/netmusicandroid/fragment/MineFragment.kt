@@ -13,6 +13,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.example.netmusicandroid.R
 import com.example.netmusicandroid.activity.PlaylistActivity
+import com.example.netmusicandroid.activity.RecentPlayActivity
+import com.example.netmusicandroid.activity.SearchActivity
+import com.example.netmusicandroid.activity.SettingActivity
 import com.example.netmusicandroid.databinding.FragmentMineBinding
 import com.example.netmusicandroid.data.db.UserEntity
 import com.example.netmusicandroid.viewmodel.MineViewModel
@@ -100,9 +103,16 @@ class MineFragment : Fragment() {
         binding.llMyPlaylist.setOnClickListener {
             startActivity(Intent(requireContext(), PlaylistActivity::class.java))
         }
-        binding.llRecentPlay.setOnClickListener {}
-        binding.llSetting.setOnClickListener {}
-        binding.llFeedback.setOnClickListener {}
+        binding.llRecentPlay.setOnClickListener {
+            startActivity(Intent(requireContext(), RecentPlayActivity::class.java))
+        }
+        // 点击跳转设置页面 SettingActivity
+        binding.llSetting.setOnClickListener {
+            startActivity(Intent(requireContext(), SettingActivity::class.java))
+        }
+        binding.llFeedback.setOnClickListener {
+            startActivity(Intent(requireContext(), SearchActivity::class.java))
+        }
         binding.llPublishSong.setOnClickListener {}
     }
 

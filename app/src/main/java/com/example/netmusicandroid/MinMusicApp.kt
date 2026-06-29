@@ -23,11 +23,18 @@ class MinMusicApp : Application() {
         // 1. 初始化Room数据库
         val db = AppDatabase.getDatabase(this)
         val userDao = db.userDao()
+        val playQueueDao = db.playQueueDao()
+        val recentPlayDao = db.recentPlayDao()
         // 赋值全局Dao给全局单例调用
         AppDatabase.globalUserDao = userDao
+        AppDatabase.globalPlayQueueDao = playQueueDao
+        AppDatabase.globalRecentPlayDao = recentPlayDao
 
         // 2. 一次性初始化AuthRepository单例（使用新的initRepo方法）
         AuthRepository.initRepo(userDao)
+
+        // 注入AuthRepository到ApiClient，解除硬耦合依赖
+        ApiClient.authRepositoryProvider = { AuthRepository.getInstance() }
 
         // 3. 最后再触发Retrofit懒加载，避免拦截器提前执行造成递归崩溃
         ApiClient.client

@@ -94,6 +94,7 @@
 
     <!-- 全局底部播放器（复用统一布局） -->
     <include
+        android:id="@+id/include_bottom_player"
         android:layout_width="match_parent"
         android:layout_height="86dp"
         android:layout_alignParentBottom="true"

@@ -58,13 +58,6 @@
                         android:textColor="#111111"
                         tools:text="@string/toast_demo_username"/>
 
-                    <ImageView
-                        android:id="@+id/ivEditName"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginStart="8dp"
-                        android:src="@drawable/ic_edit"
-                        android:contentDescription="@string/cd_edit_username"/>
                 </LinearLayout>
 
                 <TextView

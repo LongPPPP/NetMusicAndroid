@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F6F6F6"
+    android:paddingHorizontal="20dp"
+    tools:context=".activity.SearchActivity">
+
+    <!-- 左上角返回箭头 -->
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_back"
+        app:tint="#212121"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <!-- 搜索输入框 -->
+    <LinearLayout
+        android:id="@+id/ll_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/bg_round_white"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/iv_back">
+
+        <!-- 替换为AppCompatEditText，使用app:hintTextColor -->
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_search_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="搜索"
+            app:hintTextColor="#909090"
+            android:textColor="#212121"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/iv_search_icon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@android:drawable/ic_menu_search"
+            app:tint="#333333" />
+    </LinearLayout>
+
+    <!-- 分类按钮行：移除android:gap，中间按钮加左边距替代间距 -->
+    <LinearLayout
+        android:id="@+id/ll_category_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/ll_search_bar">
+
+        <TextView
+            android:id="@+id/tv_cat_song"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_round_white"
+            android:gravity="center"
+            android:text="歌曲"
+            android:textColor="#212121"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_cat_singer"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/bg_round_white"
+            android:gravity="center"
+            android:text="歌手"
+            android:textColor="#212121"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_cat_playlist"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/bg_round_white"
+            android:gravity="center"
+            android:text="歌单"
+            android:textColor="#212121"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <!-- 搜索结果 RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_search_results"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:paddingBottom="100dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/ll_category_group"
+        app:layout_constraintBottom_toTopOf="@id/include_bottom_player" />
+
+    <!-- 加载进度条 -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/ll_category_group"
+        app:layout_constraintBottom_toTopOf="@id/include_bottom_player"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 全局底部播放栏（抵消父容器 paddingHorizontal 的 20dp） -->
+    <include
+        android:id="@+id/include_bottom_player"
+        layout="@layout/layout_bottom_player"
+        android:layout_width="0dp"
+        android:layout_height="96dp"
+        android:layout_marginStart="-20dp"
+        android:layout_marginEnd="-20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
