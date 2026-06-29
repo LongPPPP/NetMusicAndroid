@@ -13,7 +13,7 @@ export async function getSingerDetail(singerId: number) {
             avatarUrl: true,
             description: true,
             songs: {
-                select: {id: true, name: true},
+                select: {id: true, name: true, singerId: true, coverUrl: true, duration: true},
                 orderBy: {id: 'asc'},
                 take: 10,
             },
@@ -29,7 +29,7 @@ export async function getSingerDetail(singerId: number) {
         singer_name: singer.name,
         avatar_url: singer.avatarUrl,
         description: singer.description,
-        hot_songs: singer.songs.map(s => ({song_id: s.id, song_name: s.name})),
+        hot_songs: singer.songs.map(s => ({song_id: s.id, song_name: s.name, singer_id: s.singerId, cover_url: s.coverUrl, duration: s.duration})),
     };
 }
 

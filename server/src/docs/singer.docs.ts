@@ -104,6 +104,9 @@ registry.registerPath({
                                             properties: {
                                                 song_id: {type: 'integer'},
                                                 song_name: {type: 'string'},
+                                                singer_id: {type: 'integer', nullable: true},
+                                                cover_url: {type: 'string', nullable: true},
+                                                duration: {type: 'integer', nullable: true},
                                             },
                                         },
                                     },
@@ -114,9 +117,9 @@ registry.registerPath({
                                     avatar_url: null,
                                     description: '台湾著名歌手、音乐制作人',
                                     hot_songs: [
-                                        {song_id: 1, song_name: '稻香'},
-                                        {song_id: 2, song_name: '晴天'},
-                                        {song_id: 3, song_name: '七里香'},
+                                        {song_id: 1, song_name: '稻香', singer_id: 1, cover_url: '/static/covers/daoxiang.jpg', duration: 244},
+                                        {song_id: 2, song_name: '晴天', singer_id: 1, cover_url: null, duration: 267},
+                                        {song_id: 3, song_name: '七里香', singer_id: 1, cover_url: '/static/covers/qilixiang.jpg', duration: 299},
                                     ],
                                 },
                             },

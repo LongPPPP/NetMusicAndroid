@@ -1,8 +1,10 @@
+import fs from 'fs';
+import path from 'path';
 import prisma from '../config/database';
 import {CommentErrorMessage, SongErrorMessage} from '../constants/errorString';
-import {ForbiddenError, NotFoundError} from '../errors/AppError';
+import {ConflictError, ForbiddenError, NotFoundError, ValidationError} from '../errors/AppError';
 import {sanitize} from '../utils/sanitize';
-import type {CreateCommentInput, GetCommentsInput, GetSongsInput} from '../validators/song.validator';
+import type {CreateCommentInput, CreateSongInput, GetCommentsInput, GetSongsInput} from '../validators/song.validator';
 
 // 获取歌曲详情
 export async function getSongDetail(songId: number) {
@@ -11,6 +13,7 @@ export async function getSongDetail(songId: number) {
         select: {
             id: true,
             name: true,
+            singerId: true,
             singerName: true,
             playUrl: true,
             coverUrl: true,
@@ -25,6 +28,7 @@ export async function getSongDetail(songId: number) {
     return {
         song_id: song.id,
         song_name: song.name,
+        singer_id: song.singerId,
         singer_name: song.singerName,
         play_url: song.playUrl,
         cover_url: song.coverUrl,
@@ -45,8 +49,9 @@ export async function listSongs(params: GetSongsInput) {
             select: {
                 id: true,
                 name: true,
+                singerId: true,
                 singerName: true,
-                playUrl: true,
+                coverUrl: true,
                 duration: true,
             },
             skip,
@@ -60,8 +65,9 @@ export async function listSongs(params: GetSongsInput) {
         list: songs.map(s => ({
             song_id: s.id,
             song_name: s.name,
+            singer_id: s.singerId,
             singer_name: s.singerName,
-            play_url: s.playUrl,
+            cover_url: s.coverUrl,
             duration: s.duration,
         })),
         total,
@@ -91,6 +97,7 @@ export async function getSongComments(songId: number, params: GetCommentsInput) 
                 userId: true,
                 username: true,
                 content: true,
+                createdAt: true,
             },
             skip,
             take: page_size,
@@ -105,6 +112,7 @@ export async function getSongComments(songId: number, params: GetCommentsInput) 
             user_id: c.userId,
             username: c.username,
             content: c.content,
+            created_at: c.createdAt,
         })),
         total,
         page,
@@ -150,6 +158,7 @@ export async function createComment(songId: number, userId: number, data: Create
         user_id: comment.userId,
         username: comment.username,
         content: comment.content,
+        created_at: comment.createdAt,
     };
 }
 
@@ -195,6 +204,147 @@ export async function getUserComments(userId: number, page: number, pageSize: nu
             content: c.content,
             created_at: c.createdAt,
             song: {song_id: c.song.id, song_name: c.song.name},
+        })),
+        total,
+        page,
+        page_size: pageSize,
+    };
+}
+
+// 上架歌曲
+export async function createSong(name: string, singerId: number, singerName: string, playUrl: string, coverUrl: string | null) {
+    const song = await prisma.song.create({
+        data: {name, singerId, singerName, playUrl, coverUrl},
+        select: {id: true, name: true, singerId: true, singerName: true, playUrl: true, coverUrl: true, duration: true},
+    });
+
+    return {
+        song_id: song.id,
+        song_name: song.name,
+        singer_id: song.singerId,
+        singer_name: song.singerName,
+        play_url: song.playUrl,
+        cover_url: song.coverUrl,
+        duration: song.duration,
+    };
+}
+
+// 下架歌曲（含文件清理）
+export async function deleteSong(songId: number, singerId: number) {
+    const song = await prisma.song.findUnique({
+        where: {id: songId},
+        select: {singerId: true, playUrl: true, coverUrl: true},
+    });
+    if (!song) {
+        throw new NotFoundError(SongErrorMessage.NOT_FOUND);
+    }
+    if (song.singerId !== singerId) {
+        throw new ForbiddenError(SongErrorMessage.NOT_OWNER);
+    }
+
+    // 删 DB 记录（级联删评论和歌单关联）
+    await prisma.song.delete({where: {id: songId}});
+
+    // 清理本地文件（不阻塞，失败忽略）
+    if (song.playUrl?.startsWith('/static/')) {
+        fs.unlink(path.resolve(__dirname, '../../', song.playUrl.slice(1)), () => {});
+    }
+    if (song.coverUrl?.startsWith('/static/')) {
+        fs.unlink(path.resolve(__dirname, '../../', song.coverUrl.slice(1)), () => {});
+    }
+}
+
+// 收藏/取消收藏（toggle：有则删，无则增）
+export async function toggleFavorite(userId: number, songId: number) {
+    const song = await prisma.song.findUnique({
+        where: {id: songId},
+        select: {id: true},
+    });
+    if (!song) {
+        throw new NotFoundError(SongErrorMessage.NOT_FOUND);
+    }
+
+    // 找用户的收藏歌单
+    const favPlaylist = await prisma.playlist.findFirst({
+        where: {userId, isFavorite: true},
+        select: {id: true},
+    });
+    if (!favPlaylist) {
+        // 极端情况：收藏歌单被手动删除则重建
+        const newFav = await prisma.playlist.create({
+            data: {userId, name: '我的收藏', isFavorite: true},
+        });
+        await prisma.playlistSong.create({
+            data: {playlistId: newFav.id, songId},
+        });
+        return {favorited: true};
+    }
+
+    const existing = await prisma.playlistSong.findUnique({
+        where: {playlistId_songId: {playlistId: favPlaylist.id, songId}},
+    });
+
+    if (existing) {
+        await prisma.playlistSong.delete({
+            where: {playlistId_songId: {playlistId: favPlaylist.id, songId}},
+        });
+        return {favorited: false};
+    } else {
+        await prisma.playlistSong.create({
+            data: {playlistId: favPlaylist.id, songId},
+        });
+        return {favorited: true};
+    }
+}
+
+// 获取用户收藏列表
+export async function getUserFavorites(userId: number, page: number, pageSize: number) {
+    const favPlaylist = await prisma.playlist.findFirst({
+        where: {userId, isFavorite: true},
+        select: {
+            id: true,
+            name: true,
+            userId: true,
+            playlistSongs: {
+                select: {
+                    addedAt: true,
+                    song: {
+                        select: {
+                            id: true,
+                            name: true,
+                            singerId: true,
+                            singerName: true,
+                            coverUrl: true,
+                            duration: true,
+                        },
+                    },
+                },
+                orderBy: {addedAt: 'desc'},
+            },
+        },
+    });
+
+    if (!favPlaylist) {
+        return {list: [], total: 0, page, page_size: pageSize};
+    }
+
+    const allSongs = favPlaylist.playlistSongs;
+    const total = allSongs.length;
+    const skip = (page - 1) * pageSize;
+    const pagedSongs = allSongs.slice(skip, skip + pageSize);
+
+    return {
+        playlist_id: favPlaylist.id,
+        playlist_name: favPlaylist.name,
+        user_id: favPlaylist.userId,
+        songs: pagedSongs.map(ps => ({
+            song_id: ps.song.id,
+            song_name: ps.song.name,
+            singer_id: ps.song.singerId,
+            singer_name: ps.song.singerName,
+            cover_url: ps.song.coverUrl,
+            duration: ps.song.duration,
+            added_at: ps.addedAt,
         })),
         total,
         page,

@@ -13,6 +13,11 @@ export async function getPlaylistsByUser(userId: number) {
             name: true,
             createdAt: true,
             _count: {select: {playlistSongs: true}},
+            playlistSongs: {
+                select: {song: {select: {coverUrl: true}}},
+                orderBy: {addedAt: 'asc'},
+                take: 5,
+            },
         },
         orderBy: {createdAt: 'desc'},
     });
@@ -22,6 +27,7 @@ export async function getPlaylistsByUser(userId: number) {
             playlist_id: p.id,
             playlist_name: p.name,
             song_count: p._count.playlistSongs,
+            cover_url: p.playlistSongs.map(ps => ps.song.coverUrl).find(url => url) ?? null,
             created_at: p.createdAt,
         })),
     };
@@ -34,10 +40,13 @@ export async function getPlaylistDetail(playlistId: number) {
         select: {
             id: true,
             name: true,
+            userId: true,
+            createdAt: true,
             playlistSongs: {
                 select: {
+                    addedAt: true,
                     song: {
-                        select: {id: true, name: true, singerName: true},
+                        select: {id: true, name: true, singerName: true, coverUrl: true, playUrl: true, duration: true},
                     },
                 },
                 orderBy: {addedAt: 'asc'},
@@ -52,10 +61,17 @@ export async function getPlaylistDetail(playlistId: number) {
     return {
         playlist_id: playlist.id,
         playlist_name: playlist.name,
+        user_id: playlist.userId,
+        cover_url: playlist.playlistSongs.map(ps => ps.song.coverUrl).find(url => url) ?? null,
+        created_at: playlist.createdAt,
         songs: playlist.playlistSongs.map(ps => ({
             song_id: ps.song.id,
             song_name: ps.song.name,
             singer_name: ps.song.singerName,
+            cover_url: ps.song.coverUrl,
+            play_url: ps.song.playUrl,
+            duration: ps.song.duration,
+            added_at: ps.addedAt,
         })),
     };
 }
@@ -76,11 +92,11 @@ export async function createPlaylist(userId: number, data: CreatePlaylistInput) 
     return {playlist_id: playlist.id};
 }
 
-// 校验歌单归属
+// 校验歌单归属，同时返回 isFavorite 供调用方判断
 async function assertPlaylistOwner(playlistId: number, userId: number) {
     const playlist = await prisma.playlist.findUnique({
         where: {id: playlistId},
-        select: {userId: true},
+        select: {userId: true, isFavorite: true},
     });
     if (!playlist) {
         throw new NotFoundError(PlaylistErrorMessage.NOT_FOUND);
@@ -88,6 +104,7 @@ async function assertPlaylistOwner(playlistId: number, userId: number) {
     if (playlist.userId !== userId) {
         throw new ForbiddenError('无权操作此歌单');
     }
+    return playlist;
 }
 
 // 歌单添加歌曲
@@ -130,7 +147,10 @@ export async function removeSongFromPlaylist(playlistId: number, songId: number,
 
 // 重命名歌单
 export async function renamePlaylist(playlistId: number, userId: number, data: UpdatePlaylistInput) {
-    await assertPlaylistOwner(playlistId, userId);
+    const pl = await assertPlaylistOwner(playlistId, userId);
+    if (pl.isFavorite) {
+        throw new ForbiddenError(PlaylistErrorMessage.FAVORITE_PROTECTED);
+    }
 
     const name = sanitize(data.name);
 
@@ -151,6 +171,11 @@ export async function renamePlaylist(playlistId: number, userId: number, data: U
             name: true,
             createdAt: true,
             _count: {select: {playlistSongs: true}},
+            playlistSongs: {
+                select: {song: {select: {coverUrl: true}}},
+                orderBy: {addedAt: 'asc'},
+                take: 5,
+            },
         },
     });
 
@@ -158,13 +183,17 @@ export async function renamePlaylist(playlistId: number, userId: number, data: U
         playlist_id: playlist.id,
         playlist_name: playlist.name,
         song_count: playlist._count.playlistSongs,
+        cover_url: playlist.playlistSongs.map(ps => ps.song.coverUrl).find(url => url) ?? null,
         created_at: playlist.createdAt,
     };
 }
 
 // 删除歌单
 export async function deletePlaylist(playlistId: number, userId: number) {
-    await assertPlaylistOwner(playlistId, userId);
+    const pl = await assertPlaylistOwner(playlistId, userId);
+    if (pl.isFavorite) {
+        throw new ForbiddenError(PlaylistErrorMessage.FAVORITE_PROTECTED);
+    }
 
     await prisma.playlist.delete({where: {id: playlistId}});
 }

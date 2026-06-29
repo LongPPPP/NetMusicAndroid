@@ -20,14 +20,31 @@ const userSelect = {
 export async function getUserById(userId: number) {
     const user = await prisma.user.findUnique({
         where: {id: userId},
-        select: userSelect,
+        select: {
+            ...userSelect,
+            _count: {
+                select: {comments: true},
+            },
+            playlists: {
+                where: {isFavorite: true},
+                select: {
+                    _count: {select: {playlistSongs: true}},
+                },
+            },
+        },
     });
 
     if (!user) {
         throw new NotFoundError(AuthErrorMessage.USER_NOT_FOUND);
     }
 
-    return user;
+    const {_count, playlists, ...profile} = user;
+
+    return {
+        ...profile,
+        comment_count: _count.comments,
+        favorite_count: playlists[0]?._count.playlistSongs ?? 0,
+    };
 }
 
 // 统一修改用户信息（数据字典：PATCH /users/me）

@@ -13,6 +13,7 @@ describe('GET /search/songs', () => {
         expect(res.body.data.list.length).toBeGreaterThan(0);
         expect(res.body.data.list[0]).toHaveProperty('song_name');
         expect(res.body.data.list[0]).toHaveProperty('singer_name');
+        expect(res.body.data.list[0]).toHaveProperty('cover_url');
     });
 
     it('should search songs by singer name', async () => {

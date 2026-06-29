@@ -23,9 +23,13 @@ export async function register({confirmPassword: _confirmPassword, ...data}: Reg
     // 加密密码
     const hashedPassword = await hashPassword(password);
 
-    // 创建用户（默认角色 USER）
-    await prisma.user.create({
+    // 创建用户（默认角色 USER），同时创建收藏歌单
+    const user = await prisma.user.create({
         data: {username, password: hashedPassword, email},
+    });
+
+    await prisma.playlist.create({
+        data: {userId: user.id, name: '我的收藏', isFavorite: true},
     });
 }
 
@@ -33,11 +37,34 @@ export async function register({confirmPassword: _confirmPassword, ...data}: Reg
 export async function login(params: LoginInput) {
     const {email, password} = params;
 
-    const user = await prisma.user.findUnique({where: {email}});
+    const user = await prisma.user.findUnique({
+        where: {email},
+        select: {
+            id: true,
+            username: true,
+            email: true,
+            password: true,
+            avatar: true,
+            signature: true,
+            role: true,
+            createdAt: true,
+            _count: {
+                select: {comments: true},
+            },
+            playlists: {
+                where: {isFavorite: true},
+                select: {
+                    _count: {select: {playlistSongs: true}},
+                },
+            },
+        },
+    });
     // 合并检查（用户不存在 / 密码错误 → 同一提示），防止枚举攻击
     if (!user || !(await comparePassword(password, user.password))) {
         throw new UnauthorizedError(AuthErrorMessage.LOGIN_FAILED);
     }
+
+    const {_count, playlists, password: _, ...profile} = user;
 
     // 签发双 Token
     const accessToken = signAccessToken(user.id, user.role);
@@ -45,14 +72,13 @@ export async function login(params: LoginInput) {
     return {
         user_id: user.id,
         access_token: accessToken,
+        expires_in: config.jwt.expiresIn,
         refresh_token: refreshToken,
+        refresh_expires_in: config.jwt.refreshExpiresIn,
         user: {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            avatar: user.avatar,
-            signature: user.signature,
-            role: user.role,
+            ...profile,
+            comment_count: _count.comments,
+            favorite_count: playlists[0]?._count.playlistSongs ?? 0,
         },
     };
 }

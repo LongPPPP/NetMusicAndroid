@@ -1,7 +1,10 @@
 # NetMusic 网易云音乐类 App — 项目设计
 
+> 暂定版本，需要修改
+
 > 课程实践项目，6 人团队（最多 4 人编码），2 周开发周期
-> 客户端：Android (Kotlin + Jetpack Compose) | 服务端：Node.js + TypeScript
+> 客户端：Android (Kotlin + 传统 Activity + XML 布局) | 服务端：Node.js + TypeScript
+> 客户端开发要求：传统 Activity 开发模式，掌握 Intent 编程技术
 
 ---
 
@@ -154,8 +157,8 @@ router.use(adInjectionMiddleware);
 |------|----|------|
 | 后端 A | 1人 | 用户 + 鉴权 + API 接口规范 |
 | 后端 B | 1人 | 音乐模块 API |
-| Android A | 1人 | 框架 + 用户 UI + 网络层 + 深色模式 |
-| Android B | 1人 | 播放器 + 歌单 + 搜索 + 评论 |
+| Android A | 1人 | Activity 框架搭建 + 用户模块 UI + 网络层封装 + Intent 导航 + 深色模式 |
+| Android B | 1人 | 播放器 + 歌单 + 搜索 + 评论等核心功能 Activity UI |
 | 广告模块 | （谁有空） | 后端广告接口 + Android 广告位 |
 | 文档组 | 2人 | 需求分析、数据字典、DFD、设计文档、报告 |
 | 项目经理 | （兼） | 进度、接口规范、联调协调 |
@@ -164,12 +167,14 @@ router.use(adInjectionMiddleware);
 
 **第 1 周：基础功能并行开发**
 - 后端：用户系统 + 音乐核心 API（歌曲、歌单、搜索）
-- 前端：框架搭建 + 网络层 + 用户界面 + 音乐列表/搜索界面
+- 前端：Activity 框架搭建 + 网络层 + 用户 Activity 界面 + 音乐列表/搜索界面
+- 前端重点：**显式 Intent 跳转、Bundle 传参、startActivityForResult**
 - 文档：需求分析、数据字典、DFD
 
 **第 2 周：集成 + 扩展功能**
 - 后端：评论/MV API + 广告系统
-- 前端：播放器集成 + 评论 + MV + 广告位 + 深色模式
+- 前端：播放器 Activity + 评论 Activity + MV Activity + 广告位 + 深色模式实现
+- 前端重点：**隐式 Intent（分享、打开链接）、Intent Filter、主题动态切换**
 - 文档：概要设计、详细设计
 - 周五前：联调 + 最终测试
 
@@ -219,12 +224,92 @@ http://localhost:3000/api/v1
 
 ---
 
-## 六、深色模式 / 主题切换（纯客户端）
+## 六、Android 客户端架构
 
-- 使用 Jetpack Compose 的 `MaterialTheme` 内置深色模式支持
-- 使用 `isSystemInDarkTheme()` 感知系统设置
-- 提供手动切换开关，将选择存入 `DataStore` / `SharedPreferences`
-- 主题色自定义：定义一组主题色常量，用户可以选预设方案
+### 6.1 开发模式
+
+采用**传统 Activity 开发模式**（非 Jetpack Compose）：
+
+- **UI 构建：** XML 布局文件（`res/layout/`）
+- **Activity 基类：** 继承 `AppCompatActivity`
+- **导航方式：** **Intent 编程**（显式 Intent + 隐式 Intent）
+- **主题系统：** `styles.xml` + `AppCompat.DayNight` 兼容主题
+
+### 6.2 Activity 架构设计
+
+```
+Application
+│
+├── SplashActivity              # 启动页/广告页
+├── MainActivity                # 主界面（底部导航栏承载容器）
+│   ├── 使用 Fragment 或 ActivityGroup 切换页面
+│   └── 通过 Intent 跳转到其他 Activity 后返回
+│
+├── LoginActivity               # 登录
+├── RegisterActivity            # 注册
+├── UserProfileActivity         # 用户信息
+├── SongDetailActivity          # 歌曲详情/播放页
+├── PlaylistDetailActivity      # 歌单详情
+├── SearchActivity              # 搜索
+├── MVPlayerActivity            # MV 播放
+├── CommentActivity             # 评论列表
+├── SettingsActivity            # 设置（含深色模式切换）
+└── AboutActivity               # 关于
+```
+
+### 6.3 Intent 编程应用场景
+
+学生需要掌握的 Intent 技术，贯穿整个应用的页面跳转和数据传递：
+
+| 场景 | Intent 类型 | 示例 |
+|------|-------------|------|
+| **页面跳转传参** | 显式 Intent + Bundle | `Intent(this, SongDetailActivity::class.java).putExtra("songId", id)` |
+| **启动服务** | 显式 Intent | `Intent(this, MusicPlayerService::class.java)` → `startService()` |
+| **打开外部链接** | 隐式 Intent | `Intent(Intent.ACTION_VIEW, Uri.parse(url))` |
+| **分享功能** | 隐式 Intent | `Intent(Intent.ACTION_SEND).setType("text/plain")` |
+| **系统功能调用** | 隐式 Intent | `Intent(MediaStore.ACTION_MUSIC_PLAYER)` |
+| **Activity 返回结果** | `startActivityForResult` | 从文件选择器选歌，回传结果 |
+| **Intent Filter** | 隐式 Intent 注册 | 在 `AndroidManifest.xml` 中声明 Activity 可处理的 Action |
+
+### 6.4 深色模式 / 主题切换
+
+使用传统 Android 主题方案实现：
+
+**方案：AppCompat.DayNight 主题**
+```xml
+<!-- res/values/themes.xml — 亮色主题 -->
+<style name="Theme.NetMusic" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <item name="colorPrimary">@color/primary</item>
+    <item name="colorPrimaryDark">@color/primary_dark</item>
+    <item name="colorAccent">@color/accent</item>
+</style>
+```
+
+```xml
+<!-- res/values-night/themes.xml — 暗色主题（自动生效） -->
+<style name="Theme.NetMusic" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <!-- 暗色配色的 colorPrimary 等 -->
+</style>
+```
+
+**手动切换实现：**
+1. 将用户的选择存入 `SharedPreferences`
+2. 在 `Application` 或 `BaseActivity` 中读取偏好，调用 `AppCompatDelegate.setDefaultNightMode()`
+3. 切换后通过 `recreate()` 刷新当前 Activity
+
+```kotlin
+// 切换深色模式
+when (AppCompatDelegate.getDefaultNightMode()) {
+    AppCompatDelegate.MODE_NIGHT_YES -> AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
+    else -> AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
+}
+```
+
+### 6.5 网络层
+
+- 使用 **Retrofit** + **OkHttp** 进行 HTTP 通信
+- 与后端 REST API 通过 JSON 交互
+- 统一在 `com.example.netmusicandroid.network` 包中管理
 
 ---
 
@@ -233,8 +318,9 @@ http://localhost:3000/api/v1
 ### 所用技术栈汇总
 | 端 | 技术 |
 |----|------|
-| Android | Kotlin, Jetpack Compose, Material 3 |
+| Android | Kotlin, 传统 Activity + XML 布局, AppCompat, Retrofit + OkHttp |
 | 服务端 | Node.js, TypeScript, Express/Fastify, Prisma/TypeORM |
 | 数据库 | MySQL / PostgreSQL |
 | 鉴权 | JWT |
+| Intent 编程 | 显式 Intent（页面跳转传参）、隐式 Intent（系统功能/分享/外部链接）|
 | 文档 | Markdown + 可视化工具 |

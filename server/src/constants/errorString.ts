@@ -15,11 +15,15 @@ export const PlaylistErrorMessage = {
     NOT_FOUND: '歌单不存在',
     NAME_EXISTS: '歌单名称已存在',
     CREATE_FAILED: '创建歌单失败',
+    FAVORITE_PROTECTED: '收藏歌单不可删除或改名',
 } as const;
 
 export const SongErrorMessage = {
     NOT_FOUND: '歌曲不存在或已下架',
     UNAUTHORIZED: '无权限播放此歌曲',
+    NOT_OWNER: '只能操作自己的歌曲',
+    NO_SINGER_PROFILE: '请先完善歌手资料',
+    UPLOAD_FAILED: '歌曲上传失败',
 } as const;
 
 export const SingerErrorMessage = {
