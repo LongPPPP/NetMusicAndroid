@@ -86,9 +86,11 @@ class MineFragment : Fragment() {
         if (user.role == "ARTIST") {
             binding.llPublishSong.visibility = View.VISIBLE
             binding.dividerPublishSong.visibility = View.VISIBLE
+            binding.llUploadSong.visibility = View.VISIBLE
         } else {
             binding.llPublishSong.visibility = View.GONE
             binding.dividerPublishSong.visibility = View.GONE
+            binding.llUploadSong.visibility = View.GONE
         }
     }
 

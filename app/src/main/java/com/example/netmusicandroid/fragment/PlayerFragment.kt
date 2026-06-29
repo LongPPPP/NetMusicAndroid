@@ -11,6 +11,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
+import android.media.MediaPlayer
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -19,7 +20,6 @@ import com.bumptech.glide.Glide
 import com.example.netmusicandroid.R
 import com.example.netmusicandroid.activity.CommentActivity
 import com.example.netmusicandroid.activity.SingerActivity
-import com.example.netmusicandroid.constant.ApiConst
 import com.example.netmusicandroid.data.repository.SongRepository
 import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.viewmodel.MainViewModel
@@ -68,18 +68,14 @@ class PlayerFragment : Fragment() {
             tvCurrentTime.text = formatTime(MusicPlayerManager.getCurrentPosition())
         }
 
-        val baseHost = ApiConst.BASE_URL.replace("/api/v1/", "")
-
         // 观察当前播放的歌曲
         mainViewModel.currentSong.observe(viewLifecycleOwner) { song ->
             if (song != null) {
-                val isSameSong = currentSongId == song.song_id
                 currentSongId = song.song_id
                 tvSongName.text = song.song_name
                 tvSinger.text = song.singer_name
-                
-                // 加载详情（无论是否是同一首歌，都要加载以补全 UI）
-                loadSongDetail(song.song_id, baseHost, imgCover, tvTotalTime, seekBar)
+                // 加载详情（URL 补全逻辑封装在 MusicPlayerManager.resolveUrl 中）
+                loadSongDetail(song.song_id, imgCover, tvTotalTime, seekBar)
             }
         }
 
@@ -130,30 +126,42 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private fun loadSongDetail(songId: Int, host: String, img: ImageView, tvTotal: TextView, sb: SeekBar) {
+    private fun loadSongDetail(songId: Int, img: ImageView, tvTotal: TextView, sb: SeekBar) {
         lifecycleScope.launch {
             val result = songRepository.fetchSongDetail(songId)
             result.onSuccess { detail ->
                 // 1. 同步封面
-                val coverUrl = if (detail.cover_url?.startsWith("http") == true) detail.cover_url 
-                               else "$host${detail.cover_url}".replace(" ", "%20")
+                val coverUrl = MusicPlayerManager.resolveUrl(detail.cover_url)
+                    ?: detail.cover_url
                 Glide.with(this@PlayerFragment).load(coverUrl).placeholder(R.drawable.disk).into(img)
 
-                // 2. 处理播放器逻辑
-                val playUrl = if (detail.play_url?.startsWith("http") == true) detail.play_url 
-                              else "$host${detail.play_url}".replace(" ", "%20")
-                
+                // 2. 处理播放器逻辑（相对路径自动补全为完整 HTTP 地址）
+                val playUrl = MusicPlayerManager.resolveUrl(detail.play_url)
+                if (playUrl == null) {
+                    Toast.makeText(requireContext(), "播放地址无效", Toast.LENGTH_SHORT).show()
+                    return@onSuccess
+                }
+
                 MusicPlayerManager.onPrepared = { duration ->
                     sb.max = duration
                     tvTotal.text = formatTime(duration)
                     handler.post(updateProgressTask)
                 }
+                // 播放错误回调：资源加载/解码失败时通知用户
+                MusicPlayerManager.onError = { what, extra ->
+                    val msg = when (what) {
+                        MediaPlayer.MEDIA_ERROR_UNKNOWN -> "音频无法播放，文件可能不存在或已损坏"
+                        MediaPlayer.MEDIA_ERROR_SERVER_DIED -> "音频服务异常，请重试"
+                        else -> "播放出错 (what=$what)"
+                    }
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                }
                 // 播放完成回调由 BottomPlayerViewModel 统一管理（记录历史 + 自动切歌）
 
                 // 执行 play，只有是新歌时才会触发重播
                 val isNewPlay = MusicPlayerManager.play(playUrl)
-                
-                // 3. 【核心修复】：如果不是新歌（说明是切回来的），手动强制同步 UI 状态
+
+                // 3. 如果不是新歌（切回来的），手动强制同步 UI 状态
                 if (!isNewPlay) {
                     val totalMs = MusicPlayerManager.getDuration()
                     if (totalMs > 0) {

@@ -59,7 +59,12 @@ class BottomPlayerViewModel : ViewModel() {
             }
         }
 
-        // 2. 播放完成回调：记录历史 + 自动切下一首
+        // 2. 播放错误回调 → Toast 通知用户
+        MusicPlayerManager.onError = { _, _ ->
+            _toastMsg.postValue("音频加载失败，请检查网络或文件是否存在")
+        }
+
+        // 3. 播放完成回调：记录历史 + 自动切下一首
         MusicPlayerManager.onCompletion = {
             viewModelScope.launch {
                 recordAndAdvance()
@@ -111,10 +116,10 @@ class BottomPlayerViewModel : ViewModel() {
 
     // ── 内部方法 ────────────────────────────────
 
-    /** 播放入队实体 */
+    /** 播放入队实体（自动补全相对路径为完整 HTTP URL） */
     private fun playEntity(entity: com.example.netmusicandroid.data.db.PlayQueueEntity) {
-        val url = entity.play_url
-        if (url.isNullOrEmpty()) {
+        val url = MusicPlayerManager.resolveUrl(entity.play_url)
+        if (url == null) {
             _toastMsg.postValue("无法播放：资源地址为空")
             return
         }
