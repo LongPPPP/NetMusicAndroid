@@ -12,24 +12,30 @@ import com.example.netmusicandroid.databinding.ActivityBaseBinding
 import com.example.netmusicandroid.fragment.HomeFragment
 import com.example.netmusicandroid.fragment.MineFragment
 import com.example.netmusicandroid.fragment.PlayerFragment
-import com.example.netmusicandroid.viewmodel.MainViewModel
 import kotlinx.coroutines.runBlocking
 
+/**
+ * 应用主底部导航容器Activity
+ * 承载首页、播放器、我的三个Fragment，全局共享MainViewModel，提供页面跳转、登录退出、前台状态判断工具方法
+ */
 class BaseActivity : AppCompatActivity() {
-
-    lateinit var mainViewModel: MainViewModel
+    // 全局共享ViewModel，全应用播放歌曲状态统一管理
+    // 页面ViewBinding
     private lateinit var binding: ActivityBaseBinding
 
     companion object {
+        // Intent标记：从外部页面跳转至播放页
         const val EXTRA_NAV_TO_PLAYER = "nav_to_player"
 
+        // 标记App是否处于前台可见状态
         private var isForeground = false
 
+        /** 判断应用当前是否在前台 */
         fun isAppForeground(): Boolean = isForeground
 
         /**
-         * 供独立 Activity（Search/PlaylistDetail 等）从底部迷你播放栏跳转到全屏播放页。
-         * 启动 BaseActivity 并携带标记，使其自动切换到 PlayerFragment 标签页。
+         * 静态工具方法：其他独立页面跳转回主界面并打开全屏播放器
+         * 清空顶部重复页面，复用已有BaseActivity
          */
         fun navigateToPlayerFrom(context: android.content.Context) {
             val intent = Intent(context, BaseActivity::class.java).apply {
@@ -40,10 +46,12 @@ class BaseActivity : AppCompatActivity() {
         }
 
         /**
-         * 全局静态方法：供 OkHttp 拦截器无Context场景调用（Token刷新失败强制登出）
+         * 全局静态登出方法
+         * 无Context场景（网络拦截器Token失效）调用，清除登录状态并跳转登录页
          */
         fun globalGoLogin() {
             val context = MinMusicApp.globalContext
+            // 同步执行登出数据库操作
             runBlocking {
                 AuthRepository.getInstance().logout()
             }
@@ -55,11 +63,13 @@ class BaseActivity : AppCompatActivity() {
         }
     }
 
+    // 页面切前台，标记应用前台状态
     override fun onResume() {
         super.onResume()
         isForeground = true
     }
 
+    // 页面切后台，标记应用后台状态
     override fun onPause() {
         super.onPause()
         isForeground = false
@@ -70,22 +80,21 @@ class BaseActivity : AppCompatActivity() {
         binding = ActivityBaseBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 初始化共享 ViewModel
-        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        // 初始化Activity作用域共享VM
 
-        // 默认显示首页
+        // 首次创建加载首页Fragment
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, HomeFragment())
                 .commit()
         }
 
-        // 从独立 Activity（搜索/歌单详情等）的迷你播放栏跳转 → 自动切到播放页
+        // 接收外部跳转标记，自动切换到播放页面
         if (intent.getBooleanExtra(EXTRA_NAV_TO_PLAYER, false)) {
             navigateToPlayer()
         }
 
-        // 底部导航切换
+        // 底部导航栏切换监听
         binding.bottomNav.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_home -> {
@@ -105,30 +114,18 @@ class BaseActivity : AppCompatActivity() {
         }
     }
 
-    // ── Fragment & 导航 ─────────────────────────
+    // ---------------- Fragment导航工具方法 ----------------
 
-    /** 提供给 Fragment 调用：跳转到播放页并选中底部按钮 */
+    /** 给Fragment调用，自动选中底部播放Tab并切换播放器Fragment */
     fun navigateToPlayer() {
         binding.bottomNav.selectedItemId = R.id.menu_play
     }
 
+    /** 替换容器内当前Fragment */
     fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
             .commit()
     }
 
-    /**
-     * 实例方法：当前页面直接跳转登录，关闭所有Activity
-     */
-    fun goLogin() {
-        runBlocking {
-            AuthRepository.getInstance().logout()
-        }
-        val intent = Intent(this, LoginActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        }
-        startActivity(intent)
-        finish()
-    }
 }

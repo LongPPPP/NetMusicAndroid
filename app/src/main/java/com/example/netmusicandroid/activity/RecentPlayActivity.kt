@@ -14,7 +14,6 @@ import com.example.netmusicandroid.utils.ImageLoadUtil
 import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.utils.ToastUtil
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
-import com.example.netmusicandroid.viewmodel.MainViewModel
 import com.example.netmusicandroid.viewmodel.RecentPlayViewModel
 import kotlinx.coroutines.launch
 
@@ -23,7 +22,6 @@ class RecentPlayActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRecentPlayBinding
     private lateinit var viewModel: RecentPlayViewModel
     private lateinit var bottomVm: BottomPlayerViewModel
-    private lateinit var mainVm: MainViewModel
     private lateinit var songAdapter: SongListAdapter
     private val songRepo = SongRepository()
 
@@ -47,7 +45,6 @@ class RecentPlayActivity : AppCompatActivity() {
     private fun initViewModel() {
         viewModel = ViewModelProvider(this)[RecentPlayViewModel::class.java]
         bottomVm = ViewModelProvider(this)[BottomPlayerViewModel::class.java]
-        mainVm = ViewModelProvider(this)[MainViewModel::class.java]
     }
 
     // ── 底部播放栏 ──────────────────────────────
@@ -90,7 +87,7 @@ class RecentPlayActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     val result = songRepo.fetchSongDetail(songItem.song_id)
                     result.onSuccess { detail ->
-                        mainVm.playSong(detail)
+                        bottomVm.playSong(detail)
                         MusicPlayerManager.play(
                             MusicPlayerManager.resolveUrl(detail.play_url) ?: return@onSuccess,
                             detail.song_id

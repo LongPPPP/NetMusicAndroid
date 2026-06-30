@@ -78,6 +78,7 @@
     <!-- ===================== 页面展示固定文本 ===================== -->
     <string name="text_collect">收藏</string>
     <string name="text_my_comment">我的评论</string>
+    <string name="text_fefault_signature">这个人很懒，什么也没留下</string>
     <string name="text_recent_play">最近播放</string>
     <string name="text_recent_play_title">最近播放</string>
     <string name="text_clear_all">清空</string>

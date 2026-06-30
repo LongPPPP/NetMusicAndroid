@@ -20,14 +20,14 @@ import com.example.netmusicandroid.adapter.SingerSongAdapter
 import com.example.netmusicandroid.constant.ApiConst
 import com.example.netmusicandroid.data.repository.SongRepository
 import com.example.netmusicandroid.utils.MusicPlayerManager
-import com.example.netmusicandroid.viewmodel.MainViewModel
 import com.example.netmusicandroid.viewmodel.SingerViewModel
+import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
 import kotlinx.coroutines.launch
 
 class SingerActivity : AppCompatActivity() {
 
     private lateinit var viewModel: SingerViewModel
-    private lateinit var mainViewModel: MainViewModel
+    private lateinit var bottomVm: BottomPlayerViewModel
     private val songRepository = SongRepository()
     private lateinit var adapter: SingerSongAdapter
 
@@ -43,7 +43,6 @@ class SingerActivity : AppCompatActivity() {
         }
 
         val singerName = intent.getStringExtra("SINGER_NAME") ?: ""
-        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         val tvName = findViewById<TextView>(R.id.tvSingerName)
         val tvSignature = findViewById<TextView>(R.id.tvSingerSignature)
@@ -62,6 +61,7 @@ class SingerActivity : AppCompatActivity() {
         rvSongs.adapter = adapter
 
         viewModel = ViewModelProvider(this)[SingerViewModel::class.java]
+        bottomVm = ViewModelProvider(this)[BottomPlayerViewModel::class.java]
         viewModel.singerDetail.observe(this) { detail ->
             if (detail != null) {
                 tvName.text = detail.singer_name
@@ -95,7 +95,7 @@ class SingerActivity : AppCompatActivity() {
                 // 【核心修复】：直接对比播放器单例中的全局 ID
                 if (com.example.netmusicandroid.utils.MusicPlayerManager.getCurrentSongId() == songId) {
                     com.example.netmusicandroid.utils.MusicPlayerManager.stop() 
-                    mainViewModel.playSong(null)
+                    bottomVm.playSong(null)
                 }
 
                 // 刷新页面
@@ -111,7 +111,7 @@ class SingerActivity : AppCompatActivity() {
 //        lifecycleScope.launch {
 //            val result = songRepository.fetchSongDetail(songId)
 //            result.onSuccess { songDetail ->
-//                mainViewModel.playSong(songDetail)
+//                bottomVm.playSong(songDetail)
 //                finish()
 //            }
 //        }
@@ -127,7 +127,7 @@ class SingerActivity : AppCompatActivity() {
                 }
 
                 // 更新本地 ViewModel 状态（用于当前页面的 UI 同步，如果有的话）
-                mainViewModel.playSong(songDetail)
+                bottomVm.playSong(songDetail)
 
                 // 删掉 finish()，点击后页面不用自动跳转
                 Toast.makeText(this@SingerActivity, "正在播放: ${songDetail.song_name}", Toast.LENGTH_SHORT).show()

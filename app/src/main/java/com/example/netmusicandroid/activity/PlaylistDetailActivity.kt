@@ -10,7 +10,6 @@ import com.example.netmusicandroid.adapter.SongListAdapter
 import com.example.netmusicandroid.databinding.ActivityPlaylistDetailBinding
 import com.example.netmusicandroid.data.repository.SongRepository
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
-import com.example.netmusicandroid.viewmodel.MainViewModel
 import com.example.netmusicandroid.viewmodel.PlaylistDetailViewModel
 import com.example.netmusicandroid.utils.ImageLoadUtil
 import com.example.netmusicandroid.utils.MusicPlayerManager
@@ -22,7 +21,6 @@ class PlaylistDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlaylistDetailBinding
     private lateinit var playlistDetailVm: PlaylistDetailViewModel
     private lateinit var bottomVm: BottomPlayerViewModel
-    private lateinit var mainVm: MainViewModel
     private val songRepo = SongRepository()
     // 歌单ID（从上个页面Intent接收）
     private var targetPlaylistId = -1
@@ -63,7 +61,6 @@ class PlaylistDetailActivity : AppCompatActivity() {
     private fun initViewModel() {
         playlistDetailVm = ViewModelProvider(this)[PlaylistDetailViewModel::class.java]
         bottomVm = ViewModelProvider(this)[BottomPlayerViewModel::class.java]
-        mainVm = ViewModelProvider(this)[MainViewModel::class.java]
     }
 
     // ── 底部播放栏 ──────────────────────────────
@@ -114,7 +111,7 @@ class PlaylistDetailActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     val result = songRepo.fetchSongDetail(songItem.song_id)
                     result.onSuccess { detail ->
-                        mainVm.playSong(detail)
+                        bottomVm.playSong(detail)
                         MusicPlayerManager.play(
                             MusicPlayerManager.resolveUrl(detail.play_url) ?: return@onSuccess,
                             detail.song_id

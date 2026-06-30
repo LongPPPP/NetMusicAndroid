@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".activity.FavoritesActivity">
+    tools:context=".activity.MySongsActivity">
 
     <!-- 滚动容器 + 底部播放器 -->
     <androidx.core.widget.NestedScrollView

@@ -77,4 +77,11 @@ interface SongApiService {
         @Query("page") page: Int = 1,
         @Query("page_size") pageSize: Int = 20
     ): ApiResponse<FavoriteData>
+
+    /** 我发表的歌曲 GET /users/me/songs */
+    @GET("users/me/songs")
+    suspend fun getMySongs(
+        @Query("page") page: Int = 1,
+        @Query("page_size") pageSize: Int = 20
+    ): ApiResponse<SongListData>
 }

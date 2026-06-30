@@ -80,6 +80,9 @@
             android:name=".activity.CurrentPlaylistActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.MySongsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.SearchActivity"
             android:exported="false" />
     </application>

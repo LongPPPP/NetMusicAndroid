@@ -17,7 +17,6 @@ import com.example.netmusicandroid.databinding.ActivitySearchBinding
 import com.example.netmusicandroid.utils.ImageLoadUtil
 import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
-import com.example.netmusicandroid.viewmodel.MainViewModel
 import com.example.netmusicandroid.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
 
@@ -25,7 +24,6 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
     private lateinit var searchVm: SearchViewModel
-    private lateinit var mainVm: MainViewModel
     private lateinit var bottomVm: BottomPlayerViewModel
     private val songRepo = SongRepository()
 
@@ -54,7 +52,6 @@ class SearchActivity : AppCompatActivity() {
 
     private fun initViewModel() {
         searchVm = ViewModelProvider(this)[SearchViewModel::class.java]
-        mainVm = ViewModelProvider(this)[MainViewModel::class.java]
         bottomVm = ViewModelProvider(this)[BottomPlayerViewModel::class.java]
     }
 
@@ -139,7 +136,7 @@ class SearchActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 val result = songRepo.fetchSongDetail(item.song_id)
                 result.onSuccess { detail ->
-                    mainVm.playSong(detail)
+                    bottomVm.playSong(detail)
                     MusicPlayerManager.play(
                         MusicPlayerManager.resolveUrl(detail.play_url) ?: "",
                         detail.song_id
