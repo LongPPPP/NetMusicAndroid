@@ -3,29 +3,54 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FF"
+    android:background="#FFFFFF"
     android:padding="24dp">
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="上架新歌曲"
-        android:textColor="#333333"
-        android:textSize="24sp"
-        android:textStyle="bold"
+    <!-- 统一标题栏 -->
+    <LinearLayout
+        android:id="@+id/ll_title_bar"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginStart="-24dp"
+        android:layout_marginEnd="-24dp"
+        android:paddingHorizontal="16dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_back"
+            android:contentDescription="@string/cd_back_btn" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/title_upload_song"
+            android:textColor="#222222"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="24dp"
+            android:layout_height="1dp" />
+    </LinearLayout>
 
     <EditText
         android:id="@+id/etSongName"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/ll_title_bar"
         android:background="@drawable/bg_edittext"
         android:hint="歌曲名称 (1-100字符)"
-        android:paddingHorizontal="16dp"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+        android:paddingHorizontal="16dp" />
 
     <!-- 选择封面按钮 -->
     <Button

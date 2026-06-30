@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -44,6 +45,8 @@ class UploadSongActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_upload_song)
+
+        findViewById<ImageView>(R.id.iv_back).setOnClickListener { finish() }
 
         val etName = findViewById<EditText>(R.id.etSongName)
         tvCoverPath = findViewById(R.id.tvCoverPath)

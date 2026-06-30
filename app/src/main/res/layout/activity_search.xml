@@ -8,28 +8,50 @@
     android:paddingHorizontal="20dp"
     tools:context=".activity.SearchActivity">
 
-    <!-- 左上角返回箭头 -->
-    <ImageView
-        android:id="@+id/iv_back"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src="@drawable/ic_back"
-        app:tint="#212121"
+    <!-- 统一标题栏 -->
+    <LinearLayout
+        android:id="@+id/ll_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_back"
+            android:contentDescription="@string/cd_back_btn" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/title_search"
+            android:textColor="#222222"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="24dp"
+            android:layout_height="1dp" />
+    </LinearLayout>
 
     <!-- 搜索输入框 -->
     <LinearLayout
         android:id="@+id/ll_search_bar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/bg_round_white"
         android:gravity="center_vertical"
         android:paddingHorizontal="20dp"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/iv_back">
+        app:layout_constraintTop_toBottomOf="@id/ll_title_bar">
 
         <!-- 替换为AppCompatEditText，使用app:hintTextColor -->
         <androidx.appcompat.widget.AppCompatEditText

@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 主应用生效主题（你原有AppCompat方案，兼容性最强，默认启用） -->
+    <!-- 主应用生效主题：黑白风格，全局去紫 -->
     <style name="Theme.NetMusicAndroid" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- 全局去掉标题栏，全屏布局 -->
         <item name="android:windowNoTitle">true</item>
+        <!-- 主题色：深灰替代默认紫色 -->
+        <item name="colorPrimary">#212121</item>
+        <item name="colorPrimaryDark">#000000</item>
+        <item name="colorAccent">#424242</item>
+        <!-- 全局背景白色 -->
+        <item name="android:windowBackground">#FFFFFF</item>
     </style>
 
     <!-- 队友提供的Material3基础主题（备用，如需M3组件可切换主主题parent到此） -->

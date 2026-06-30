@@ -1,5 +1,15 @@
 <resources>
     <string name="app_name">NetMusicAndroid</string>
+
+    <!-- ===================== 页面标题 ===================== -->
+    <string name="title_search">搜索</string>
+    <string name="title_singer_list">所有歌手</string>
+    <string name="title_singer_detail">歌手详情</string>
+    <string name="title_upload_song">上架新歌曲</string>
+    <string name="title_playlist_detail">歌单详情</string>
+    <string name="title_comment">评论</string>
+    <string name="title_login">登录</string>
+    <string name="title_register">注册</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -55,6 +65,7 @@
     <string name="cd_back_btn">返回上一页</string>
     <string name="cd_add_playlist_icon">新建歌单添加图标</string>
     <string name="cd_close_dialog">关闭弹窗</string>
+    <string name="desc_artist_avatar">歌手头像</string>
     <!-- 设置页新增无障碍描述 -->
     <string name="cd_icon_user">个人信息图标</string>
     <string name="cd_icon_logout">退出登录图标</string>

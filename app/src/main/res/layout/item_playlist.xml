@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="120dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginEnd="12dp">
+
+    <!-- 封面+播放按钮 区域 -->
+    <FrameLayout
+        android:layout_width="120dp"
+        android:layout_height="120dp">
+
+        <!-- 歌单封面图 -->
+        <ImageView
+            android:id="@+id/ivPlaylistCover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:background="@drawable/bg_round_white"
+            android:contentDescription="歌单封面"
+            tools:src="@color/color_F0F0F0" />
+
+        <!-- 右下角播放按钮 -->
+        <ImageButton
+            android:id="@+id/btnPlayPlaylist"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="8dp"
+            android:background="@drawable/bg_circle_white"
+            android:src="@android:drawable/ic_media_play"
+            android:padding="4dp"
+            android:contentDescription="播放歌单" />
+
+    </FrameLayout>
+
+    <!-- 歌单名称 -->
+    <TextView
+        android:id="@+id/tvPlaylistName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="#222222"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:maxLines="1"
+        android:ellipsize="end"
+        tools:text="清晨的第一缕阳光" />
+
+    <!-- 歌曲数量 -->
+    <TextView
+        android:id="@+id/tvSongCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:textColor="#999999"
+        android:textSize="12sp"
+        android:maxLines="1"
+        tools:text="32首" />
+
+</LinearLayout>

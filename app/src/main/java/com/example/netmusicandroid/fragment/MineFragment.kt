@@ -16,6 +16,7 @@ import com.example.netmusicandroid.activity.PlaylistActivity
 import com.example.netmusicandroid.activity.RecentPlayActivity
 import com.example.netmusicandroid.activity.SearchActivity
 import com.example.netmusicandroid.activity.SettingActivity
+import com.example.netmusicandroid.activity.SingerListActivity
 import com.example.netmusicandroid.databinding.FragmentMineBinding
 import com.example.netmusicandroid.data.db.UserEntity
 import com.example.netmusicandroid.viewmodel.MineViewModel
@@ -115,7 +116,9 @@ class MineFragment : Fragment() {
         binding.llFeedback.setOnClickListener {
             startActivity(Intent(requireContext(), SearchActivity::class.java))
         }
-        binding.llPublishSong.setOnClickListener {}
+        binding.llPublishSong.setOnClickListener {
+            startActivity(Intent(requireContext(), SingerListActivity::class.java))
+        }
     }
 
     override fun onDestroyView() {

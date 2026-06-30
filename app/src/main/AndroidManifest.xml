@@ -68,6 +68,9 @@
             android:name=".activity.RecentPlayActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.SingerListActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.SearchActivity"
             android:exported="false" />
     </application>

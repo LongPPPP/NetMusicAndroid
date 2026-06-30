@@ -3,7 +3,7 @@ package com.example.netmusicandroid.activity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -47,7 +47,7 @@ class CommentActivity : AppCompatActivity() {
         val rvComments = findViewById<RecyclerView>(R.id.rvComments)
         val etComment = findViewById<EditText>(R.id.etComment)
         val btnSend = findViewById<Button>(R.id.btnSend)
-        val btnBack = findViewById<ImageButton>(R.id.btnCommentBack)
+        val btnBack = findViewById<ImageView>(R.id.iv_back)
 
         // 3. 设置列表适配器
         adapter = CommentAdapter(emptyList()) { comment ->

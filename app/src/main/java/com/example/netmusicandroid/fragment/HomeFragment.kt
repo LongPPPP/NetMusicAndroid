@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.netmusicandroid.R
 import com.example.netmusicandroid.activity.BaseActivity
 import com.example.netmusicandroid.activity.SearchActivity
+import com.example.netmusicandroid.activity.SingerListActivity
 import com.example.netmusicandroid.adapter.HomeSongAdapter
 import com.example.netmusicandroid.data.repository.SongRepository
 import com.example.netmusicandroid.viewmodel.MainViewModel
@@ -50,6 +51,11 @@ class HomeFragment : Fragment() {
         val toSearch = Intent(requireContext(), SearchActivity::class.java)
         view.findViewById<View>(R.id.ll_search_bar).setOnClickListener { startActivity(toSearch) }
         view.findViewById<View>(R.id.btnSearch).setOnClickListener { startActivity(toSearch) }
+
+        // 推荐歌手「更多」→ 跳转歌手列表页
+        view.findViewById<View>(R.id.tvMoreArtist).setOnClickListener {
+            startActivity(Intent(requireContext(), SingerListActivity::class.java))
+        }
 
         loadSongs()
     }

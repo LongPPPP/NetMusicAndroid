@@ -5,31 +5,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- 1. 内容容器 -->
     <FrameLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/include_bottom_player"
+        app:layout_constraintBottom_toTopOf="@+id/barrier_bottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 全局底部播放栏（PlayerFragment 标签页激活时通过代码隐藏） -->
+    <!-- 2. 迷你播放栏（显示时被 barrier 固定高度，隐藏时高度为 0） -->
     <include
         android:id="@+id/include_bottom_player"
         layout="@layout/layout_bottom_player"
         android:layout_width="0dp"
-        android:layout_height="96dp"
+        android:layout_height="72dp"
         android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNav" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Barrier：在播放栏和导航栏之间，动态取两者顶部的更高者作为 fragmentContainer 底部 -->
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="include_bottom_player,bottomNav" />
+
+    <!-- 3. 导航栏 -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
+        android:background="#FFFFFF"
         app:menu="@menu/bottom_menu"
+        app:itemIconTint="#212121"
+        app:itemTextColor="#212121"
+        app:itemRippleColor="#E0E0E0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

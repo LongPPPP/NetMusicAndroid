@@ -49,7 +49,7 @@ class SingerActivity : AppCompatActivity() {
         val ivAvatar = findViewById<ImageView>(R.id.ivSingerAvatar)
         val rvSongs = findViewById<RecyclerView>(R.id.rvSingerSongs)
         
-        findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+        findViewById<ImageView>(R.id.iv_back).setOnClickListener { finish() }
 
         // 适配器逻辑
         adapter = SingerSongAdapter(
