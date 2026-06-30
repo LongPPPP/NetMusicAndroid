@@ -22,7 +22,7 @@ import com.example.netmusicandroid.adapter.HistoryAccountAdapter
 import com.example.netmusicandroid.viewmodel.LoginViewModel
 
 class LoginActivity : AppCompatActivity() {
-
+    //先声明，后面一定会初始化,因为这些对象只有 onCreate() 之后才能找到
     private lateinit var viewModel: LoginViewModel
     private lateinit var etEmail: EditText
     private lateinit var etPassword: EditText
@@ -30,7 +30,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
+        //不同 Activity，就有不同的 ViewModelStore,无则创建,有就获取
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
 
         etEmail = findViewById(R.id.etEmail)
@@ -39,7 +39,7 @@ class LoginActivity : AppCompatActivity() {
         val tvRegister = findViewById<TextView>(R.id.tvRegister)
         val ivShowHistory = findViewById<ImageView>(R.id.ivShowHistory)
 
-        // 1. 自动填充上次登录
+        // 自动填充上次登录
         viewModel.getLastUser { user ->
             if (user != null) {
                 etEmail.setText(user.email)
@@ -47,14 +47,14 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        // 2. 点击箭头显示历史记录弹窗
+        // 点击箭头显示历史记录弹窗
         ivShowHistory.setOnClickListener {
             showAccountHistoryPopup(ivShowHistory)
         }
 
         btnLogin.setOnClickListener {
-            val email = etEmail.text.toString().trim()
-            val password = etPassword.text.toString()
+            val email = etEmail.text.toString().trim()//把 Editable 变成 String,trim去掉字符串首尾的空格
+            val password = etPassword.text.toString()//密码空格不删
 
             viewModel.login(email, password) { success, message ->
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()

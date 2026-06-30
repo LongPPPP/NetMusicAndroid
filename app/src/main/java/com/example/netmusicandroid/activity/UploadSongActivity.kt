@@ -26,7 +26,6 @@ class UploadSongActivity : AppCompatActivity() {
     private lateinit var tvSongPath: TextView
     private lateinit var progressBar: ProgressBar
 
-    // 文件选择器
     private val pickCoverLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
             coverUri = it
@@ -55,7 +54,7 @@ class UploadSongActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.btnPickSong).setOnClickListener {
-            pickSongLauncher.launch("audio/mpeg")
+            pickSongLauncher.launch("*/*") // 扩大范围，防止有些音频被过滤
         }
 
         findViewById<Button>(R.id.btnSubmit).setOnClickListener {
@@ -68,7 +67,6 @@ class UploadSongActivity : AppCompatActivity() {
                 Toast.makeText(this, "请选择歌曲文件", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             upload(name)
         }
     }
@@ -78,10 +76,10 @@ class UploadSongActivity : AppCompatActivity() {
             progressBar.visibility = View.VISIBLE
             
             try {
-                // 转换文件
-                val songFile = repository.uriToFile(this@UploadSongActivity, songUri!!, "temp_song.mp3")
+                // 【核心优化】：使用标准文件名，规避后端字符编码崩溃
+                val songFile = repository.uriToFile(this@UploadSongActivity, songUri!!, "temp_music_file.mp3")
                 val coverFile = coverUri?.let {
-                    repository.uriToFile(this@UploadSongActivity, it, "temp_cover.jpg")
+                    repository.uriToFile(this@UploadSongActivity, it, "temp_cover_file.jpg")
                 }
 
                 val result = repository.publishSong(name, coverFile, songFile)
@@ -90,10 +88,13 @@ class UploadSongActivity : AppCompatActivity() {
                     Toast.makeText(this@UploadSongActivity, "上架成功！", Toast.LENGTH_SHORT).show()
                     finish()
                 }.onFailure {
-                    Toast.makeText(this@UploadSongActivity, "上架失败: ${it.message}", Toast.LENGTH_SHORT).show()
+                    // 打印详细错误
+                    println("UploadError: ${it.message}")
+                    Toast.makeText(this@UploadSongActivity, "失败: ${it.message}", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@UploadSongActivity, "文件处理错误", Toast.LENGTH_SHORT).show()
+                println("UploadFatalError: ${e.stackTraceToString()}")
+                Toast.makeText(this@UploadSongActivity, "文件处理致命错误", Toast.LENGTH_SHORT).show()
             } finally {
                 progressBar.visibility = View.GONE
             }
