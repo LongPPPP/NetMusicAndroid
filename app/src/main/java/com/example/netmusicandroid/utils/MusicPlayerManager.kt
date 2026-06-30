@@ -3,16 +3,21 @@ package com.example.netmusicandroid.utils
 import android.media.MediaPlayer
 import android.util.Log
 import com.example.netmusicandroid.constant.ApiConst
+import com.example.netmusicandroid.data.model.SongDetail
 
 /**
  * 音乐播放管理单例
+ * 合并逻辑：支持准备状态管理、ID追踪、跨页面歌曲信息同步、路径自动补全
  */
 object MusicPlayerManager {
     private var mediaPlayer: MediaPlayer? = null
     private var currentUrl: String? = null
-    // 手动维护准备状态标记，彻底避免PREPARING阶段调用API触发-38错误
     private var isPreparedFlag = false
-    private var currentSongId: Int = -1 // 【新增】：记录当前歌曲 ID
+    private var currentSongId: Int = -1
+
+    // 全局状态：当前播放详情与首页首选歌曲
+    var currentSong: SongDetail? = null
+    var firstSongInHome: SongDetail? = null
 
     var onPrepared: ((Int) -> Unit)? = null
     var onCompletion: (() -> Unit)? = null
@@ -20,47 +25,50 @@ object MusicPlayerManager {
 
     /**
      * 将相对路径补全为完整 HTTP 地址。
-     * 后端返回形如 /static/songs/xxx.mp3 的相对路径时，自动拼接 BASE_URL 的协议+主机部分。
      */
     fun resolveUrl(path: String?): String? {
         if (path.isNullOrEmpty()) return null
-        if (path.startsWith("http://") || path.startsWith("https://")) return path
-        val base = ApiConst.BASE_URL.removeSuffix("/api/v1/").removeSuffix("/")
-        return "$base${path}".replace(" ", "%20")
+        if (path.startsWith("http")) return path
+
+        val base = ApiConst.BASE_URL.replace("/api/v1/", "").trimEnd('/')
+        val cleanPath = if (path.startsWith("/")) path else "/$path"
+
+        // 核心修复：使用系统的 Uri.encode 进行转义
+        val encodedPath = android.net.Uri.encode(cleanPath, "/")
+
+        return "$base$encodedPath"
     }
 
     /**
-     * 播放歌曲。
-     * @return true 开始播新歌，false 同一 URL 已在播放中。
+     * 播放歌曲
      */
     fun play(url: String, songId: Int = -1): Boolean {
-        // 同一URL且播放器存在时，处理续播逻辑
+        Log.d("MusicPlayerDebug", "请求播放 URL: $url (ID: $songId)")
+
         if (url == currentUrl && mediaPlayer != null) {
+            Log.d("MusicPlayerDebug", "检测到相同 URL，尝试续播...")
             val mp = mediaPlayer!!
             return try {
-                // 仅在已完成准备的状态下操作，避免PREPARING阶段非法调用
                 if (isPreparedFlag && !mp.isPlaying) {
                     mp.start()
                     onPrepared?.invoke(mp.duration)
                 }
                 false
             } catch (e: Exception) {
-                // 状态异常 → 走完整重建流程
                 releaseQuietly()
                 false
             }
         }
 
-        // 安全释放旧播放器
         releaseQuietly()
         currentUrl = url
-        currentSongId = songId // 【记录 ID】
+        currentSongId = songId
 
         return try {
             mediaPlayer = MediaPlayer().apply {
                 setDataSource(url)
                 setOnPreparedListener { mp ->
-                    // 准备完成后再标记状态、执行播放与回调
+                    Log.d("MusicPlayerDebug", "播放器就绪 (Prepared)")
                     isPreparedFlag = true
                     mp.start()
                     onPrepared?.invoke(mp.duration)
@@ -69,7 +77,7 @@ object MusicPlayerManager {
                     onCompletion?.invoke()
                 }
                 setOnErrorListener { _, what, extra ->
-                    Log.e("MusicPlayer", "Error what=$what extra=$extra url=$url")
+                    Log.e("MusicPlayerDebug", "MediaPlayer 报错: what=$what, extra=$extra, url=$url")
                     isPreparedFlag = false
                     currentUrl = null
                     onError?.invoke(what, extra)
@@ -80,7 +88,7 @@ object MusicPlayerManager {
             }
             true
         } catch (e: Exception) {
-            Log.e("MusicPlayer", "play exception: ${e.message}")
+            Log.e("MusicPlayerDebug", "播放启动失败: ${e.message}")
             currentUrl = null
             releaseQuietly()
             false
@@ -89,83 +97,43 @@ object MusicPlayerManager {
 
     fun toggle(): Boolean {
         mediaPlayer?.let {
-            return try {
-                if (!isPreparedFlag) return@let false
-                if (it.isPlaying) {
-                    it.pause()
-                    false
-                } else {
-                    it.start()
-                    true
-                }
-            } catch (e: Exception) {
-                false
+            if (!isPreparedFlag) return@let false
+            if (it.isPlaying) {
+                it.pause()
+                return false
+            } else {
+                it.start()
+                return true
             }
         }
         return false
     }
 
-    fun isPlaying(): Boolean {
-        return try {
-            isPreparedFlag && mediaPlayer?.isPlaying == true
-        } catch (e: Exception) {
-            false
-        }
-    }
+    fun isPlaying() = isPreparedFlag && mediaPlayer?.isPlaying == true
 
-    /** 安全释放（容错：播放器处于 Error/Idle 状态时 stop/release 会抛异常） */
     fun stop() {
         releaseQuietly()
         currentUrl = null
-        currentSongId = -1 // 【重置 ID】
+        currentSongId = -1
+        currentSong = null
     }
 
-    fun getCurrentSongId() = currentSongId // 【暴露获取方法】
+    fun getCurrentSongId() = currentSongId
 
     fun seekTo(msec: Int) {
-        try {
-            if (isPreparedFlag) {
-                mediaPlayer?.seekTo(msec)
-            }
-        } catch (e: Exception) {
-            // 未就绪时忽略
-        }
+        if (isPreparedFlag) mediaPlayer?.seekTo(msec)
     }
 
-    /** 获取当前播放位置。未就绪时返回 0，不抛异常。 */
-    fun getCurrentPosition(): Int {
-        return try {
-            mediaPlayer?.takeIf { isPreparedFlag }?.currentPosition ?: 0
-        } catch (e: Exception) {
-            0
-        }
-    }
+    fun getCurrentPosition() = if (isPreparedFlag) mediaPlayer?.currentPosition ?: 0 else 0
+    fun getDuration() = if (isPreparedFlag) mediaPlayer?.duration ?: 0 else 0
 
-    /** 获取总时长。未就绪时返回 0，不抛异常。 */
-    fun getDuration(): Int {
-        return try {
-            mediaPlayer?.takeIf { isPreparedFlag }?.duration ?: 0
-        } catch (e: Exception) {
-            0
-        }
-    }
-
-    // ── 内部 ────────────────────────────────────
-
-    /** 安全释放，容错各异常状态 */
     private fun releaseQuietly() {
-        val mp = mediaPlayer ?: return
-        // 释放前先重置状态标记，避免后续调用触发异常
         isPreparedFlag = false
-        try {
-            if (mp.isPlaying) mp.stop()
-        } catch (_: Exception) {}
-        try {
-            mp.reset()
-        } catch (_: Exception) {}
-        try {
-            mp.release()
-        } catch (_: Exception) {}
+        mediaPlayer?.let {
+            try { if (it.isPlaying) it.stop() } catch (_: Exception) {}
+            try { it.reset() } catch (_: Exception) {}
+            try { it.release() } catch (_: Exception) {}
+        }
         mediaPlayer = null
     }
 }
