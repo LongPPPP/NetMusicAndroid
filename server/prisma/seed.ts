@@ -55,11 +55,11 @@ async function main() {
 
     const singersData = [
         {name: 'Edvard Grieg',    description: '挪威浪漫主义作曲家'},
-        {name: 'Chris Garneau',   description: '美国独立民谣唱作人'},
-        {name: 'SC',              description: '独立电子音乐人'},
-        {name: '独立音乐人',       description: '独立摇滚 / 另类流行'},
-        {name: '告五人',           description: '台湾独立摇滚乐团'},
-        {name: 'G.E.M. 邓紫棋',    avatarUrl: '/static/avatars/邓紫棋.jpg',   description: '华语流行 / R&B 唱作人'},
+        {name: 'Chris James',        description: '美国独立流行唱作人'},
+        {name: 'Troye Sivan',       description: '澳大利亚流行唱作人 / 演员'},
+        {name: 'Ridiculon',         description: '游戏原声 / 独立电子'},
+        {name: 'ヰ世界情緒×理芽',    description: '日本虚拟歌手组合'},
+        {name: 'G.E.M. 邓紫棋',     avatarUrl: '/static/avatars/邓紫棋.jpg',   description: '华语流行 / R&B 唱作人'},
         {name: '林俊杰',           description: '华语流行 / R&B 唱作天王'},
         {name: '宋冬野',           description: '中国民谣唱作人'},
         {name: '周杰伦',           avatarUrl: '/static/avatars/周杰伦.jpg',   description: '华语流行 / 中国风代表人物'},
@@ -81,11 +81,11 @@ async function main() {
     console.log('\n━━━ 3. 创建歌曲 ━━━');
     const songsData = [
         {name: "Anitra's Dance",     singerId: S('Edvard Grieg').id,   singerName: 'Edvard Grieg',   playUrl: "/static/songs/Anitra's Dance.mp3",                                                  duration: 199},
-        {name: 'Not Angry',          singerId: S('Chris Garneau').id,  singerName: 'Chris Garneau',  playUrl: '/static/songs/Not Angry.mp3',          coverUrl: '/static/covers/Not Angry.jpg',          duration: 199},
-        {name: 'SC',                 singerId: S('SC').id,             singerName: 'SC',             playUrl: '/static/songs/SC.mp3',                 coverUrl: '/static/covers/SC.jpg',                 duration: 201},
-        {name: 'Them Kitty Bones',   singerId: S('独立音乐人').id,      singerName: '独立音乐人',      playUrl: '/static/songs/Them Kitty Bones.mp3',   coverUrl: '/static/covers/Them Kitty Bones.jpg',   duration: 227},
-        {name: '唯一',                singerId: S('告五人').id,          singerName: '告五人',          playUrl: '/static/songs/唯一.mp3',                coverUrl: '/static/covers/唯一.jpg',                duration: 253},
-        {name: '泡沫',                singerId: S('G.E.M. 邓紫棋').id,   singerName: 'G.E.M. 邓紫棋',   playUrl: '/static/songs/泡沫.mp3',                coverUrl: '/static/covers/泡沫.jpg',                duration: 227},
+        {name: 'Not Angry',                singerId: S('Chris James').id,         singerName: 'Chris James',         playUrl: '/static/songs/Not Angry.mp3',                coverUrl: '/static/covers/Not Angry.jpg',                duration: 199},
+        {name: 'Strawberries & Cigarettes', singerId: S('Troye Sivan').id,        singerName: 'Troye Sivan',         playUrl: '/static/songs/SC.mp3',                       coverUrl: '/static/covers/SC.jpg',                       duration: 201},
+        {name: 'Them Kitty Bones',         singerId: S('Ridiculon').id,           singerName: 'Ridiculon',           playUrl: '/static/songs/Them Kitty Bones.mp3',         coverUrl: '/static/covers/Them Kitty Bones.jpg',         duration: 227},
+        {name: '唯一',                      singerId: S('G.E.M. 邓紫棋').id,        singerName: 'G.E.M. 邓紫棋',        playUrl: '/static/songs/唯一.mp3',                      coverUrl: '/static/covers/唯一.jpg',                      duration: 253},
+        {name: '泡沫',                      singerId: S('ヰ世界情緒×理芽').id,       singerName: 'ヰ世界情緒×理芽',       playUrl: '/static/songs/泡沫.mp3',                      coverUrl: '/static/covers/泡沫.jpg',                      duration: 227},
         {name: '那些你很冒险的梦',      singerId: S('林俊杰').id,         singerName: '林俊杰',         playUrl: '/static/songs/那些你很冒险的梦.mp3',      coverUrl: '/static/covers/那些你很冒险的梦.jpg',      duration: 244},
         {name: '郭源潮',              singerId: S('宋冬野').id,         singerName: '宋冬野',         playUrl: '/static/songs/郭源潮.mp3',              coverUrl: '/static/covers/郭源潮.jpg',              duration: 445},
         {name: '雨下一整晚',           singerId: S('周杰伦').id,         singerName: '周杰伦',         playUrl: '/static/songs/雨下一整晚.mp3',           coverUrl: '/static/covers/雨下一整晚.jpg',           duration: 256},
@@ -167,11 +167,11 @@ async function main() {
 
             // --- bob: 摇滚精选 ---
             {playlistId: playlistOf('摇滚精选').id, songId: G('Not Angry').id},
-            {playlistId: playlistOf('摇滚精选').id, songId: G('SC').id},
+            {playlistId: playlistOf('摇滚精选').id, songId: G('Strawberries & Cigarettes').id},
             {playlistId: playlistOf('摇滚精选').id, songId: G('Them Kitty Bones').id},
 
             // --- bob: 深夜聆听 ---
-            {playlistId: playlistOf('深夜聆听').id, songId: G('SC').id},
+            {playlistId: playlistOf('深夜聆听').id, songId: G('Strawberries & Cigarettes').id},
             {playlistId: playlistOf('深夜聆听').id, songId: G('郭源潮').id},
             {playlistId: playlistOf('深夜聆听').id, songId: G('雨下一整晚').id},
             {playlistId: playlistOf('深夜聆听').id, songId: G("Anitra's Dance").id},
@@ -196,7 +196,7 @@ async function main() {
 
             // --- 收藏: bob (7 首，展示账号) ---
             {playlistId: favOf('bob').id, songId: G('Not Angry').id},
-            {playlistId: favOf('bob').id, songId: G('SC').id},
+            {playlistId: favOf('bob').id, songId: G('Strawberries & Cigarettes').id},
             {playlistId: favOf('bob').id, songId: G('Them Kitty Bones').id},
             {playlistId: favOf('bob').id, songId: G('郭源潮').id},
             {playlistId: favOf('bob').id, songId: G('唯一').id},
@@ -226,25 +226,25 @@ async function main() {
 
         // --- Not Angry ---
         {songId: G('Not Angry').id, userId: U('alice').id, username: U('alice').username, content: '好喜欢这首歌的旋律，轻快又治愈 🎶'},
-        {songId: G('Not Angry').id, userId: U('bob').id, username: U('bob').username, content: 'Chris Garneau 的嗓音太独特了，慵懒又迷人。'},
+        {songId: G('Not Angry').id, userId: U('bob').id, username: U('bob').username, content: 'Chris James 的嗓音太独特了，慵懒又迷人。'},
         {songId: G('Not Angry').id, userId: U('charlie').id, username: U('charlie').username, content: '适合下雨天一个人听。'},
 
         // --- SC ---
-        {songId: G('SC').id, userId: U('bob').id, username: U('bob').username, content: '电子音色搭配得很有层次感，值得循环！'},
-        {songId: G('SC').id, userId: U('alice').id, username: U('alice').username, content: '前奏一出来就爱上了 💿'},
+        {songId: G('Strawberries & Cigarettes').id, userId: U('bob').id, username: U('bob').username, content: '电子音色搭配得很有层次感，值得循环！'},
+        {songId: G('Strawberries & Cigarettes').id, userId: U('alice').id, username: U('alice').username, content: '前奏一出来就爱上了 💿'},
 
         // --- Them Kitty Bones ---
         {songId: G('Them Kitty Bones').id, userId: U('bob').id, username: U('bob').username, content: '这首歌的 bass line 写得太棒了！'},
         {songId: G('Them Kitty Bones').id, userId: U('charlie').id, username: U('charlie').username, content: '有态度，很喜欢这种独立音乐的风格。'},
 
         // --- 唯一 ---
-        {songId: G('唯一').id, userId: U('alice').id, username: U('alice').username, content: '告五人的歌每次听都有不同的感受，这就是音乐的魅力吧。'},
+        {songId: G('唯一').id, userId: U('alice').id, username: U('alice').username, content: '邓紫棋的嗓音太有辨识度了，每次听都有不同的感受，这就是音乐的魅力吧。'},
         {songId: G('唯一').id, userId: U('alice').id, username: U('alice').username, content: '歌词写得太戳心了，"我是你的唯一" 这句话好浪漫 💕'},
         {songId: G('唯一').id, userId: U('bob').id, username: U('bob').username, content: '编曲很用心，吉他 riff 抓耳。'},
 
         // --- 泡沫 ---
-        {songId: G('泡沫').id, userId: U('alice').id, username: U('alice').username, content: '邓紫棋的高音太震撼了！这首歌什么时候听都不过时。'},
-        {songId: G('泡沫').id, userId: U('admin').id, username: U('admin').username, content: '华语乐坛的现象级歌曲，G.E.M. 的创作能力毋庸置疑。'},
+        {songId: G('泡沫').id, userId: U('alice').id, username: U('alice').username, content: 'ヰ世界情緒×理芽的演绎太有感觉了，这首歌什么时候听都不过时。'},
+        {songId: G('泡沫').id, userId: U('admin').id, username: U('admin').username, content: '虚拟歌手的演绎别有一番风味，编曲也非常出色。'},
         {songId: G('泡沫').id, userId: U('charlie').id, username: U('charlie').username, content: '美丽的泡沫，虽然一刹花火～'},
 
         // --- 那些你很冒险的梦 ---

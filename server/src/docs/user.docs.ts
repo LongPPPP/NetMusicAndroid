@@ -1,5 +1,6 @@
 import {z} from 'zod';
 import {registry} from '../config/openapi';
+import {getSongsSchema} from '../validators/song.validator';
 import {updateUserSchema} from '../validators/user.validator';
 
 // 路径参数 id 的 schema
@@ -385,6 +386,65 @@ registry.registerPath({
             },
         },
         401: {description: '未登录'},
+    },
+});
+
+// ===== GET /users/me/songs =====
+registry.registerPath({
+    method: 'get',
+    path: '/users/me/songs',
+    summary: '获取我发布的歌曲',
+    description: '需 ARTIST 角色登录，分页返回当前歌手发布的所有歌曲',
+    security: [{bearerAuth: []}],
+    tags: ['用户', '歌曲'],
+    request: {query: getSongsSchema},
+    responses: {
+        200: {
+            description: '返回当前歌手发布的歌曲列表（分页）',
+            content: {
+                'application/json': {
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            code: {type: 'integer', example: 200},
+                            data: {
+                                type: 'object',
+                                properties: {
+                                    list: {
+                                        type: 'array',
+                                        items: {
+                                            type: 'object',
+                                            properties: {
+                                                song_id: {type: 'integer'},
+                                                song_name: {type: 'string'},
+                                                singer_id: {type: 'integer', nullable: true},
+                                                singer_name: {type: 'string'},
+                                                cover_url: {type: 'string', nullable: true},
+                                                duration: {type: 'integer', nullable: true},
+                                            },
+                                        },
+                                    },
+                                    total: {type: 'integer'},
+                                    page: {type: 'integer'},
+                                    page_size: {type: 'integer'},
+                                },
+                                example: {
+                                    list: [
+                                        {song_id: 1, song_name: '稻香', singer_id: 1, singer_name: '周杰伦', cover_url: '/static/covers/daoxiang.jpg', duration: 244},
+                                    ],
+                                    total: 1,
+                                    page: 1,
+                                    page_size: 20,
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+        400: {description: '未完善歌手资料'},
+        401: {description: '未登录'},
+        403: {description: '非 ARTIST 角色'},
     },
 });
 
