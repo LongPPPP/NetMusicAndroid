@@ -85,7 +85,7 @@ class PlayerFragment : Fragment() {
                 if (isNewSong) {
                     loadSongDetail(song.song_id, imgCover, tvTotalTime, seekBar)
                 } else {
-                    // 【核心修复】：同一首歌切回来，也要把封面加载出来
+                    // 修复：同一首歌切回来，也要把封面加载出来
                     val coverUrl = MusicPlayerManager.resolveUrl(song.cover_url) ?: song.cover_url
                     Glide.with(this@PlayerFragment)
                         .load(coverUrl)
@@ -114,7 +114,7 @@ class PlayerFragment : Fragment() {
             }
         }
 
-        // 【核心修复】：观察队友的全局播放状态，确保图标绝对一致
+        // 修复：观察home播放的全局播放状态，确保图标绝对一致
         bottomVm.isPlaying.observe(viewLifecycleOwner) { isPlaying ->
             if (isPlaying) {
                 btnPlay.setImageResource(R.drawable.pause_button)
