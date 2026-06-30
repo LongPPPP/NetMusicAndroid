@@ -19,6 +19,7 @@ import com.example.netmusicandroid.R
 import com.example.netmusicandroid.adapter.SingerSongAdapter
 import com.example.netmusicandroid.constant.ApiConst
 import com.example.netmusicandroid.data.repository.SongRepository
+import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.viewmodel.MainViewModel
 import com.example.netmusicandroid.viewmodel.SingerViewModel
 import kotlinx.coroutines.launch
@@ -106,12 +107,30 @@ class SingerActivity : AppCompatActivity() {
         }
     }
 
+//    private fun playSingerSong(songId: Int) {
+//        lifecycleScope.launch {
+//            val result = songRepository.fetchSongDetail(songId)
+//            result.onSuccess { songDetail ->
+//                mainViewModel.playSong(songDetail)
+//                finish()
+//            }
+//        }
+//    }
     private fun playSingerSong(songId: Int) {
         lifecycleScope.launch {
             val result = songRepository.fetchSongDetail(songId)
             result.onSuccess { songDetail ->
+                // 修复：直接调用播放器单例，解决跨 Activity 无法播放的问题
+                val playUrl = MusicPlayerManager.resolveUrl(songDetail.play_url)
+                if (playUrl != null) {
+                    MusicPlayerManager.play(playUrl, songDetail.song_id)
+                }
+
+                // 更新本地 ViewModel 状态（用于当前页面的 UI 同步，如果有的话）
                 mainViewModel.playSong(songDetail)
-                finish()
+
+                // 删掉 finish()，点击后页面不用自动跳转
+                Toast.makeText(this@SingerActivity, "正在播放: ${songDetail.song_name}", Toast.LENGTH_SHORT).show()
             }
         }
     }
