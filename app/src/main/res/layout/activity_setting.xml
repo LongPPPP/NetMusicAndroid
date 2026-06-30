@@ -16,16 +16,16 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- 顶部标题栏 -->
+            <!-- 顶部标题栏：高度80dp、顶部30dp边距 -->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                >
+                android:layout_height="80dp"
+                android:layout_marginTop="30dp">
 
                 <ImageView
                     android:id="@+id/iv_back"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_back"/>
@@ -36,9 +36,8 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:text="@string/text_setting_title"
-                    android:textColor="#000000"
-                    android:textSize="24sp"
-                    android:textStyle="bold"/>
+                    android:textColor="#111111"
+                    android:textSize="21sp"/>
             </RelativeLayout>
 
             <!-- 分组标题：账号 -->
@@ -50,7 +49,7 @@
                 android:textColor="#888888"
                 android:textSize="14sp"/>
 
-            <!-- 修改个人信息 条目（LinearLayout 无重叠警告） -->
+            <!-- 修改个人信息 条目 -->
             <LinearLayout
                 android:id="@+id/rlItemInfo"
                 android:layout_width="match_parent"
@@ -87,7 +86,7 @@
                 android:layout_height="1px"
                 android:background="#EEEEEE"/>
 
-            <!-- 退出登录 条目（LinearLayout 无重叠警告） -->
+            <!-- 退出登录 条目 -->
             <LinearLayout
                 android:id="@+id/rlItemLogout"
                 android:layout_width="match_parent"
@@ -134,7 +133,7 @@
                 android:textColor="#888888"
                 android:textSize="14sp"/>
 
-            <!-- 修改主题 条目（LinearLayout 无重叠警告） -->
+            <!-- 修改主题 条目 -->
             <LinearLayout
                 android:id="@+id/rlItemTheme"
                 android:layout_width="match_parent"

@@ -15,6 +15,7 @@ import com.example.netmusicandroid.adapter.UserPlaylistAdapter
 import com.example.netmusicandroid.data.repository.SongRepository
 import com.example.netmusicandroid.databinding.ActivitySearchBinding
 import com.example.netmusicandroid.utils.ImageLoadUtil
+import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
 import com.example.netmusicandroid.viewmodel.MainViewModel
 import com.example.netmusicandroid.viewmodel.SearchViewModel
@@ -64,7 +65,7 @@ class SearchActivity : AppCompatActivity() {
         bottomVm.songName.observe(this) { bp.tvSongName.text = it }
         bottomVm.singerName.observe(this) { bp.tvSinger.text = it }
         bottomVm.coverUrl.observe(this) { url ->
-            if (!url.isNullOrEmpty()) ImageLoadUtil.loadImage(bp.ivSongCover, url)
+            ImageLoadUtil.loadImage(bp.ivSongCover, MusicPlayerManager.resolveUrl(url))
         }
         bottomVm.hasCurrentSong.observe(this) { has ->
             bp.root.visibility = if (has) View.VISIBLE else View.GONE
@@ -139,7 +140,10 @@ class SearchActivity : AppCompatActivity() {
                 val result = songRepo.fetchSongDetail(item.song_id)
                 result.onSuccess { detail ->
                     mainVm.playSong(detail)
-                    Toast.makeText(this@SearchActivity, "正在播放: ${detail.song_name}", Toast.LENGTH_SHORT).show()
+                    MusicPlayerManager.play(
+                        MusicPlayerManager.resolveUrl(detail.play_url) ?: "",
+                        detail.song_id
+                    )
                 }.onFailure {
                     Toast.makeText(this@SearchActivity, "获取歌曲详情失败", Toast.LENGTH_SHORT).show()
                 }

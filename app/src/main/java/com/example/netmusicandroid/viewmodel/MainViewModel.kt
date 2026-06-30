@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.netmusicandroid.data.model.SongDetail
 import com.example.netmusicandroid.data.repository.PlayQueueRepository
+import com.example.netmusicandroid.data.repository.RecentPlayRepository
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
@@ -30,10 +31,8 @@ class MainViewModel : ViewModel() {
                 val existing = queue.find { it.song_id == song.song_id }
 
                 if (existing != null) {
-                    // 已在队列中 → 直接标记为当前
                     repo.markAsCurrent(existing.id)
                 } else {
-                    // 不在队列中 → 追加并标记为当前
                     repo.append(
                         songId = song.song_id,
                         songName = song.song_name,
@@ -44,9 +43,19 @@ class MainViewModel : ViewModel() {
                     )
                     repo.getQueue().lastOrNull()?.let { repo.markAsCurrent(it.id) }
                 }
+
+                // 立即写入最近播放（不等待播放完成，用户点击即记录）
+                RecentPlayRepository().record(
+                    songId = song.song_id,
+                    songName = song.song_name,
+                    singerName = song.singer_name,
+                    playUrl = song.play_url,
+                    coverUrl = song.cover_url,
+                    duration = song.duration
+                )
             }
         } else {
-            _isPlaying.value = false // 清空即停止
+            _isPlaying.value = false
         }
     }
 

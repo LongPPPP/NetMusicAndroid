@@ -4,9 +4,13 @@ import com.example.netmusicandroid.data.model.ApiResponse
 import com.example.netmusicandroid.data.model.LoginData
 import com.example.netmusicandroid.data.model.RefreshTokenData
 import com.example.netmusicandroid.data.model.UserInfo
+import okhttp3.MultipartBody
 import retrofit2.http.Body
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Part
 //定义接口 登录和注册里各请求体的具体内容
 data class LoginRequest(
     val email: String,
@@ -40,7 +44,12 @@ interface AuthApiService {
     @POST("auth/refresh")
     suspend fun refreshToken(@Body body: RefreshRequest): ApiResponse<RefreshTokenData>
 
-    /** 修改用户信息 PATCH /users/me — field ∈ {avatar, signature, username, email} */
+    /** 修改用户信息 PATCH /users/me — field ∈ {signature, username, email} */
     @PATCH("users/me")
     suspend fun updateUser(@Body body: UpdateUserRequest): ApiResponse<UserInfo>
+
+    /** 上传头像 PUT /users/me/avatar */
+    @Multipart
+    @PUT("users/me/avatar")
+    suspend fun uploadAvatar(@Part avatar: MultipartBody.Part): ApiResponse<UserInfo>
 }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.netmusicandroid.R
 import com.example.netmusicandroid.data.model.SingerItem
 import com.example.netmusicandroid.utils.ImageLoadUtil
+import com.example.netmusicandroid.utils.MusicPlayerManager
 
 /**
  * 搜索结果歌手列表适配器。
@@ -31,7 +32,7 @@ class SearchSingerAdapter(
 
         fun bind(item: SingerItem) {
             tvName.text = item.singer_name
-            ImageLoadUtil.loadImage(ivAvatar, item.avatar_url)
+            ImageLoadUtil.loadImage(ivAvatar, MusicPlayerManager.resolveUrl(item.avatar_url))
         }
     }
 

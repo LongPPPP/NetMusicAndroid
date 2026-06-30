@@ -9,6 +9,10 @@ import com.example.netmusicandroid.data.api.UpdateUserRequest
 import com.example.netmusicandroid.data.db.UserDao
 import com.example.netmusicandroid.data.db.UserEntity
 import com.example.netmusicandroid.sp.SpManager
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -52,6 +56,8 @@ class AuthRepository private constructor(
                 avatar = loginData.user.avatar ?: "",
                 signature = loginData.user.signature ?: "",
                 role = loginData.user.role ?: "",
+                commentCount = loginData.user.comment_count,
+                favoriteCount = loginData.user.favorite_count,
                 accessToken = loginData.access_token,
                 refreshToken = loginData.refresh_token,
                 tokenExpire = tokenExpireTime
@@ -166,6 +172,25 @@ class AuthRepository private constructor(
                 Result.success(updated)
             } else {
                 Result.failure(Throwable(resp.message ?: "修改失败"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun uploadAvatar(file: File): Result<UserEntity> {
+        return try {
+            val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+            val part = MultipartBody.Part.createFormData("avatar", file.name, requestBody)
+            val resp = api.uploadAvatar(part)
+            if (resp.code == 200 && resp.data != null) {
+                val email = SpManager.getCurrentLoginEmail() ?: return Result.failure(Throwable("未登录"))
+                val user = userDao.findUserByEmail(email) ?: return Result.failure(Throwable("本地数据丢失"))
+                val updated = user.copy(avatar = resp.data.avatar ?: user.avatar)
+                userDao.saveUser(updated)
+                Result.success(updated)
+            } else {
+                Result.failure(Throwable(resp.message ?: "上传失败"))
             }
         } catch (e: Exception) {
             Result.failure(e)

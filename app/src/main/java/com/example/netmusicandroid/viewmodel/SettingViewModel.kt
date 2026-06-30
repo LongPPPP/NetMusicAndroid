@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.netmusicandroid.data.db.UserEntity
 import com.example.netmusicandroid.data.repository.AuthRepository
 import kotlinx.coroutines.launch
+import java.io.File
 
 class SettingViewModel : ViewModel() {
 
@@ -52,6 +53,18 @@ class SettingViewModel : ViewModel() {
     suspend fun logoutAction() {
         authRepo.logout()
         _toastMsg.postValue("已退出登录")
+    }
+
+    fun uploadAvatar(file: File) {
+        viewModelScope.launch {
+            val result = authRepo.uploadAvatar(file)
+            result.onSuccess { updatedUser ->
+                _currentUser.postValue(updatedUser)
+                _toastMsg.postValue("头像修改成功")
+            }.onFailure { e ->
+                _toastMsg.postValue(e.message ?: "头像上传失败")
+            }
+        }
     }
 
     fun goModifyTheme() {

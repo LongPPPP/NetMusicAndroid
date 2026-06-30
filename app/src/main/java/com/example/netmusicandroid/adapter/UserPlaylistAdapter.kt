@@ -1,110 +1,68 @@
 package com.example.netmusicandroid.adapter
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.Rect
-import android.graphics.RectF
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.example.netmusicandroid.R
 import com.example.netmusicandroid.constant.ApiConst
 import com.example.netmusicandroid.data.model.UserPlaylist
 import com.example.netmusicandroid.databinding.ItemUserCollectionBinding
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
-import java.util.concurrent.Executors
+import com.example.netmusicandroid.utils.MusicPlayerManager
 
+/**
+ * 用户歌单列表适配器
+ * 使用ListAdapter+DiffUtil实现局部刷新，性能优于传统RecyclerView.Adapter
+ * @param onItemClick 歌单项点击回调，传入歌单ID
+ * @param onDeleteClick 删除按钮点击回调，传入歌单ID
+ */
 class UserPlaylistAdapter(
-    // 新增：条目整体点击回调，参数为歌单ID
     private val onItemClick: (playlistId: Int) -> Unit,
-    // 原有删除按钮回调
     private val onDeleteClick: (playlistId: Int) -> Unit
 ) : ListAdapter<UserPlaylist, UserPlaylistAdapter.CollectionVH>(CollectionDiffCallback()) {
 
-    private val executor = Executors.newSingleThreadExecutor()
-    private val mainHandler = Handler(Looper.getMainLooper())
-
+    /**
+     * ViewHolder：持有Item布局binding，负责数据绑定渲染
+     */
     inner class CollectionVH(val binding: ItemUserCollectionBinding) : RecyclerView.ViewHolder(binding.root) {
+        /**
+         * 绑定单条歌单数据到布局控件
+         * @param item 单条用户歌单实体
+         */
         fun bind(item: UserPlaylist) {
-            // 条目整体点击，传递歌单ID
+            // 整行item点击事件
             itemView.setOnClickListener {
                 onItemClick.invoke(item.playlist_id)
             }
 
-            // 文本赋值
+            // 设置歌单名称
             binding.tvCollectionName.text = item.playlist_name
+            // 设置歌曲数量文案
             binding.tvSongNum.text = "${item.song_count}首"
 
-            // 默认兜底封面
-            val defaultCoverUrl = "https://picsum.photos/id/237/200/300"
-            val realUrl = if (!item.cover_url.isNullOrBlank()) {
-                // 数据库返回格式：/static/xxx，直接拼接静态资源根域名，不会产生双斜杠
-                "${ApiConst.STATIC_BASE}${item.cover_url}"
-            } else {
-                defaultCoverUrl
-            }
+            // 处理封面图片完整访问地址
+            val url = MusicPlayerManager.resolveUrl(item.cover_url)
+            // Glide加载圆形封面图
+            Glide.with(binding.ivCover.context)
+                .load(url)
+                .placeholder(R.drawable.ic_default_cover) // 加载中占位图
+                .error(R.drawable.ic_default_cover)       // 加载失败兜底图
+                .transform(CircleCrop())                 // 圆形裁剪转换
+                .into(binding.ivCover)
 
-            loadCircleCover(iv = binding.ivCover, urlStr = realUrl)
-
-            // 删除点击事件
+            // 删除图标点击事件
             binding.ivDelete.setOnClickListener {
                 onDeleteClick.invoke(item.playlist_id)
             }
         }
-
-        // 原生网络图片+圆形裁剪
-        private fun loadCircleCover(iv: android.widget.ImageView, urlStr: String) {
-            executor.submit {
-                var sourceBit: Bitmap? = null
-                try {
-                    val url = URL(urlStr)
-                    val conn = url.openConnection() as HttpURLConnection
-                    conn.connectTimeout = 8000
-                    conn.readTimeout = 8000
-                    val input: InputStream = conn.inputStream
-                    sourceBit = BitmapFactory.decodeStream(input)
-                    input.close()
-                    conn.disconnect()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-                val finalBit = sourceBit
-                mainHandler.post {
-                    finalBit?.let {
-                        val circleBit = getCircleBitmap(it)
-                        iv.setImageBitmap(circleBit)
-                    }
-                }
-            }
-        }
-
-        // 生成圆形Bitmap
-        private fun getCircleBitmap(source: Bitmap): Bitmap {
-            val minSize = minOf(source.width, source.height)
-            val output = Bitmap.createBitmap(minSize, minSize, Bitmap.Config.ARGB_8888)
-            val canvas = Canvas(output)
-            val paint = Paint().apply {
-                isAntiAlias = true
-                xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-            }
-            val rect = Rect(0, 0, minSize, minSize)
-            canvas.drawOval(RectF(rect), paint)
-            canvas.drawBitmap(source, rect, rect, paint)
-            if (!source.isRecycled) source.recycle()
-            return output
-        }
     }
 
+    /**
+     * 创建ViewHolder，inflate item布局
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CollectionVH {
         val bind = ItemUserCollectionBinding.inflate(
             LayoutInflater.from(parent.context),
@@ -114,15 +72,28 @@ class UserPlaylistAdapter(
         return CollectionVH(bind)
     }
 
+    /**
+     * 给对应位置ViewHolder绑定数据
+     */
     override fun onBindViewHolder(holder: CollectionVH, position: Int) {
         holder.bind(getItem(position))
     }
 
+    /**
+     * DiffUtil差异比较器：用于ListAdapter对比新旧列表，只刷新变更Item
+     */
     class CollectionDiffCallback : DiffUtil.ItemCallback<UserPlaylist>() {
+        /**
+         * 判断两条数据是否为同一条数据（唯一标识对比）
+         */
         override fun areItemsTheSame(oldItem: UserPlaylist, newItem: UserPlaylist): Boolean {
             return oldItem.playlist_id == newItem.playlist_id
         }
 
+        /**
+         * 同一ID下，判断内容是否完全一致，不一致则刷新UI
+         * 依赖UserPlaylist数据类重写equals方法
+         */
         override fun areContentsTheSame(oldItem: UserPlaylist, newItem: UserPlaylist): Boolean {
             return oldItem == newItem
         }

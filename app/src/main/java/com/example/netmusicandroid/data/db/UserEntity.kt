@@ -14,6 +14,9 @@ data class UserEntity(
     val signature: String,
     val role: String,
 
+    // 统计数据
+    val commentCount: Int = 0,
+    val favoriteCount: Int = 0,
 
     // 登录返回鉴权凭证
     val accessToken: String = "",

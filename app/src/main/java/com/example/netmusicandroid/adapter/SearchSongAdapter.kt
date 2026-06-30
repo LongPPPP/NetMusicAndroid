@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.netmusicandroid.data.model.SearchSongItem
 import com.example.netmusicandroid.databinding.ItemItemSongBinding
 import com.example.netmusicandroid.utils.ImageLoadUtil
+import com.example.netmusicandroid.utils.MusicPlayerManager
 
 /**
  * 搜索结果歌曲列表适配器。
@@ -24,7 +25,7 @@ class SearchSongAdapter(
             binding.tvSongName.text = item.song_name
             binding.tvArtist.text = item.singer_name
             binding.tvDuration.text = ""  // 搜索结果无时长
-            ImageLoadUtil.loadImage(binding.ivSongCover, item.cover_url)
+            ImageLoadUtil.loadImage(binding.ivSongCover, MusicPlayerManager.resolveUrl(item.cover_url))
             // 隐藏删除按钮（搜索结果不可删除）
             // INVISIBLE 而非 GONE：iv_delete 是 tv_duration 的 layout_toStartOf 锚点，
             // GONE 会导致 RelativeLayout 丢弃该定位规则，连锁摧毁 ll_song_info 的宽度计算

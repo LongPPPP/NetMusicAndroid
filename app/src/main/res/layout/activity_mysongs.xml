@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".activity.FavoritesActivity">
+
+    <!-- 滚动容器 + 底部播放器 -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 顶部标题栏：返回 + 标题 + 新建歌单 -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginTop="30dp">
+
+                <!-- 返回箭头 -->
+                <ImageView
+                    android:id="@+id/ivBack"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_back"
+                    android:contentDescription="@string/cd_back_btn"/>
+
+                <!-- 页面标题 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/title_mysongs"
+                    android:textColor="#111111"
+                    android:textSize="21sp"/>
+
+            </RelativeLayout>
+
+            <!-- 歌单总数提示 -->
+            <TextView
+                android:id="@+id/tvTotalCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_playlist_total_count"
+                android:textColor="#777777"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp"/>
+
+            <!-- 歌单RecyclerView列表 -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCollectionList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                tools:listitem="@layout/item_user_collection"/>
+
+            <!-- 底部留白，避开全局播放器 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="100dp"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- 全局底部播放器（复用统一布局） -->
+    <include
+        android:id="@+id/include_bottom_player"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_alignParentBottom="true"
+        layout="@layout/layout_bottom_player"/>
+</RelativeLayout>

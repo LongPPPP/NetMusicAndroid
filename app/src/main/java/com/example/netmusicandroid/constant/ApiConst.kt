@@ -6,6 +6,6 @@ object ApiConst {
     //静态资源地址
     const val STATIC_BASE = "http://10.0.2.2:3000"
 
-    const val BASE_URL = "http://10.73.103.130:3000/api/v1/"
+    const val BASE_URL = "http://10.0.2.2:3000/api/v1/"
 
 }

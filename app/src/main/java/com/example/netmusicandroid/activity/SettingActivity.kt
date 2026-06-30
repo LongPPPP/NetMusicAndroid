@@ -1,7 +1,9 @@
 package com.example.netmusicandroid.activity
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -9,15 +11,30 @@ import com.example.netmusicandroid.R
 import com.example.netmusicandroid.databinding.ActivitySettingBinding
 import com.example.netmusicandroid.dialog.EditProfileDialog
 import com.example.netmusicandroid.utils.ImageLoadUtil
+import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
 import com.example.netmusicandroid.viewmodel.SettingViewModel
 import com.example.netmusicandroid.utils.ToastUtil
 import kotlinx.coroutines.launch
+import java.io.File
 
 class SettingActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingBinding
     private lateinit var settingVm: SettingViewModel
     private lateinit var bottomVm: BottomPlayerViewModel
+    private var editDialog: EditProfileDialog? = null
+
+    private val pickAvatarLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            editDialog?.setAvatarUri(it)
+            // 将 Uri 复制到临时文件并上传
+            val tempFile = File(cacheDir, "avatar_upload_${System.currentTimeMillis()}.jpg")
+            contentResolver.openInputStream(it)?.use { input ->
+                tempFile.outputStream().use { output -> input.copyTo(output) }
+            }
+            settingVm.uploadAvatar(tempFile)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +67,7 @@ class SettingActivity : AppCompatActivity() {
         bottomVm.songName.observe(this) { bp.tvSongName.text = it }
         bottomVm.singerName.observe(this) { bp.tvSinger.text = it }
         bottomVm.coverUrl.observe(this) { url ->
-            if (!url.isNullOrEmpty()) ImageLoadUtil.loadImage(bp.ivSongCover, url)
+            ImageLoadUtil.loadImage(bp.ivSongCover, MusicPlayerManager.resolveUrl(url))
         }
         bottomVm.hasCurrentSong.observe(this) { has ->
             bp.root.visibility = if (has) View.VISIBLE else View.GONE
@@ -95,17 +112,20 @@ class SettingActivity : AppCompatActivity() {
                 ToastUtil.showShort("请先登录")
                 return@setOnClickListener
             }
-            EditProfileDialog(this, user) { field, value ->
-                settingVm.updateUserField(field, value)
-            }.show()
+            editDialog = EditProfileDialog(
+                    this, user,
+                    onPickAvatar = { pickAvatarLauncher.launch("image/*") },
+                    onSave = { field, value -> settingVm.updateUserField(field, value) }
+                )
+                editDialog!!.show()
         }
 
         // 退出登录（suspend函数需协程包裹调用）
         binding.rlItemLogout.setOnClickListener {
             lifecycleScope.launch {
+                MusicPlayerManager.stop()
                 settingVm.logoutAction()
                 ToastUtil.showShort("已退出登录")
-                // 直接调用静态方法，取消强转BaseActivity
                 BaseActivity.globalGoLogin()
                 finish()
             }

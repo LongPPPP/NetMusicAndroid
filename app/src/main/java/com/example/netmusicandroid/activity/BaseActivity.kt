@@ -2,7 +2,6 @@ package com.example.netmusicandroid.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -13,8 +12,6 @@ import com.example.netmusicandroid.databinding.ActivityBaseBinding
 import com.example.netmusicandroid.fragment.HomeFragment
 import com.example.netmusicandroid.fragment.MineFragment
 import com.example.netmusicandroid.fragment.PlayerFragment
-import com.example.netmusicandroid.utils.ImageLoadUtil
-import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
 import com.example.netmusicandroid.viewmodel.MainViewModel
 import kotlinx.coroutines.runBlocking
 
@@ -22,7 +19,6 @@ class BaseActivity : AppCompatActivity() {
 
     lateinit var mainViewModel: MainViewModel
     private lateinit var binding: ActivityBaseBinding
-    private lateinit var bottomVm: BottomPlayerViewModel
 
     companion object {
         const val EXTRA_NAV_TO_PLAYER = "nav_to_player"
@@ -62,9 +58,6 @@ class BaseActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         isForeground = true
-        if (::bottomVm.isInitialized) {
-            bottomVm.syncPlayState()
-        }
     }
 
     override fun onPause() {
@@ -79,9 +72,6 @@ class BaseActivity : AppCompatActivity() {
 
         // 初始化共享 ViewModel
         mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
-
-        // 初始化底部播放栏 ViewModel
-        initBottomPlayer()
 
         // 默认显示首页
         if (savedInstanceState == null) {
@@ -100,69 +90,19 @@ class BaseActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.menu_home -> {
                     replaceFragment(HomeFragment())
-                    updateBottomPlayerVisibility()
                     true
                 }
                 R.id.menu_play -> {
                     replaceFragment(PlayerFragment())
-                    // 全屏播放器页面：始终隐藏底部迷你播放栏
-                    binding.includeBottomPlayer.root.visibility = View.GONE
                     true
                 }
                 R.id.menu_mine -> {
                     replaceFragment(MineFragment())
-                    updateBottomPlayerVisibility()
                     true
                 }
                 else -> false
             }
         }
-    }
-
-    // ── 底部播放栏 ──────────────────────────────
-
-    private fun initBottomPlayer() {
-        bottomVm = ViewModelProvider(this)[BottomPlayerViewModel::class.java]
-        val bp = binding.includeBottomPlayer
-
-        // 歌曲信息
-        bottomVm.songName.observe(this) { bp.tvSongName.text = it }
-        bottomVm.singerName.observe(this) { bp.tvSinger.text = it }
-        bottomVm.coverUrl.observe(this) { url ->
-            if (!url.isNullOrEmpty()) {
-                ImageLoadUtil.loadImage(bp.ivSongCover, url)
-            }
-        }
-
-        // 播放/暂停图标
-        bottomVm.isPlaying.observe(this) { playing ->
-            bp.ivPlayToggle.setImageResource(
-                if (playing) R.drawable.ic_pause else R.drawable.ic_play_triangle
-            )
-        }
-
-        // 可见性：有当前歌曲 且 不在 PlayerFragment 标签页时显示
-        bottomVm.hasCurrentSong.observe(this) { hasSong ->
-            if (binding.bottomNav.selectedItemId != R.id.menu_play) {
-                bp.root.visibility = if (hasSong) View.VISIBLE else View.GONE
-            }
-        }
-
-        // 控制按钮
-        bp.ivPrev.setOnClickListener { bottomVm.playPrev() }
-        bp.ivPlayToggle.setOnClickListener { bottomVm.togglePlayPause() }
-        bp.ivNext.setOnClickListener { bottomVm.playNext() }
-
-        // 封面 & 歌名区域 → 跳转全屏播放页
-        val goPlayer = View.OnClickListener { navigateToPlayer() }
-        bp.cvCover.setOnClickListener(goPlayer)
-        bp.llSongInfo.setOnClickListener(goPlayer)
-    }
-
-    /** 根据当前标签页 + hasCurrentSong 更新底部播放栏可见性 */
-    private fun updateBottomPlayerVisibility() {
-        val hasSong = bottomVm.hasCurrentSong.value == true
-        binding.includeBottomPlayer.root.visibility = if (hasSong) View.VISIBLE else View.GONE
     }
 
     // ── Fragment & 导航 ─────────────────────────

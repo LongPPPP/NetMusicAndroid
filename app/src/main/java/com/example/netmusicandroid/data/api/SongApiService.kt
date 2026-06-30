@@ -3,6 +3,8 @@ package com.example.netmusicandroid.data.api
 import com.example.netmusicandroid.data.model.ApiResponse
 import com.example.netmusicandroid.data.model.CommentItem
 import com.example.netmusicandroid.data.model.CommentListData
+import com.example.netmusicandroid.data.model.FavoriteData
+import com.example.netmusicandroid.data.model.MyCommentListData
 import com.example.netmusicandroid.data.model.SongDetail
 import com.example.netmusicandroid.data.model.SongListData
 import okhttp3.MultipartBody
@@ -61,4 +63,18 @@ interface SongApiService {
         @Path("songId") songId: Int,
         @Path("commentId") commentId: Int
     ): ApiResponse<Unit>
+
+    /** 我的评论列表 GET /users/me/comments */
+    @GET("users/me/comments")
+    suspend fun getMyComments(
+        @Query("page") page: Int = 1,
+        @Query("page_size") pageSize: Int = 20
+    ): ApiResponse<MyCommentListData>
+
+    /** 我的收藏 GET /users/me/favorites */
+    @GET("users/me/favorites")
+    suspend fun getFavorites(
+        @Query("page") page: Int = 1,
+        @Query("page_size") pageSize: Int = 20
+    ): ApiResponse<FavoriteData>
 }

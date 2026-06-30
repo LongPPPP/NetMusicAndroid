@@ -5,14 +5,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.netmusicandroid.R
 import com.example.netmusicandroid.adapter.UserPlaylistAdapter
 import com.example.netmusicandroid.data.repository.AuthRepository
 import com.example.netmusicandroid.databinding.ActivityPlaylistBinding
 import com.example.netmusicandroid.dialog.CreatePlaylistDialog
-import com.example.netmusicandroid.utils.ImageLoadUtil
+import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
 import com.example.netmusicandroid.viewmodel.UserPlaylistViewModel
 import com.example.netmusicandroid.utils.ToastUtil
@@ -55,14 +56,23 @@ class PlaylistActivity : AppCompatActivity() {
     }
 
     // ── 底部播放栏 ──────────────────────────────
-
     private fun initBottomPlayer() {
         val bp = binding.includeBottomPlayer
         bottomVm.songName.observe(this) { bp.tvSongName.text = it }
         bottomVm.singerName.observe(this) { bp.tvSinger.text = it }
-        bottomVm.coverUrl.observe(this) { url ->
-            if (!url.isNullOrEmpty()) ImageLoadUtil.loadImage(bp.ivSongCover, url)
+
+        // 【已替换】和UserPlaylistAdapter完全一致的封面URL解析+Glide加载逻辑
+        bottomVm.coverUrl.observe(this) { rawUrl ->
+            // 统一处理图片完整地址
+            val coverUrl = MusicPlayerManager.resolveUrl(rawUrl)
+            Glide.with(bp.ivSongCover.context)
+                .load(coverUrl)
+                .placeholder(R.drawable.ic_default_cover) // 加载占位图
+                .error(R.drawable.ic_default_cover)       // 加载失败兜底图
+                .transform(CircleCrop())                 // 圆形裁剪
+                .into(bp.ivSongCover)
         }
+
         bottomVm.hasCurrentSong.observe(this) { has ->
             bp.root.visibility = if (has) View.VISIBLE else View.GONE
         }

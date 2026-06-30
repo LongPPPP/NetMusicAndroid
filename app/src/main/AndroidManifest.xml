@@ -71,6 +71,15 @@
             android:name=".activity.SingerListActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.MyCommentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.FavoritesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CurrentPlaylistActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.SearchActivity"
             android:exported="false" />
     </application>

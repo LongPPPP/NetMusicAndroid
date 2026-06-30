@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 底部播放栏悬浮圆角背景（阴影由 android:elevation 属性提供） -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#FFFFFF"/>
-    <corners
-        android:topLeftRadius="24dp"
-        android:topRightRadius="24dp"
-        android:bottomLeftRadius="0dp"
-        android:bottomRightRadius="0dp"/>
-</shape>
+<!-- 带明显四周悬浮阴影的圆角背景，阴影向下+向外扩散 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 底层阴影层1：模糊外围淡阴影 -->
+    <item
+        android:left="6dp"
+        android:top="4dp"
+        android:right="6dp"
+        android:bottom="8dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="16dp"/>
+            <solid android:color="#20000000"/>
+        </shape>
+    </item>
+    <!-- 底层阴影层2：主深色投影，突出悬浮感 -->
+    <item
+        android:left="3dp"
+        android:top="2dp"
+        android:right="3dp"
+        android:bottom="5dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="16dp"/>
+            <solid android:color="#35000000"/>
+        </shape>
+    </item>
+    <!-- 主体白色圆角面板 -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="16dp"/>
+            <solid android:color="#FFFFFF"/>
+        </shape>
+    </item>
+</layer-list>

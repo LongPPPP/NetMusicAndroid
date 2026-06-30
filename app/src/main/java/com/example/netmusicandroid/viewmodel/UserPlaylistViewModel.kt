@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.netmusicandroid.data.model.ApiResponse
 import com.example.netmusicandroid.data.model.UserPlaylist
 import com.example.netmusicandroid.data.repository.PlaylistRepository
+import com.example.netmusicandroid.sp.SpManager
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import kotlinx.coroutines.delay
@@ -26,7 +27,7 @@ class UserPlaylistViewModel : ViewModel() {
     fun loadUserCollection() {
         viewModelScope.launch {
             try {
-                val userId = 1 // 替换成你登录接口拿到的真实用户id
+                val userId = SpManager.getUserId().toInt()
                 val resp = mineRepo.getUserPlaylist(userId)
                 if (resp.isSuccessful) {
                     val list = resp.body()?.data?.list ?: emptyList()

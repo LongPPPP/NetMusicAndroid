@@ -4,21 +4,28 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.netmusicandroid.R
 import com.example.netmusicandroid.adapter.SongListAdapter
+import com.example.netmusicandroid.data.repository.SongRepository
 import com.example.netmusicandroid.databinding.ActivityRecentPlayBinding
 import com.example.netmusicandroid.utils.ImageLoadUtil
+import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.utils.ToastUtil
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
+import com.example.netmusicandroid.viewmodel.MainViewModel
 import com.example.netmusicandroid.viewmodel.RecentPlayViewModel
+import kotlinx.coroutines.launch
 
 class RecentPlayActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRecentPlayBinding
     private lateinit var viewModel: RecentPlayViewModel
     private lateinit var bottomVm: BottomPlayerViewModel
+    private lateinit var mainVm: MainViewModel
     private lateinit var songAdapter: SongListAdapter
+    private val songRepo = SongRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +47,7 @@ class RecentPlayActivity : AppCompatActivity() {
     private fun initViewModel() {
         viewModel = ViewModelProvider(this)[RecentPlayViewModel::class.java]
         bottomVm = ViewModelProvider(this)[BottomPlayerViewModel::class.java]
+        mainVm = ViewModelProvider(this)[MainViewModel::class.java]
     }
 
     // ── 底部播放栏 ──────────────────────────────
@@ -49,7 +57,7 @@ class RecentPlayActivity : AppCompatActivity() {
         bottomVm.songName.observe(this) { bp.tvSongName.text = it }
         bottomVm.singerName.observe(this) { bp.tvSinger.text = it }
         bottomVm.coverUrl.observe(this) { url ->
-            if (!url.isNullOrEmpty()) ImageLoadUtil.loadImage(bp.ivSongCover, url)
+            ImageLoadUtil.loadImage(bp.ivSongCover, MusicPlayerManager.resolveUrl(url))
         }
         bottomVm.hasCurrentSong.observe(this) { has ->
             bp.root.visibility = if (has) View.VISIBLE else View.GONE
@@ -76,9 +84,21 @@ class RecentPlayActivity : AppCompatActivity() {
 
     private fun initSongRecycler() {
         // 删除回调 → 从播放历史移除该歌曲
-        songAdapter = SongListAdapter { songId ->
-            viewModel.deleteBySongId(songId)
-        }
+        songAdapter = SongListAdapter(
+            onSongDeleteClick = { songId -> viewModel.deleteBySongId(songId) },
+            onSongClick = { songItem ->
+                lifecycleScope.launch {
+                    val result = songRepo.fetchSongDetail(songItem.song_id)
+                    result.onSuccess { detail ->
+                        mainVm.playSong(detail)
+                        MusicPlayerManager.play(
+                            MusicPlayerManager.resolveUrl(detail.play_url) ?: return@onSuccess,
+                            detail.song_id
+                        )
+                    }
+                }
+            }
+        )
         binding.rvSongList.layoutManager = LinearLayoutManager(this)
         binding.rvSongList.adapter = songAdapter
     }

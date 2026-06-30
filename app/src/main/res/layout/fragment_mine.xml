@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:paddingHorizontal="16dp">
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -80,6 +86,7 @@
 
             <!-- 收藏模块 -->
             <LinearLayout
+                android:id="@+id/llMyFavorite"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -88,7 +95,7 @@
 
                 <TextView
                     android:id="@+id/tvCollectCount"
-                    android:layout_width="37dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#111111"
                     android:textSize="24sp"
@@ -111,6 +118,7 @@
 
             <!-- 我的评论模块 -->
             <LinearLayout
+                android:id="@+id/llMyComment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -142,6 +150,44 @@
             android:orientation="vertical"
             android:background="@drawable/shape_menu_card"
             android:paddingVertical="8dp">
+
+            <!-- 0. 当前播放 -->
+            <LinearLayout
+                android:id="@+id/llCurrentPlaylist"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_music_list"
+                    android:contentDescription="当前播放"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="当前播放"
+                    android:textSize="16sp"
+                    android:textColor="#222222"
+                    android:layout_marginStart="14dp"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:contentDescription="@string/cd_enter_detail"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#EEEEEE"
+                android:layout_marginHorizontal="16dp"/>
 
             <!-- 1. 最近播放 -->
             <LinearLayout
@@ -377,3 +423,12 @@
             android:layout_height="120dp"/>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
+
+    <include
+        android:id="@+id/include_bottom_player"
+        layout="@layout/layout_bottom_player"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:visibility="gone" />
+
+</LinearLayout>

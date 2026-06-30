@@ -6,11 +6,12 @@
     android:background="#FFFFFF"
     android:padding="24dp">
 
-    <!-- 统一标题栏 -->
+    <!-- 统一规范标题栏 -->
     <LinearLayout
         android:id="@+id/ll_title_bar"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="30dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:layout_marginStart="-24dp"
@@ -22,8 +23,8 @@
 
         <ImageView
             android:id="@+id/iv_back"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:src="@drawable/ic_back"
             android:contentDescription="@string/cd_back_btn" />
 
@@ -33,9 +34,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/title_upload_song"
-            android:textColor="#222222"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textColor="#111111"
+            android:textSize="21sp" />
 
         <View
             android:layout_width="24dp"

@@ -8,17 +8,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.netmusicandroid.R
 import com.example.netmusicandroid.adapter.SongListAdapter
 import com.example.netmusicandroid.databinding.ActivityPlaylistDetailBinding
+import com.example.netmusicandroid.data.repository.SongRepository
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
+import com.example.netmusicandroid.viewmodel.MainViewModel
 import com.example.netmusicandroid.viewmodel.PlaylistDetailViewModel
 import com.example.netmusicandroid.utils.ImageLoadUtil
+import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.utils.ToastUtil
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class PlaylistDetailActivity : AppCompatActivity() {
-    // ViewBinding
     private lateinit var binding: ActivityPlaylistDetailBinding
-    // ViewModel
     private lateinit var playlistDetailVm: PlaylistDetailViewModel
     private lateinit var bottomVm: BottomPlayerViewModel
+    private lateinit var mainVm: MainViewModel
+    private val songRepo = SongRepository()
     // 歌单ID（从上个页面Intent接收）
     private var targetPlaylistId = -1
     // 歌曲列表Adapter
@@ -58,6 +63,7 @@ class PlaylistDetailActivity : AppCompatActivity() {
     private fun initViewModel() {
         playlistDetailVm = ViewModelProvider(this)[PlaylistDetailViewModel::class.java]
         bottomVm = ViewModelProvider(this)[BottomPlayerViewModel::class.java]
+        mainVm = ViewModelProvider(this)[MainViewModel::class.java]
     }
 
     // ── 底部播放栏 ──────────────────────────────
@@ -67,7 +73,7 @@ class PlaylistDetailActivity : AppCompatActivity() {
         bottomVm.songName.observe(this) { bp.tvSongName.text = it }
         bottomVm.singerName.observe(this) { bp.tvSinger.text = it }
         bottomVm.coverUrl.observe(this) { url ->
-            if (!url.isNullOrEmpty()) ImageLoadUtil.loadImage(bp.ivSongCover, url)
+            ImageLoadUtil.loadImage(bp.ivSongCover, MusicPlayerManager.resolveUrl(url))
         }
         bottomVm.hasCurrentSong.observe(this) { has ->
             bp.root.visibility = if (has) View.VISIBLE else View.GONE
@@ -100,10 +106,23 @@ class PlaylistDetailActivity : AppCompatActivity() {
     // 3. 初始化歌曲列表RecyclerView + SongListAdapter
     private fun initSongRecycler() {
         // 实例化Adapter，传入单首删除回调
-        songAdapter = SongListAdapter { deleteSongId ->
-            // 调用VM删除歌单内歌曲接口
-            playlistDetailVm.deleteSongInPlaylist(targetPlaylistId, deleteSongId)
-        }
+        songAdapter = SongListAdapter(
+            onSongDeleteClick = { deleteSongId ->
+                playlistDetailVm.deleteSongInPlaylist(targetPlaylistId, deleteSongId)
+            },
+            onSongClick = { songItem ->
+                lifecycleScope.launch {
+                    val result = songRepo.fetchSongDetail(songItem.song_id)
+                    result.onSuccess { detail ->
+                        mainVm.playSong(detail)
+                        MusicPlayerManager.play(
+                            MusicPlayerManager.resolveUrl(detail.play_url) ?: return@onSuccess,
+                            detail.song_id
+                        )
+                    }
+                }
+            }
+        )
         // 线性布局
         binding.rvSongList.layoutManager = LinearLayoutManager(this)
         binding.rvSongList.adapter = songAdapter
@@ -116,7 +135,7 @@ class PlaylistDetailActivity : AppCompatActivity() {
             // 防御空指针：detail 为 null 时跳过渲染
             if (detail == null) return@observe
             // 歌单封面
-            ImageLoadUtil.loadImage(binding.ivPlaylistCover, detail.cover_url)
+            ImageLoadUtil.loadImage(binding.ivPlaylistCover, MusicPlayerManager.resolveUrl(detail.cover_url))
             // 歌单名称
             binding.tvPlaylistName.text = detail.playlist_name
             // 通过songs列表长度计算歌曲总数

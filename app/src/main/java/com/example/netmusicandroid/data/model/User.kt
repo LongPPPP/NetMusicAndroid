@@ -10,7 +10,9 @@ data class UserInfo(
     val avatar: String?,
     val signature: String?,
     val role: String?,
-    val createdAt: String?
+    val createdAt: String?,
+    val comment_count: Int = 0,
+    val favorite_count: Int = 0
 )
 
 @JsonClass(generateAdapter = true)
