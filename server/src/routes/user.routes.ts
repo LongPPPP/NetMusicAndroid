@@ -2,6 +2,7 @@ import {Router} from 'express';
 import * as playlistController from '../controllers/playlist.controller';
 import * as userController from '../controllers/user.controller';
 import {authMiddleware} from '../middlewares/auth.middleware';
+import {requireRole} from '../middlewares/role.middleware';
 import {uploadAvatar as uploadAvatarMiddleware} from '../middlewares/upload.middleware';
 import {validate} from '../middlewares/validate';
 import {updateUserSchema} from '../validators/user.validator';
@@ -13,6 +14,7 @@ router.get('/me', authMiddleware, userController.getMyProfile);
 router.get('/me/playlists', authMiddleware, playlistController.getMyPlaylists);
 router.get('/me/comments', authMiddleware, userController.getMyComments);
 router.get('/me/favorites', authMiddleware, userController.getMyFavorites);
+router.get('/me/songs', authMiddleware, requireRole('ARTIST'), userController.getMySongs);
 router.put('/me/avatar', authMiddleware, uploadAvatarMiddleware, userController.updateAvatar);
 
 // 公开

@@ -1,7 +1,9 @@
+import prisma from '../config/database';
 import * as songService from '../services/song.service';
 import * as userService from '../services/user.service';
 import {asyncHandler} from '../utils/asyncHandler';
 import {success} from '../utils/response';
+import {ValidationError} from '../errors/AppError';
 
 // 获取用户信息（公开）
 export const getProfile = asyncHandler(async (req, res) => {
@@ -52,6 +54,22 @@ export const getMyFavorites = asyncHandler(async (req, res) => {
     const page = parseInt(String(req.query.page)) || 1;
     const pageSize = parseInt(String(req.query.page_size)) || 20;
     const result = await songService.getUserFavorites(req.userId!, page, pageSize);
+    return success(res, result);
+});
+
+// 获取当前用户发布的歌曲（仅 ARTIST）
+export const getMySongs = asyncHandler(async (req, res) => {
+    const singer = await prisma.singer.findUnique({
+        where: {userId: req.userId!},
+        select: {id: true},
+    });
+    if (!singer) {
+        throw new ValidationError('请先完善歌手资料');
+    }
+
+    const page = parseInt(String(req.query.page)) || 1;
+    const pageSize = parseInt(String(req.query.page_size)) || 20;
+    const result = await songService.listSongs({page, page_size: pageSize, singer_id: singer.id});
     return success(res, result);
 });
 
