@@ -23,12 +23,16 @@ import com.example.netmusicandroid.activity.SingerActivity
 import com.example.netmusicandroid.data.repository.SongRepository
 import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.viewmodel.MainViewModel
+import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
 import kotlinx.coroutines.launch
 
 class PlayerFragment : Fragment() {
 
     private lateinit var mainViewModel: MainViewModel
+    private lateinit var bottomVm: BottomPlayerViewModel
     private val songRepository = SongRepository()
+    
+    // 初始化为当前正在播放的 ID，防止 Fragment 重建导致的逻辑误触发
     private var currentSongId: Int = -1
 
     private val handler = Handler(Looper.getMainLooper())
@@ -45,7 +49,12 @@ class PlayerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // 共享 Activity 级别的 ViewModel
         mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+        bottomVm = ViewModelProvider(requireActivity())[BottomPlayerViewModel::class.java]
+
+        // Fragment 创建时立刻同步 ID，防止误判
+        currentSongId = MusicPlayerManager.getCurrentSongId()
 
         val tvSongName = view.findViewById<TextView>(R.id.tvSongName)
         val tvSinger = view.findViewById<TextView>(R.id.tvSinger)
@@ -55,7 +64,7 @@ class PlayerFragment : Fragment() {
         val tvCurrentTime = view.findViewById<TextView>(R.id.tvCurrentTime)
         val tvTotalTime = view.findViewById<TextView>(R.id.tvTotalTime)
 
-        // 抢先同步已有的进度
+        // 立即尝试同步已有进度
         val currentDuration = MusicPlayerManager.getDuration()
         if (currentDuration > 0) {
             seekBar.max = currentDuration
@@ -64,14 +73,35 @@ class PlayerFragment : Fragment() {
             tvCurrentTime.text = formatTime(MusicPlayerManager.getCurrentPosition())
         }
 
+        // 观察歌曲变化
         mainViewModel.currentSong.observe(viewLifecycleOwner) { song ->
             if (song != null) {
+                val isNewSong = currentSongId != song.song_id
                 currentSongId = song.song_id
+
                 tvSongName.text = song.song_name
                 tvSinger.text = song.singer_name
-                loadSongDetail(song.song_id, imgCover, tvTotalTime, seekBar)
+
+                if (isNewSong) {
+                    loadSongDetail(song.song_id, imgCover, tvTotalTime, seekBar)
+                } else {
+                    // 【核心修复】：同一首歌切回来，也要把封面加载出来
+                    val coverUrl = MusicPlayerManager.resolveUrl(song.cover_url) ?: song.cover_url
+                    Glide.with(this@PlayerFragment)
+                        .load(coverUrl)
+                        .placeholder(R.drawable.disk)
+                        .into(imgCover)
+
+                    // 同步 UI 即可
+                    val duration = MusicPlayerManager.getDuration()
+                    if (duration > 0) {
+                        seekBar.max = duration
+                        tvTotalTime.text = formatTime(duration)
+                        updateProgressBar()
+                    }
+                }
             } else {
-                // UI 清理逻辑（用于歌曲被删除时）
+                // UI 清空
                 currentSongId = -1
                 tvSongName.text = "暂无播放歌曲"
                 tvSinger.text = "---"
@@ -84,7 +114,8 @@ class PlayerFragment : Fragment() {
             }
         }
 
-        mainViewModel.isPlaying.observe(viewLifecycleOwner) { isPlaying ->
+        // 【核心修复】：观察队友的全局播放状态，确保图标绝对一致
+        bottomVm.isPlaying.observe(viewLifecycleOwner) { isPlaying ->
             if (isPlaying) {
                 btnPlay.setImageResource(R.drawable.pause_button)
                 handler.post(updateProgressTask)
@@ -96,8 +127,8 @@ class PlayerFragment : Fragment() {
 
         btnPlay.setOnClickListener {
             if (currentSongId == -1) return@setOnClickListener
-            MusicPlayerManager.toggle()
-            mainViewModel.togglePlayState()
+            // 统一调用全局切换逻辑
+            bottomVm.togglePlayPause()
         }
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -132,11 +163,9 @@ class PlayerFragment : Fragment() {
         lifecycleScope.launch {
             val result = songRepository.fetchSongDetail(songId)
             result.onSuccess { detail ->
-                // 1. 同步封面
                 val coverUrl = MusicPlayerManager.resolveUrl(detail.cover_url) ?: detail.cover_url
                 Glide.with(this@PlayerFragment).load(coverUrl).placeholder(R.drawable.disk).into(img)
 
-                // 2. 处理播放器逻辑
                 val playUrl = MusicPlayerManager.resolveUrl(detail.play_url)
                 if (playUrl == null) {
                     Toast.makeText(requireContext(), "播放地址无效", Toast.LENGTH_SHORT).show()
@@ -155,6 +184,10 @@ class PlayerFragment : Fragment() {
                 }
 
                 val isNewPlay = MusicPlayerManager.play(playUrl, detail.song_id)
+                
+                // 播放启动后，同步一次全局状态让图标变 pause
+                bottomVm.syncPlayState()
+
                 if (!isNewPlay) {
                     val totalMs = MusicPlayerManager.getDuration()
                     if (totalMs > 0) {
@@ -182,14 +215,12 @@ class PlayerFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // 关键同步：如果在大管家里被外部修改了歌曲（比如删除了）
-        MusicPlayerManager.currentSong?.let { song ->
-            if (currentSongId != song.song_id) {
-                mainViewModel.playSong(song)
-            }
-        }
+        // 回到页面，同步一次播放器真实状态
+        bottomVm.syncPlayState()
         updateProgressBar()
-        if (MusicPlayerManager.isPlaying()) handler.post(updateProgressTask)
+        if (MusicPlayerManager.isPlaying()) {
+            handler.post(updateProgressTask)
+        }
     }
 
     override fun onDestroyView() {

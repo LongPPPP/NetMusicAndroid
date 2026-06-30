@@ -114,12 +114,31 @@
                 android:orientation="horizontal">
 
                 <ImageButton
+                    android:id="@+id/btnPrev"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="20dp"
+                    android:contentDescription="上一首"
+                    android:src="@drawable/ic_prev"
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerInside" />
+
+                <ImageButton
                     android:id="@+id/btnPlay"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:layout_marginTop="0dp"
                     android:contentDescription="播放按钮"
                     android:src="@drawable/play_button"
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerInside" />
+
+                <ImageButton
+                    android:id="@+id/btnNext"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="20dp"
+                    android:contentDescription="下一首"
+                    android:src="@drawable/ic_next"
                     android:background="@android:color/transparent"
                     android:scaleType="centerInside" />
 

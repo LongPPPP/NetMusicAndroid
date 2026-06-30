@@ -10,17 +10,17 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
+    // 当前正在播放的歌曲信息
     private val _currentSong = MutableLiveData<SongDetail?>()
     val currentSong: LiveData<SongDetail?> = _currentSong
 
-    private val _isPlaying = MutableLiveData<Boolean>(false)
-    val isPlaying: LiveData<Boolean> = _isPlaying
-
+    /**
+     * 设置当前播放歌曲。
+     * 同时自动同步到 Room 播放队列（由队友的功能实现）。
+     */
     fun playSong(song: SongDetail?) {
         _currentSong.value = song
         if (song != null) {
-            _isPlaying.value = true
-            // 自动同步到 Room 播放队列（队友的功能）
             viewModelScope.launch {
                 try {
                     val repo = PlayQueueRepository()
@@ -41,12 +41,6 @@ class MainViewModel : ViewModel() {
                     }
                 } catch (_: Exception) {}
             }
-        } else {
-            _isPlaying.value = false
         }
-    }
-
-    fun togglePlayState() {
-        _isPlaying.value = !(_isPlaying.value ?: false)
     }
 }
