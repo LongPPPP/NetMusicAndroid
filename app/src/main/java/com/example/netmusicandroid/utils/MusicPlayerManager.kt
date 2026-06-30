@@ -12,6 +12,7 @@ object MusicPlayerManager {
     private var currentUrl: String? = null
     // 手动维护准备状态标记，彻底避免PREPARING阶段调用API触发-38错误
     private var isPreparedFlag = false
+    private var currentSongId: Int = -1 // 【新增】：记录当前歌曲 ID
 
     var onPrepared: ((Int) -> Unit)? = null
     var onCompletion: (() -> Unit)? = null
@@ -32,7 +33,7 @@ object MusicPlayerManager {
      * 播放歌曲。
      * @return true 开始播新歌，false 同一 URL 已在播放中。
      */
-    fun play(url: String): Boolean {
+    fun play(url: String, songId: Int = -1): Boolean {
         // 同一URL且播放器存在时，处理续播逻辑
         if (url == currentUrl && mediaPlayer != null) {
             val mp = mediaPlayer!!
@@ -53,6 +54,7 @@ object MusicPlayerManager {
         // 安全释放旧播放器
         releaseQuietly()
         currentUrl = url
+        currentSongId = songId // 【记录 ID】
 
         return try {
             mediaPlayer = MediaPlayer().apply {
@@ -115,7 +117,10 @@ object MusicPlayerManager {
     fun stop() {
         releaseQuietly()
         currentUrl = null
+        currentSongId = -1 // 【重置 ID】
     }
+
+    fun getCurrentSongId() = currentSongId // 【暴露获取方法】
 
     fun seekTo(msec: Int) {
         try {

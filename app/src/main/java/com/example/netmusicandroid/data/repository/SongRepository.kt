@@ -41,13 +41,16 @@ class SongRepository {
         coverFile: File?,
         songFile: File
     ): Result<SongDetail> = try {
+        // 使用 plain 类型发送字符串
         val nameBody = name.toRequestBody("text/plain".toMediaTypeOrNull())
         
+        // 【精准修复】：明确指定 mimeType 为后端支持的类型
         val songRequestBody = songFile.asRequestBody("audio/mpeg".toMediaTypeOrNull())
         val songPart = MultipartBody.Part.createFormData("song", songFile.name, songRequestBody)
         
         val coverPart = coverFile?.let {
-            val coverRequestBody = it.asRequestBody("image/*".toMediaTypeOrNull())
+            // 这里不再使用 image/*，而是改为 image/jpeg
+            val coverRequestBody = it.asRequestBody("image/jpeg".toMediaTypeOrNull())
             MultipartBody.Part.createFormData("cover", it.name, coverRequestBody)
         }
 
@@ -73,7 +76,6 @@ class SongRepository {
         Result.failure(Exception(parseError(e)))
     }
 
-    // 辅助方法：将 Uri 转换为临时 File (用于上传)
     fun uriToFile(context: Context, uri: Uri, fileName: String): File {
         val inputStream = context.contentResolver.openInputStream(uri)
         val file = File(context.cacheDir, fileName)

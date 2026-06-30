@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.netmusicandroid.R
 import com.example.netmusicandroid.data.model.SongDetail
-
+import com.example.netmusicandroid.constant.ApiConst
 class HomeSongAdapter(
     private var songList: List<SongDetail>,
     private val onItemClick: (SongDetail) -> Unit
@@ -35,10 +35,14 @@ class HomeSongAdapter(
         
         // 处理图片 URL (严格处理 null 和 空格转义)
         val rawCoverUrl = song.cover_url ?: ""
+        val baseHost = ApiConst.BASE_URL.replace("/api/v1/", "")
         val coverUrl = when {
             rawCoverUrl.isEmpty() -> null
             rawCoverUrl.startsWith("http") -> rawCoverUrl.replace(" ", "%20")
-            else -> "http://10.240.200.130:3000$rawCoverUrl".replace(" ", "%20")
+            else -> {
+                val path = if (rawCoverUrl.startsWith("/")) rawCoverUrl else "/$rawCoverUrl"
+                "$baseHost$path".replace(" ", "%20")
+            }
         }
         
         android.util.Log.d("CoverDebug", "请求的封面地址: $coverUrl")

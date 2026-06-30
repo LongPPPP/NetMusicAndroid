@@ -90,6 +90,13 @@ class SingerActivity : AppCompatActivity() {
             val result = songRepository.removeSong(songId)
             result.onSuccess {
                 Toast.makeText(this@SingerActivity, "下架成功", Toast.LENGTH_SHORT).show()
+
+                // 【核心修复】：直接对比播放器单例中的全局 ID
+                if (com.example.netmusicandroid.utils.MusicPlayerManager.getCurrentSongId() == songId) {
+                    com.example.netmusicandroid.utils.MusicPlayerManager.stop() 
+                    mainViewModel.playSong(null)
+                }
+
                 // 刷新页面
                 val name = findViewById<TextView>(R.id.tvSingerName).text.toString()
                 viewModel.loadSingerByName(name)

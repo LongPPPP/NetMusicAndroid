@@ -59,7 +59,7 @@ class PlayerFragment : Fragment() {
         val tvCurrentTime = view.findViewById<TextView>(R.id.tvCurrentTime)
         val tvTotalTime = view.findViewById<TextView>(R.id.tvTotalTime)
 
-        // 【极致同步】：抢在异步加载之前，先尝试同步一次进度条
+        // 抢在异步加载之前，先尝试同步一次进度条
         val currentDuration = MusicPlayerManager.getDuration()
         if (currentDuration > 0) {
             seekBar.max = currentDuration
@@ -76,6 +76,19 @@ class PlayerFragment : Fragment() {
                 tvSinger.text = song.singer_name
                 // 加载详情（URL 补全逻辑封装在 MusicPlayerManager.resolveUrl 中）
                 loadSongDetail(song.song_id, imgCover, tvTotalTime, seekBar)
+            } else {
+                currentSongId = -1
+
+                tvSongName.text = ""
+                tvSinger.text = ""
+                imgCover.setImageResource(R.drawable.disk)
+
+                seekBar.progress = 0
+                seekBar.max = 0
+                tvCurrentTime.text = "00:00"
+                tvTotalTime.text = "00:00"
+
+                handler.removeCallbacks(updateProgressTask)
             }
         }
 
@@ -159,7 +172,7 @@ class PlayerFragment : Fragment() {
                 // 播放完成回调由 BottomPlayerViewModel 统一管理（记录历史 + 自动切歌）
 
                 // 执行 play，只有是新歌时才会触发重播
-                val isNewPlay = MusicPlayerManager.play(playUrl)
+                val isNewPlay = MusicPlayerManager.play(playUrl, detail.song_id)
 
                 // 3. 如果不是新歌（切回来的），手动强制同步 UI 状态
                 if (!isNewPlay) {
