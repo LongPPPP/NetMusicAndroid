@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@drawable/bg_app_soft"
     tools:context=".activity.MyCommentActivity">
 
     <!-- 统一规范标题栏：高80dp、顶部30dp边距、垂直居中 -->
@@ -21,8 +21,12 @@
 
         <ImageView
             android:id="@+id/iv_back"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_icon_click_feedback"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="6dp"
             android:src="@drawable/ic_back"
             android:contentDescription="@string/cd_back_btn" />
 

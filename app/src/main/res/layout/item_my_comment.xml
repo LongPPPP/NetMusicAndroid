@@ -5,7 +5,9 @@
     android:orientation="vertical"
     android:paddingHorizontal="16dp"
     android:paddingVertical="14dp"
-    android:background="@drawable/bg_round_white"
+    android:background="@drawable/bg_click_feedback_round"
+    android:clickable="true"
+    android:focusable="true"
     android:layout_marginHorizontal="12dp"
     android:layout_marginTop="8dp">
 

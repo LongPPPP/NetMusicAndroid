@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@drawable/bg_app_soft"
     tools:context=".activity.MySongsActivity">
 
     <!-- 滚动容器 + 底部播放器 -->
@@ -27,9 +27,13 @@
                 <!-- 返回箭头 -->
                 <ImageView
                     android:id="@+id/ivBack"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_centerVertical="true"
+                    android:background="@drawable/bg_icon_click_feedback"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="6dp"
                     android:src="@drawable/ic_back"
                     android:contentDescription="@string/cd_back_btn"/>
 
