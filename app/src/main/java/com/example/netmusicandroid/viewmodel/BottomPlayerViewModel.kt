@@ -83,11 +83,16 @@ class BottomPlayerViewModel : ViewModel() {
 
     // ── 播放入口（各页面点击歌曲时调用） ─────────
 
-    /** 播放歌曲：写入队列 + 标记当前 + 记录最近播放 */
+    /** 播放歌曲：写入队列 + 标记当前 + 记录最近播放 + 实际播放 */
     fun playSong(song: SongDetail?) {
         _currentSong.value = song
         if (song != null) {
             _isPlaying.value = true
+            // 触发实际音频播放
+            val url = MusicPlayerManager.resolveUrl(song.play_url)
+            if (url != null) {
+                MusicPlayerManager.play(url, song.song_id)
+            }
             viewModelScope.launch {
                 val queue = queueRepo.getQueue()
                 val existing = queue.find { it.song_id == song.song_id }

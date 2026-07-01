@@ -137,10 +137,6 @@ class SearchActivity : AppCompatActivity() {
                 val result = songRepo.fetchSongDetail(item.song_id)
                 result.onSuccess { detail ->
                     bottomVm.playSong(detail)
-                    MusicPlayerManager.play(
-                        MusicPlayerManager.resolveUrl(detail.play_url) ?: "",
-                        detail.song_id
-                    )
                 }.onFailure {
                     Toast.makeText(this@SearchActivity, "获取歌曲详情失败", Toast.LENGTH_SHORT).show()
                 }

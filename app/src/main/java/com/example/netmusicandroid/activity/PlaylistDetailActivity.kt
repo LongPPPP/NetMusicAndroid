@@ -112,10 +112,6 @@ class PlaylistDetailActivity : AppCompatActivity() {
                     val result = songRepo.fetchSongDetail(songItem.song_id)
                     result.onSuccess { detail ->
                         bottomVm.playSong(detail)
-                        MusicPlayerManager.play(
-                            MusicPlayerManager.resolveUrl(detail.play_url) ?: return@onSuccess,
-                            detail.song_id
-                        )
                     }
                 }
             }
