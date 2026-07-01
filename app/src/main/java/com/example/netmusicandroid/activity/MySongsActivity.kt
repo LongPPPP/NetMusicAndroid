@@ -9,8 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.netmusicandroid.R
 import com.example.netmusicandroid.adapter.SongListAdapter
 import com.example.netmusicandroid.data.repository.SongRepository
-import com.example.netmusicandroid.utils.ImageLoadUtil
-import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.utils.ToastUtil
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
 import com.example.netmusicandroid.viewmodel.MySongsViewModel

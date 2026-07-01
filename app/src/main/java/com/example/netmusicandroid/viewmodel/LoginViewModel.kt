@@ -3,15 +3,12 @@ package com.example.netmusicandroid.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.netmusicandroid.data.db.AppDatabase
+import com.example.netmusicandroid.data.db.UserEntity
 import com.example.netmusicandroid.data.repository.AuthRepository
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
-
-import com.example.netmusicandroid.MinMusicApp
-import com.example.netmusicandroid.data.db.AppDatabase
-import com.example.netmusicandroid.data.db.UserEntity
-import com.example.netmusicandroid.sp.SpManager
 
 class LoginViewModel:ViewModel(){
     // 复用全局初始化好的Dao，不重复创建数据库

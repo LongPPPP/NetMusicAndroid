@@ -1,8 +1,6 @@
 package com.example.netmusicandroid.activity
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -19,9 +17,8 @@ import com.example.netmusicandroid.R
 import com.example.netmusicandroid.adapter.SingerSongAdapter
 import com.example.netmusicandroid.constant.ApiConst
 import com.example.netmusicandroid.data.repository.SongRepository
-import com.example.netmusicandroid.utils.MusicPlayerManager
-import com.example.netmusicandroid.viewmodel.SingerViewModel
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
+import com.example.netmusicandroid.viewmodel.SingerViewModel
 import kotlinx.coroutines.launch
 
 class SingerActivity : AppCompatActivity() {

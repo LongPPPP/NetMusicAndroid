@@ -8,9 +8,9 @@ import com.example.netmusicandroid.data.model.ApiResponse
 import com.example.netmusicandroid.data.model.UserPlaylist
 import com.example.netmusicandroid.data.repository.PlaylistRepository
 import com.example.netmusicandroid.sp.SpManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.Response
-import kotlinx.coroutines.delay
 
 class UserPlaylistViewModel : ViewModel() {
     private val mineRepo = PlaylistRepository.getInstance()

@@ -16,7 +16,6 @@ import com.example.netmusicandroid.R
 import com.example.netmusicandroid.data.repository.SongRepository
 import com.example.netmusicandroid.utils.FileUtil
 import kotlinx.coroutines.launch
-import java.io.File
 
 class UploadSongActivity : AppCompatActivity() {
 

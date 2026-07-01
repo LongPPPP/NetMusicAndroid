@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.netmusicandroid.data.db.UserEntity
 import com.example.netmusicandroid.data.repository.AuthRepository
-import com.example.netmusicandroid.data.db.AppDatabase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 

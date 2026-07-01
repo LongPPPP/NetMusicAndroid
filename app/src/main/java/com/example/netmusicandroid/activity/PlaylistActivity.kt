@@ -2,22 +2,16 @@ package com.example.netmusicandroid.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.example.netmusicandroid.R
 import com.example.netmusicandroid.adapter.UserPlaylistAdapter
-import com.example.netmusicandroid.data.repository.AuthRepository
 import com.example.netmusicandroid.databinding.ActivityPlaylistBinding
 import com.example.netmusicandroid.dialog.CreatePlaylistDialog
 import com.example.netmusicandroid.utils.BottomPlayerBinder
+import com.example.netmusicandroid.utils.ToastUtil
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
 import com.example.netmusicandroid.viewmodel.UserPlaylistViewModel
-import com.example.netmusicandroid.utils.ToastUtil
-import kotlinx.coroutines.launch
 
 class PlaylistActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlaylistBinding

@@ -6,12 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.netmusicandroid.R
 import com.example.netmusicandroid.adapter.SongListAdapter
 import com.example.netmusicandroid.data.repository.SongRepository
 import com.example.netmusicandroid.databinding.ActivityRecentPlayBinding
-import com.example.netmusicandroid.utils.ImageLoadUtil
-import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.utils.BottomPlayerBinder
 import com.example.netmusicandroid.utils.ToastUtil
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel

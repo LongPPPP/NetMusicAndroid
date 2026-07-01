@@ -1,20 +1,20 @@
 package com.example.netmusicandroid.data.repository
 
-import com.example.netmusicandroid.data.api.cachedAccessToken
 import com.example.netmusicandroid.data.api.AuthApiService
 import com.example.netmusicandroid.data.api.LoginRequest
 import com.example.netmusicandroid.data.api.RefreshRequest
 import com.example.netmusicandroid.data.api.RegisterRequest
 import com.example.netmusicandroid.data.api.UpdateUserRequest
+import com.example.netmusicandroid.data.api.cachedAccessToken
 import com.example.netmusicandroid.data.db.UserDao
 import com.example.netmusicandroid.data.db.UserEntity
 import com.example.netmusicandroid.sp.SpManager
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 
 class AuthRepository private constructor(
     private val userDao: UserDao

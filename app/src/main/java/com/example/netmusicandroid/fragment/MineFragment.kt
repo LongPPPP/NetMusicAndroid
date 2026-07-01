@@ -24,12 +24,11 @@ import com.example.netmusicandroid.activity.SearchActivity
 import com.example.netmusicandroid.activity.SettingActivity
 import com.example.netmusicandroid.activity.SingerActivity
 import com.example.netmusicandroid.activity.UploadSongActivity
+import com.example.netmusicandroid.data.db.UserEntity
 import com.example.netmusicandroid.data.repository.AuthRepository
 import com.example.netmusicandroid.databinding.FragmentMineBinding
 import com.example.netmusicandroid.databinding.LayoutBottomPlayerBinding
-import com.example.netmusicandroid.data.db.UserEntity
 import com.example.netmusicandroid.utils.BottomPlayerBinder
-import com.example.netmusicandroid.utils.ImageLoadUtil
 import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
 import kotlinx.coroutines.launch

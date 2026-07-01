@@ -1,7 +1,6 @@
 package com.example.netmusicandroid.utils
 
 import android.media.MediaPlayer
-import android.util.Log
 import com.example.netmusicandroid.constant.ApiConst
 import com.example.netmusicandroid.data.model.SongDetail
 

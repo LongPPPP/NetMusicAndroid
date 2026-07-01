@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.netmusicandroid.R
-import com.example.netmusicandroid.constant.ApiConst
 import com.example.netmusicandroid.data.model.UserPlaylist
 import com.example.netmusicandroid.databinding.ItemUserCollectionBinding
 import com.example.netmusicandroid.utils.MusicPlayerManager

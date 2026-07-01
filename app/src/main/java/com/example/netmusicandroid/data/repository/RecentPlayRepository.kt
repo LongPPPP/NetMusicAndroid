@@ -1,8 +1,8 @@
 package com.example.netmusicandroid.data.repository
 
-import com.example.netmusicandroid.data.db.AppDatabase
 import com.example.netmusicandroid.data.db.RecentPlayDao
 import com.example.netmusicandroid.data.db.RecentPlayEntity
+import com.example.netmusicandroid.data.repository.RecentPlayRepository.Companion.MAX_COUNT
 import kotlinx.coroutines.flow.Flow
 
 /**

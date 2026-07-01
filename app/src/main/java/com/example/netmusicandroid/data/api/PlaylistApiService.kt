@@ -1,12 +1,11 @@
 package com.example.netmusicandroid.data.api
 
 import com.example.netmusicandroid.data.model.ApiResponse
-import com.example.netmusicandroid.data.model.UserInfo
-import com.example.netmusicandroid.data.model.PlaylistData
 import com.example.netmusicandroid.data.model.CreatePlaylistReq
 import com.example.netmusicandroid.data.model.CreatePlaylistResp
+import com.example.netmusicandroid.data.model.PlaylistData
+import com.example.netmusicandroid.data.model.UserInfo
 import com.example.netmusicandroid.data.model.UserPlaylist
-
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE

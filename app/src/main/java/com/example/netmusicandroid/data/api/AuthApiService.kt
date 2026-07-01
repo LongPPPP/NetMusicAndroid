@@ -1,7 +1,7 @@
 package com.example.netmusicandroid.data.api
 
-import com.example.netmusicandroid.data.model.AvatarUploadData
 import com.example.netmusicandroid.data.model.ApiResponse
+import com.example.netmusicandroid.data.model.AvatarUploadData
 import com.example.netmusicandroid.data.model.LoginData
 import com.example.netmusicandroid.data.model.RefreshTokenData
 import com.example.netmusicandroid.data.model.SingerIdData
@@ -14,6 +14,7 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
+
 //定义接口 登录和注册里各请求体的具体内容
 data class LoginRequest(
     val email: String,

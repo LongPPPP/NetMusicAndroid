@@ -3,10 +3,10 @@ package com.example.netmusicandroid.data.repository
 import com.example.netmusicandroid.data.api.ApiClient
 import com.example.netmusicandroid.data.api.PlaylistApiService
 import com.example.netmusicandroid.data.model.ApiResponse
-import com.example.netmusicandroid.data.model.UserInfo
-import com.example.netmusicandroid.data.model.PlaylistData
 import com.example.netmusicandroid.data.model.CreatePlaylistReq
 import com.example.netmusicandroid.data.model.CreatePlaylistResp
+import com.example.netmusicandroid.data.model.PlaylistData
+import com.example.netmusicandroid.data.model.UserInfo
 import com.example.netmusicandroid.data.model.UserPlaylist
 import retrofit2.Response
 

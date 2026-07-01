@@ -2,11 +2,10 @@ package com.example.netmusicandroid.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.netmusicandroid.data.db.AppDatabase
 import com.example.netmusicandroid.data.repository.AuthRepository
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import org.json.JSONObject
+import retrofit2.HttpException
 
 class RegisterViewModel : ViewModel() {
     private val repository = AuthRepository.getInstance()

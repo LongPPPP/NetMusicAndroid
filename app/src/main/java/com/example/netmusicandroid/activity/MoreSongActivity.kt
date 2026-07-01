@@ -15,8 +15,6 @@ import com.example.netmusicandroid.R
 import com.example.netmusicandroid.adapter.HomeSongAdapter
 import com.example.netmusicandroid.data.model.SongDetail
 import com.example.netmusicandroid.data.repository.SongRepository
-import com.example.netmusicandroid.utils.ImageLoadUtil
-import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
 import com.example.netmusicandroid.viewmodel.MoreSongViewModel
 import kotlinx.coroutines.launch
@@ -44,7 +42,7 @@ class MoreSongActivity : AppCompatActivity() {
 
         // RecyclerView
         val rv = findViewById<RecyclerView>(R.id.rv_song_list)
-        songAdapter = HomeSongAdapter(emptyList()) { song ->
+        songAdapter = HomeSongAdapter { song ->
             playSong(song)
         }
         rv.layoutManager = LinearLayoutManager(this)
@@ -74,7 +72,7 @@ class MoreSongActivity : AppCompatActivity() {
 
         // 数据观察
         viewModel.songs.observe(this) { list ->
-            songAdapter.updateData(list)
+            songAdapter.submitSongs(list)
             findViewById<TextView>(R.id.tv_song_total).text = "${list.size} 首"
             findViewById<TextView>(R.id.tv_play_all).text = "播放全部(${list.size})"
             // 封面使用第一首歌曲的封面

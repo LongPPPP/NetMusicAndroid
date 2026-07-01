@@ -2,20 +2,17 @@ package com.example.netmusicandroid.activity
 
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.example.netmusicandroid.R
 import com.example.netmusicandroid.databinding.ActivitySettingBinding
 import com.example.netmusicandroid.dialog.EditProfileDialog
 import com.example.netmusicandroid.utils.BottomPlayerBinder
-import com.example.netmusicandroid.utils.ImageLoadUtil
 import com.example.netmusicandroid.utils.MusicPlayerManager
+import com.example.netmusicandroid.utils.ToastUtil
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
 import com.example.netmusicandroid.viewmodel.SettingViewModel
-import com.example.netmusicandroid.utils.ToastUtil
 import kotlinx.coroutines.launch
 import java.io.File
 
