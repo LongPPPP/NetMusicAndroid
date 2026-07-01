@@ -64,12 +64,11 @@ class HomeFragment : Fragment() {
         playlistVm = ViewModelProvider(this)[UserPlaylistViewModel::class.java]
         singerListVm = ViewModelProvider(this)[SingerListViewModel::class.java]
 
-        // 1. 热门歌曲列表RecyclerView初始化
+// 1. 热门歌曲列表RecyclerView初始化
         val rvHomeSongs = view.findViewById<RecyclerView>(R.id.rvHomeSongs)
         songAdapter = HomeSongAdapter(emptyList()) { song ->
-            // 点击歌曲自动播放并跳转全屏播放页
+            // 点击歌曲仅触发播放，不跳转全屏播放页
             bottomVm.playSong(song)
-            (requireActivity() as BaseActivity).navigateToPlayer()
         }
         rvHomeSongs.adapter = songAdapter
 

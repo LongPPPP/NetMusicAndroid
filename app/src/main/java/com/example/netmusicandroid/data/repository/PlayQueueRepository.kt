@@ -1,6 +1,7 @@
 package com.example.netmusicandroid.data.repository
 
 import com.example.netmusicandroid.data.db.AppDatabase
+import com.example.netmusicandroid.data.db.PlayQueueDao
 import com.example.netmusicandroid.data.db.PlayQueueEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -10,14 +11,47 @@ import kotlinx.coroutines.flow.Flow
  * 封装 Room Dao，提供队列持久化的增删改查能力。
  * 队列通过 sort_order 升序维护播放顺序，is_current 标记当前歌曲。
  *
+ * 改造说明：改为全局单例模式，全应用共用同一份播放队列与当前歌曲指针
+ * 所有页面/ViewModel 操作的都是同一份数据，切歌、增删歌曲全局自动同步
+ *
  * 使用方式：
+ * - 在 Application 中调用 initInstance 完成初始化
+ * - 各 ViewModel 通过 getInstance() 获取全局唯一实例
  * - 通过 observeQueue() / observeCurrentSong() 监听队列变化（Flow）
  * - 通过 append / remove / move / clear 修改队列
  * - 通过切歌方法 next / prev / skipTo 切换当前歌曲
  */
-class PlayQueueRepository(
-    private val dao: com.example.netmusicandroid.data.db.PlayQueueDao = AppDatabase.globalPlayQueueDao
+class PlayQueueRepository private constructor(
+    private val dao: PlayQueueDao
 ) {
+
+    companion object {
+        @Volatile
+        private var INSTANCE: PlayQueueRepository? = null
+
+        /**
+         * 初始化全局单例（仅在 Application 启动时调用一次）
+         */
+        fun initInstance(dao: PlayQueueDao) {
+            if (INSTANCE == null) {
+                synchronized(this) {
+                    if (INSTANCE == null) {
+                        INSTANCE = PlayQueueRepository(dao)
+                    }
+                }
+            }
+        }
+
+        /**
+         * 获取全局唯一实例
+         * 调用前必须先在 Application 中执行 initInstance
+         */
+        fun getInstance(): PlayQueueRepository {
+            return INSTANCE ?: throw IllegalStateException(
+                "PlayQueueRepository 未初始化，请在 Application.onCreate 中调用 initInstance"
+            )
+        }
+    }
 
     // ── 监听（Flow） ────────────────────────────
 
@@ -46,8 +80,14 @@ class PlayQueueRepository(
     /**
      * 追加单首歌曲到队尾，返回新行的 sort_order
      */
-    suspend fun append(songId: Int, songName: String, singerName: String,
-                       playUrl: String?, coverUrl: String?, duration: Int?): Int {
+    suspend fun append(
+        songId: Int,
+        songName: String,
+        singerName: String,
+        playUrl: String?,
+        coverUrl: String?,
+        duration: Int?
+    ): Int {
         val nextOrder = (dao.getMaxSortOrder() ?: 0) + 1
         val entity = PlayQueueEntity(
             song_id = songId,

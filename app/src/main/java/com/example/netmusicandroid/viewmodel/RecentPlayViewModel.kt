@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class RecentPlayViewModel : ViewModel() {
 
-    private val repo = RecentPlayRepository()
+    private val repo = RecentPlayRepository.getInstance()
 
     // ── 数据 ────────────────────────────────────
 

@@ -4,6 +4,8 @@ import android.app.Application
 import com.example.netmusicandroid.data.api.ApiClient
 import com.example.netmusicandroid.data.db.AppDatabase
 import com.example.netmusicandroid.data.repository.AuthRepository
+import com.example.netmusicandroid.data.repository.PlayQueueRepository
+import com.example.netmusicandroid.data.repository.RecentPlayRepository
 
 /**
  * APP全局应用入口，APP进程创建时最先执行
@@ -32,6 +34,11 @@ class MinMusicApp : Application() {
 
         // 2. 一次性初始化AuthRepository单例（使用新的initRepo方法）
         AuthRepository.initRepo(userDao)
+
+        // 初始化播放队列全局单例
+        PlayQueueRepository.initInstance(AppDatabase.globalPlayQueueDao)
+        // 初始化最近播放全局单例
+        RecentPlayRepository.initInstance(AppDatabase.globalRecentPlayDao)
 
         // 注入AuthRepository到ApiClient，解除硬耦合依赖
         ApiClient.authRepositoryProvider = { AuthRepository.getInstance() }

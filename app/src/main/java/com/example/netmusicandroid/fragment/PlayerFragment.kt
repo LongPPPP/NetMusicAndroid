@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 /**
  * 全屏播放器Fragment
  * 播放状态、切歌逻辑完全与底部迷你播放栏同源，统一由BottomPlayerViewModel管理
+ * 修复：进度条切歌乱跳问题，严格控制刷新时机与任务生命周期
  */
 class PlayerFragment : Fragment() {
     // 全局共享播放器VM，与底部迷你播放栏共用同一实例
@@ -41,8 +42,25 @@ class PlayerFragment : Fragment() {
     private val handler = Handler(Looper.getMainLooper())
     private val updateProgressTask = object : Runnable {
         override fun run() {
-            updateProgressBar()
+            // 修复：播放器未准备完成时不刷新进度，避免异常数值
+            if (MusicPlayerManager.getDuration() > 0) {
+                updateProgressBar()
+            }
             handler.postDelayed(this, 1000)
+        }
+    }
+
+    // 播放器准备完成监听器，用于精准更新时长、启动进度
+    private val preparedListener: (Int) -> Unit = { duration ->
+        view?.let { root ->
+            val seekBar = root.findViewById<SeekBar>(R.id.seekBar)
+            val tvTotalTime = root.findViewById<TextView>(R.id.tvTotalTime)
+            seekBar.max = duration
+            tvTotalTime.text = formatTime(duration)
+            // 准备完成且正在播放时，启动进度刷新
+            if (bottomVm.isPlaying.value == true) {
+                handler.post(updateProgressTask)
+            }
         }
     }
 
@@ -80,6 +98,9 @@ class PlayerFragment : Fragment() {
             tvCurrentTime.text = formatTime(MusicPlayerManager.getCurrentPosition())
         }
 
+        // 注册播放器准备完成监听，精准更新时长
+        MusicPlayerManager.addOnPreparedListener(preparedListener)
+
         // 监听全局歌曲切换，统一刷新UI（与迷你播放栏同源）
         bottomVm.currentSong.observe(viewLifecycleOwner) { song ->
             if (song != null) {
@@ -91,10 +112,18 @@ class PlayerFragment : Fragment() {
                 tvSinger.text = song.singer_name
 
                 if (isNewSong) {
-                    // 新歌：仅加载详情补全UI，不触发播放（播放由VM统一管理）
-                    loadSongDetail(song.song_id, imgCover, tvTotalTime, seekBar)
+                    // 修复：切新歌先立刻停止所有旧进度任务，清空残留回调，避免旧进度跳变
+                    handler.removeCallbacks(updateProgressTask)
+
+                    // 强制重置进度UI，从0开始
                     seekBar.progress = 0
                     tvCurrentTime.text = "00:00"
+                    // 总时长先临时清空，等待播放器准备完成后更新真实值
+                    seekBar.max = 0
+                    tvTotalTime.text = "00:00"
+
+                    // 异步加载详情补全封面等UI，不控制播放
+                    loadSongDetail(song.song_id, imgCover, tvTotalTime, seekBar)
                 } else {
                     // 同一首歌：直接同步封面与进度
                     val coverUrl = MusicPlayerManager.resolveUrl(song.cover_url) ?: song.cover_url
@@ -111,7 +140,7 @@ class PlayerFragment : Fragment() {
                     }
                 }
             } else {
-                // 无播放歌曲，清空所有UI
+                // 无播放歌曲，清空所有UI并停止进度刷新
                 currentSongId = -1
                 tvSongName.text = "暂无播放歌曲"
                 tvSinger.text = "---"
@@ -124,11 +153,15 @@ class PlayerFragment : Fragment() {
             }
         }
 
-        // 监听全局播放状态，同步播放/暂停按钮（与迷你播放栏完全一致）
+        // 监听全局播放状态，同步播放/暂停按钮
         bottomVm.isPlaying.observe(viewLifecycleOwner) { isPlaying ->
             if (isPlaying) {
                 btnPlay.setImageResource(R.drawable.pause_button)
-                handler.post(updateProgressTask)
+                // 修复：只有播放器已准备完成，才启动进度刷新，避免提前启动乱跳
+                if (MusicPlayerManager.getDuration() > 0) {
+                    handler.removeCallbacks(updateProgressTask)
+                    handler.post(updateProgressTask)
+                }
             } else {
                 btnPlay.setImageResource(R.drawable.play_button)
                 handler.removeCallbacks(updateProgressTask)
@@ -159,7 +192,7 @@ class PlayerFragment : Fragment() {
 
             override fun onStopTrackingTouch(sb: SeekBar?) {
                 sb?.let { MusicPlayerManager.seekTo(it.progress) }
-                if (bottomVm.isPlaying.value == true) {
+                if (bottomVm.isPlaying.value == true && MusicPlayerManager.getDuration() > 0) {
                     handler.post(updateProgressTask)
                 }
             }
@@ -196,20 +229,19 @@ class PlayerFragment : Fragment() {
                 val coverUrl = MusicPlayerManager.resolveUrl(detail.cover_url) ?: detail.cover_url
                 Glide.with(this@PlayerFragment).load(coverUrl).placeholder(R.drawable.disk).into(img)
 
-                // 用详情时长初始化UI，播放器准备完成后会自动校正
-                val detailDuration = detail.duration ?: 0
-                if (detailDuration > 0) {
-                    sb.max = detailDuration
-                    tvTotal.text = formatTime(detailDuration)
-                }
-                // 播放器已准备完成则直接同步真实时长
+                // 仅当播放器还没准备完成时，用详情时长做临时显示
                 val realDuration = MusicPlayerManager.getDuration()
-                if (realDuration > 0) {
-                    sb.max = realDuration
-                    tvTotal.text = formatTime(realDuration)
+                if (realDuration <= 0) {
+                    val detailDuration = detail.duration ?: 0
+                    if (detailDuration > 0) {
+                        sb.max = detailDuration
+                        tvTotal.text = formatTime(detailDuration)
+                    }
                 }
             }.onFailure {
-                Toast.makeText(requireContext(), "加载歌曲详情失败", Toast.LENGTH_SHORT).show()
+                context?.let {
+                    Toast.makeText(it, "加载歌曲详情失败", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -233,14 +265,19 @@ class PlayerFragment : Fragment() {
         super.onResume()
         // 页面可见时同步播放状态与进度
         bottomVm.syncPlayState()
-        updateProgressBar()
-        if (bottomVm.isPlaying.value == true) {
-            handler.post(updateProgressTask)
+        if (MusicPlayerManager.getDuration() > 0) {
+            updateProgressBar()
+            if (bottomVm.isPlaying.value == true) {
+                handler.removeCallbacks(updateProgressTask)
+                handler.post(updateProgressTask)
+            }
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        // 移除所有定时任务与监听器，防止内存泄漏
         handler.removeCallbacks(updateProgressTask)
+        MusicPlayerManager.removeOnPreparedListener(preparedListener)
     }
 }

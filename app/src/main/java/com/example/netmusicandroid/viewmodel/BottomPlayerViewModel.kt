@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.netmusicandroid.data.db.AppDatabase
 import com.example.netmusicandroid.data.db.PlayQueueEntity
 import com.example.netmusicandroid.data.db.UserEntity
 import com.example.netmusicandroid.data.model.SongDetail
@@ -19,10 +18,16 @@ import kotlinx.coroutines.launch
  * 全局播放 ViewModel（原 MainViewModel + BottomPlayerViewModel 合并）
  * 统一管理：播放队列、最近播放、当前歌曲、播放状态、迷你播放栏 UI
  * 切歌支持首尾循环：最后一首下一首 → 第一首；第一首上一首 → 最后一首
+ *
+ * 改造说明：
+ * 1. 仓库改用全局单例，所有 VM 实例共用同一份队列、同一份最近播放数据
+ * 2. 播放器回调改为注册监听器模式，支持多页面同时监听，互不覆盖
+ * 3. VM 销毁时自动移除监听器，避免内存泄漏
  */
 class BottomPlayerViewModel : ViewModel() {
-    private val queueRepo = PlayQueueRepository(AppDatabase.globalPlayQueueDao)
-    private val recentRepo = RecentPlayRepository(AppDatabase.globalRecentPlayDao)
+    // 仓库改用全局单例，多 VM 实例共享同一份数据源
+    private val queueRepo = PlayQueueRepository.getInstance()
+    private val recentRepo = RecentPlayRepository.getInstance()
 
     private val authRepository = AuthRepository.getInstance()
     val currentUserFlow: Flow<UserEntity?> = authRepository.observeCurrentLoginUser()
@@ -45,6 +50,12 @@ class BottomPlayerViewModel : ViewModel() {
     private val _currentSong = MutableLiveData<SongDetail?>()
     val currentSong: LiveData<SongDetail?> = _currentSong
 
+    // 保存监听器引用，用于 VM 销毁时移除，防止内存泄漏
+    private val stateListener: (Boolean) -> Unit = { _isPlaying.postValue(it) }
+    private val completionListener: () -> Unit = {
+        viewModelScope.launch { recordAndAdvance() }
+    }
+
     init {
         viewModelScope.launch {
             queueRepo.observeCurrentSong().collect { entity ->
@@ -65,10 +76,9 @@ class BottomPlayerViewModel : ViewModel() {
                 })
             }
         }
-        MusicPlayerManager.onStateChanged = { _isPlaying.postValue(it) }
-        MusicPlayerManager.onCompletion = {
-            viewModelScope.launch { recordAndAdvance() }
-        }
+        // 注册播放器监听器（多监听器模式，不会覆盖其他页面的监听）
+        MusicPlayerManager.addOnStateChangedListener(stateListener)
+        MusicPlayerManager.addOnCompletionListener(completionListener)
     }
 
     // ── 播放入口（各页面点击歌曲时调用） ─────────
@@ -156,7 +166,16 @@ class BottomPlayerViewModel : ViewModel() {
     fun syncPlayState() { _isPlaying.postValue(MusicPlayerManager.isPlaying()) }
     fun clearToast() { _toastMsg.postValue("") }
 
-    // ── 内部 ────────────────────────────────────
+    // ── 生命周期 ────────────────────────────────
+
+    override fun onCleared() {
+        super.onCleared()
+        // VM 销毁时移除播放器监听器，防止内存泄漏
+        MusicPlayerManager.removeOnStateChangedListener(stateListener)
+        MusicPlayerManager.removeOnCompletionListener(completionListener)
+    }
+
+    // ── 内部方法 ────────────────────────────────
 
     private fun playEntity(entity: PlayQueueEntity) {
         val url = MusicPlayerManager.resolveUrl(entity.play_url)
