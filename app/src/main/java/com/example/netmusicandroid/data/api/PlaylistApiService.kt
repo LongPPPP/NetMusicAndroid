@@ -52,4 +52,22 @@ interface PlaylistApiService {
         @Body body: CreatePlaylistReq
     ): Response<ApiResponse<CreatePlaylistResp>>
 
+    /**
+     * 歌单添加歌曲 POST /playlists/{playlistId}/songs
+     */
+    @POST("playlists/{playlistId}/songs")
+    suspend fun addSongToPlaylist(
+        @Path("playlistId") playlistId: Int,
+        @Body body: Map<String, Int>
+    ): Response<ApiResponse<Unit>>
+
+    /**
+     * 歌单移除歌曲 DELETE /playlists/{playlistId}/songs/{songId}
+     */
+    @DELETE("playlists/{playlistId}/songs/{songId}")
+    suspend fun removeSongFromPlaylist(
+        @Path("playlistId") playlistId: Int,
+        @Path("songId") songId: Int
+    ): Response<ApiResponse<Unit>>
+
 }

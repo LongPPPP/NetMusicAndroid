@@ -115,4 +115,10 @@ class SongRepository {
         if (response.code != 200) Result.failure(Exception(response.message))
         else Result.success(Unit)
     } catch (e: Exception) { Result.failure(Exception(parseError(e))) }
+
+    suspend fun fetchFavorites(): Result<com.example.netmusicandroid.data.model.FavoriteData> = try {
+        val response = api.getFavorites()
+        if (response.code != 200) Result.failure(Exception(response.message))
+        else Result.success(response.data!!)
+    } catch (e: Exception) { Result.failure(Exception(parseError(e))) }
 }

@@ -85,6 +85,7 @@ class PlayerFragment : Fragment() {
         val btnPlay = view.findViewById<ImageButton>(R.id.btnPlay)
         val btnPrev = view.findViewById<ImageButton>(R.id.btnPrev)
         val btnNext = view.findViewById<ImageButton>(R.id.btnNext)
+        val btnLike = view.findViewById<ImageButton>(R.id.btnLike)
         val seekBar = view.findViewById<SeekBar>(R.id.seekBar)
         val tvCurrentTime = view.findViewById<TextView>(R.id.tvCurrentTime)
         val tvTotalTime = view.findViewById<TextView>(R.id.tvTotalTime)
@@ -179,6 +180,22 @@ class PlayerFragment : Fragment() {
 
         // 下一首：统一走VM控制，与迷你播放栏逻辑完全一致
         btnNext.setOnClickListener { bottomVm.playNext() }
+
+        // 收藏功能逻辑
+        btnLike.setOnClickListener {
+            if (currentSongId != -1) {
+                bottomVm.toggleFavorite()
+            }
+        }
+
+        // 监听收藏状态，更新爱心图标
+        bottomVm.isLiked.observe(viewLifecycleOwner) { liked ->
+            if (liked) {
+                btnLike.setImageResource(R.drawable.ic_heart_filled)
+            } else {
+                btnLike.setImageResource(R.drawable.ic_heart_empty)
+            }
+        }
 
         // 进度条拖拽逻辑
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {

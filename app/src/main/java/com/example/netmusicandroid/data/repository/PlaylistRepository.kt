@@ -33,4 +33,29 @@ class PlaylistRepository {
         val response = api.createUserPlaylist(body)
         return if (response.isSuccessful) response.body() else null
     }
+
+    // 收藏：歌单添加歌曲
+    suspend fun addFavorite(playlistId: Int, songId: Int): Result<Unit> = try {
+        val body = mapOf("song_id" to songId)
+        val response = api.addSongToPlaylist(playlistId, body)
+        if (response.isSuccessful && (response.body()?.code == 200 || response.body()?.code == 201)) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception(response.body()?.message ?: "添加失败"))
+        }
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    // 取消收藏：歌单移除歌曲
+    suspend fun removeFavorite(playlistId: Int, songId: Int): Result<Unit> = try {
+        val response = api.removeSongFromPlaylist(playlistId, songId)
+        if (response.isSuccessful && response.body()?.code == 200) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception(response.body()?.message ?: "移除失败"))
+        }
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
 }

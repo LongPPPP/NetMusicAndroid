@@ -9,7 +9,9 @@ import com.example.netmusicandroid.data.db.UserEntity
 import com.example.netmusicandroid.data.model.SongDetail
 import com.example.netmusicandroid.data.repository.AuthRepository
 import com.example.netmusicandroid.data.repository.PlayQueueRepository
+import com.example.netmusicandroid.data.repository.PlaylistRepository
 import com.example.netmusicandroid.data.repository.RecentPlayRepository
+import com.example.netmusicandroid.data.repository.SongRepository
 import com.example.netmusicandroid.utils.MusicPlayerManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -29,9 +31,13 @@ class BottomPlayerViewModel : ViewModel() {
     // 仓库改用全局单例，多 VM 实例共享同一份数据源
     private val queueRepo = PlayQueueRepository.getInstance()
     private val recentRepo = RecentPlayRepository.getInstance()
+    private val playlistRepo = PlaylistRepository()
+    private val songRepo = SongRepository()
 
     private val authRepository = AuthRepository.getInstance()
     val currentUserFlow: Flow<UserEntity?> = authRepository.observeCurrentLoginUser()
+
+    private var favoritePlaylistId: Int = -1
 
     // ── 迷你播放栏 UI 状态 ──────────────────────
     private val _songName = MutableLiveData("")
@@ -46,6 +52,10 @@ class BottomPlayerViewModel : ViewModel() {
     val hasCurrentSong: LiveData<Boolean> = _hasCurrentSong
     private val _toastMsg = MutableLiveData("")
     val toastMsg: LiveData<String> = _toastMsg
+
+    // ── 收藏状态 ────────────────────────────────
+    private val _isLiked = MutableLiveData(false)
+    val isLiked: LiveData<Boolean> = _isLiked
 
     // ── 全屏播放器 UI 状态 ──────────────────────
     private val _currentSong = MutableLiveData<SongDetail?>()
@@ -75,6 +85,8 @@ class BottomPlayerViewModel : ViewModel() {
                         duration = it.duration
                     )
                 })
+                // 切歌后异步检查收藏状态
+                entity?.let { checkIsLiked(it.song_id) }
             }
         }
         // 注册播放器监听器（多监听器模式，不会覆盖其他页面的监听）
@@ -183,6 +195,69 @@ class BottomPlayerViewModel : ViewModel() {
                 } else {
                     _toastMsg.postValue("播放队列为空")
                 }
+            }
+        }
+    }
+
+    /** 收藏/取消收藏 切换 */
+    fun toggleFavorite() {
+        val song = _currentSong.value ?: return
+        viewModelScope.launch {
+            // 确保有收藏歌单 ID
+            if (favoritePlaylistId == -1) {
+                val success = fetchFavoritePlaylistId()
+                if (!success) {
+                    _toastMsg.postValue("无法获取收藏歌单信息")
+                    return@launch
+                }
+            }
+
+            if (_isLiked.value == true) {
+                // 取消收藏
+                val res = playlistRepo.removeFavorite(favoritePlaylistId, song.song_id)
+                if (res.isSuccess) {
+                    _isLiked.postValue(false)
+                    _toastMsg.postValue("已取消收藏")
+                } else {
+                    _toastMsg.postValue("取消收藏失败")
+                }
+            } else {
+                // 添加收藏
+                val res = playlistRepo.addFavorite(favoritePlaylistId, song.song_id)
+                if (res.isSuccess) {
+                    _isLiked.postValue(true)
+                    _toastMsg.postValue("收藏成功")
+                } else {
+                    _toastMsg.postValue("收藏失败")
+                }
+            }
+        }
+    }
+
+    private suspend fun fetchFavoritePlaylistId(): Boolean {
+        try {
+            val res = songRepo.fetchFavorites()
+            if (res.isSuccess) {
+                favoritePlaylistId = res.getOrNull()?.playlist_id ?: -1
+                return favoritePlaylistId != -1
+            }
+        } catch (e: Exception) {}
+        return false
+    }
+
+    private fun checkIsLiked(songId: Int) {
+        viewModelScope.launch {
+            try {
+                val res = songRepo.fetchFavorites()
+                res.onSuccess { data ->
+                    favoritePlaylistId = data.playlist_id
+                    val liked = data.songs.any { it.song_id == songId }
+                    _isLiked.postValue(liked)
+                }.onFailure {
+                    _isLiked.postValue(false)
+                }
+            } catch (e: Exception) {
+                _isLiked.postValue(false)
             }
         }
     }
