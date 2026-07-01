@@ -39,7 +39,8 @@ class CurrentPlaylistActivity : AppCompatActivity() {
                         bottomVm.playSong(detail) // 更新播放器数据并播放
                     }
                 }
-            }
+            },
+            showDeleteButton = false
         )
         rv.layoutManager = LinearLayoutManager(this) // 线性布局
         rv.adapter = songAdapter // 绑定适配器

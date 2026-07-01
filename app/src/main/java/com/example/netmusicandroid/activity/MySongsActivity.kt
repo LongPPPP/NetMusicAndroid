@@ -53,7 +53,8 @@ class MySongsActivity : AppCompatActivity() {
                         bottomVm.playSong(detail)
                     }
                 }
-            }
+            },
+            showDeleteButton = false
         )
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = songAdapter

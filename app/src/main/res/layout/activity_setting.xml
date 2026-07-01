@@ -9,7 +9,8 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@id/include_bottom_player">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -169,11 +170,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:background="#EEEEEE"/>
-
-            <!-- 底部留白，避开全局播放器 -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="100dp"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

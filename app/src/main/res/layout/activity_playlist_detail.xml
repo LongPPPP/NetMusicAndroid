@@ -155,7 +155,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        android:paddingBottom="100dp"
         app:layout_constraintTop_toBottomOf="@id/rv_play_all"
         app:layout_constraintBottom_toTopOf="@id/include_bottom_player" />
 

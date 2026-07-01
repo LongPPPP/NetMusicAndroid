@@ -7,12 +7,13 @@
     <!-- 歌曲序号 -->
     <TextView
         android:id="@+id/tv_index"
-        android:layout_width="24dp"
+        android:layout_width="18dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:gravity="center"
         android:text="1"
-        android:textColor="#999999"
-        android:textSize="16sp" />
+        android:textColor="#A0A0A0"
+        android:textSize="13sp" />
 
     <!-- 歌曲封面 -->
     <ImageView
@@ -71,10 +72,14 @@
     <!-- 删除按钮 -->
     <ImageView
         android:id="@+id/iv_delete"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_delete" />
+        android:background="@drawable/bg_song_delete_circle"
+        android:contentDescription="删除歌曲"
+        android:padding="8dp"
+        android:src="@drawable/ic_delete"
+        android:tint="#8A8A8A" />
 
 </RelativeLayout>
