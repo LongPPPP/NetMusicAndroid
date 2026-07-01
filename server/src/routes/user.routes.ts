@@ -14,6 +14,7 @@ router.get('/me', authMiddleware, userController.getMyProfile);
 router.get('/me/playlists', authMiddleware, playlistController.getMyPlaylists);
 router.get('/me/comments', authMiddleware, userController.getMyComments);
 router.get('/me/favorites', authMiddleware, userController.getMyFavorites);
+router.get('/me/singer', authMiddleware, userController.getMySingerId);
 router.get('/me/songs', authMiddleware, requireRole('ARTIST'), userController.getMySongs);
 router.put('/me/avatar', authMiddleware, uploadAvatarMiddleware, userController.updateAvatar);
 

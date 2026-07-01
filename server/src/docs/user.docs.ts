@@ -543,3 +543,39 @@ registry.registerPath({
         401: {description: '未登录'},
     },
 });
+
+// ===== GET /users/me/singer =====
+registry.registerPath({
+    method: 'get',
+    path: '/users/me/singer',
+    summary: '获取当前用户的歌手 ID',
+    description: '需登录认证，根据当前登录用户的 userId 查询关联的歌手 ID。若用户尚未关联歌手则返回 404。',
+    security: [{bearerAuth: []}],
+    tags: ['用户'],
+    responses: {
+        200: {
+            description: '返回歌手 ID',
+            content: {
+                'application/json': {
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            code: {type: 'integer', example: 200},
+                            data: {
+                                type: 'object',
+                                properties: {
+                                    singer_id: {type: 'integer', description: '歌手 ID'},
+                                },
+                                example: {
+                                    singer_id: 1,
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+        401: {description: '未登录'},
+        404: {description: '该用户尚未关联歌手'},
+    },
+});
