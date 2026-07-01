@@ -35,7 +35,7 @@ class SongRepository {
         }
     }
 
-    /** 上架歌曲 */
+    // 上架歌曲
     suspend fun publishSong(
         name: String,
         coverFile: File?,
@@ -44,7 +44,7 @@ class SongRepository {
         // 使用 plain 类型发送字符串
         val nameBody = name.toRequestBody("text/plain".toMediaTypeOrNull())
         
-        // 【精准修复】：明确指定 mimeType 为后端支持的类型
+        // 修复：明确指定 mimeType 为后端支持的类型
         val songRequestBody = songFile.asRequestBody("audio/mpeg".toMediaTypeOrNull())
         val songPart = MultipartBody.Part.createFormData("song", songFile.name, songRequestBody)
         
@@ -64,7 +64,7 @@ class SongRepository {
         Result.failure(Exception(parseError(e)))
     }
 
-    /** 下架歌曲 */
+    // 下架歌曲
     suspend fun removeSong(songId: Int): Result<Unit> = try {
         val response = api.deleteSong(songId)
         if (response.code == 200) {

@@ -7,6 +7,6 @@ object ApiConst {
     //http://10.0.2.2:3000
     //172.29.70.130
 
-    const val BASE_URL = "http://10.0.2.2:3000/api/v1/"
+    const val BASE_URL = "http://10.106.244.130:3000/api/v1/"
 
 }

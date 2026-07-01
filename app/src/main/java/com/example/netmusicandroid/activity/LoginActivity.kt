@@ -22,7 +22,6 @@ import com.example.netmusicandroid.adapter.HistoryAccountAdapter
 import com.example.netmusicandroid.viewmodel.LoginViewModel
 
 class LoginActivity : AppCompatActivity() {
-    //先声明，后面一定会初始化,因为这些对象只有 onCreate() 之后才能找到
     private lateinit var viewModel: LoginViewModel
     private lateinit var etEmail: EditText
     private lateinit var etPassword: EditText
@@ -30,7 +29,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        //不同 Activity，就有不同的 ViewModelStore,无则创建,有就获取
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
 
         etEmail = findViewById(R.id.etEmail)
@@ -39,30 +37,41 @@ class LoginActivity : AppCompatActivity() {
         val tvRegister = findViewById<TextView>(R.id.tvRegister)
         val ivShowHistory = findViewById<ImageView>(R.id.ivShowHistory)
 
-        // 自动填充上次登录
-        viewModel.getLastUser { user ->
-            if (user != null) {
-                etEmail.setText(user.email)
-                etPassword.setText(user.password)
+        // MVVM: 观察最近登录用户，自动填充
+        viewModel.lastUser.observe(this) { user ->
+            user?.let {
+                etEmail.setText(it.email)
+                etPassword.setText(it.password)
+            }
+        }
+        viewModel.fetchLastUser()
+
+        // MVVM: 观察登录结果
+        viewModel.loginResult.observe(this) { (success, message) ->
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            if (success) {
+                startActivity(Intent(this, BaseActivity::class.java))
+                finish()
             }
         }
 
-        // 点击箭头显示历史记录弹窗
+        // MVVM: 观察历史记录列表，展示弹窗
+        viewModel.historyUsers.observe(this) { users ->
+            if (users.isNotEmpty()) {
+                showAccountHistoryPopup(ivShowHistory, users)
+            } else {
+                Toast.makeText(this, "暂无历史登录记录", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         ivShowHistory.setOnClickListener {
-            showAccountHistoryPopup(ivShowHistory)
+            viewModel.fetchAllHistoryUsers()
         }
 
         btnLogin.setOnClickListener {
-            val email = etEmail.text.toString().trim()//把 Editable 变成 String,trim去掉字符串首尾的空格
-            val password = etPassword.text.toString()//密码空格不删
-
-            viewModel.login(email, password) { success, message ->
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                if (success) {
-                    startActivity(Intent(this, BaseActivity::class.java))
-                    finish()
-                }
-            }
+            val email = etEmail.text.toString().trim()
+            val password = etPassword.text.toString()
+            viewModel.login(email, password)
         }
 
         tvRegister.setOnClickListener {
@@ -70,43 +79,33 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun showAccountHistoryPopup(anchor: View) {
-        viewModel.getAllHistoryUsers { users ->
-            if (users.isEmpty()) {
-                Toast.makeText(this, "暂无历史登录记录", Toast.LENGTH_SHORT).show()
-                return@getAllHistoryUsers
+    private fun showAccountHistoryPopup(anchor: View, users: List<com.example.netmusicandroid.data.db.UserEntity>) {
+        // 创建弹窗内容
+        val popupView = LayoutInflater.from(this).inflate(R.layout.layout_history_popup, null)
+        val rv = popupView.findViewById<RecyclerView>(R.id.rvHistory)
+        
+        val container = anchor.parent as View
+        val popup = PopupWindow(popupView, container.width, ViewGroup.LayoutParams.WRAP_CONTENT, true)
+        
+        popup.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        popup.elevation = 20f
+
+        val adapter = HistoryAccountAdapter(users, 
+            onItemClick = { user ->
+                etEmail.setText(user.email)
+                etPassword.setText(user.password)
+                popup.dismiss()
+            },
+            onDeleteClick = { user ->
+                viewModel.deleteLocalUser(user)
+                popup.dismiss()
+                Toast.makeText(this, "已删除该账号记录", Toast.LENGTH_SHORT).show()
             }
-
-            // 创建弹窗内容
-            val popupView = LayoutInflater.from(this).inflate(R.layout.layout_history_popup, null)
-            val rv = popupView.findViewById<RecyclerView>(R.id.rvHistory)
-            
-            // 获取输入框容器的宽度，让弹窗和输入框一样宽
-            val container = anchor.parent as View
-            val popup = PopupWindow(popupView, container.width, ViewGroup.LayoutParams.WRAP_CONTENT, true)
-            
-            popup.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-            popup.elevation = 20f
-
-            val adapter = HistoryAccountAdapter(users, 
-                onItemClick = { user ->
-                    etEmail.setText(user.email)
-                    etPassword.setText(user.password)
-                    popup.dismiss()
-                },
-                onDeleteClick = { user ->
-                    viewModel.deleteLocalUser(user) {
-                        popup.dismiss()
-                        Toast.makeText(this, "已删除该账号记录", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            )
-            
-            rv.layoutManager = LinearLayoutManager(this)
-            rv.adapter = adapter
-            
-            // 显示在输入框容器下方
-            popup.showAsDropDown(container, 0, 5)
-        }
+        )
+        
+        rv.layoutManager = LinearLayoutManager(this)
+        rv.adapter = adapter
+        
+        popup.showAsDropDown(container, 0, 5)
     }
 }

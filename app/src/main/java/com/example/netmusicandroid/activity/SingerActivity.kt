@@ -84,7 +84,7 @@ class SingerActivity : AppCompatActivity() {
             }
         }
 
-        // 优先使用歌手ID直接加载；兼容旧版通过名字加载的调用方式
+        // 优先使用歌手ID直接加载；兼容通过名字加载的调用方式.songdetail里面只有singername
         if (singerId > 0) {
             viewModel.loadSingerById(singerId)
         } else {

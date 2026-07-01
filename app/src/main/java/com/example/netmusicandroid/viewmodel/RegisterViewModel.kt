@@ -1,37 +1,29 @@
 package com.example.netmusicandroid.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.netmusicandroid.data.db.AppDatabase
 import com.example.netmusicandroid.data.repository.AuthRepository
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import org.json.JSONObject
 
 class RegisterViewModel : ViewModel() {
     private val repository = AuthRepository.getInstance()
 
-    fun register(
-        username: String,
-        password: String,
-        confirmPassword: String,
-        email: String,
-        onResult: (Boolean, String) -> Unit
-    ) {
+    private val _registerResult = MutableLiveData<Pair<Boolean, String>>()
+    val registerResult: LiveData<Pair<Boolean, String>> = _registerResult
+
+    fun register(username: String, password: String, confirmPassword: String, email: String) {
         viewModelScope.launch {
-            try {
-                val result = repository.register(username, password, confirmPassword, email)
-                onResult(result.code == 200 || result.code == 201, result.message ?: "")
-            } catch (e: HttpException) {
-                val errorBody = e.response()?.errorBody()?.string()
-                val message = try {
-                    JSONObject(errorBody ?: "").getString("message")
-                } catch (ex: Exception) {
-                    "请求失败"
-                }
-                onResult(false, message)
-            } catch (e: Exception) {
-                onResult(false, e.message ?: "网络异常")
+            // 统一使用 Result 风格，逻辑更简洁
+            val result = repository.register(username, password, confirmPassword, email)
+            
+            result.onSuccess {
+                _registerResult.value = Pair(true, "注册成功")
+            }
+            
+            result.onFailure { error ->
+                _registerResult.value = Pair(false, error.message ?: "注册失败")
             }
         }
     }

@@ -1,69 +1,62 @@
-//suspend函数只能在协程里面调用,所以要launch开启一个协程
 package com.example.netmusicandroid.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.netmusicandroid.data.repository.AuthRepository
 import kotlinx.coroutines.launch
-import org.json.JSONObject
-import retrofit2.HttpException
-
-import com.example.netmusicandroid.MinMusicApp
 import com.example.netmusicandroid.data.db.AppDatabase
 import com.example.netmusicandroid.data.db.UserEntity
-import com.example.netmusicandroid.sp.SpManager
 
-class LoginViewModel:ViewModel(){
-    // 复用全局初始化好的Dao，不重复创建数据库
+class LoginViewModel : ViewModel() {
     private val userDao = AppDatabase.globalUserDao
-    // 使用单例获取AuthRepository，不再new构造
-    private val r = AuthRepository.getInstance()
+    private val authRepository = AuthRepository.getInstance()
 
-    fun login(e:String,p:String,cb:(Boolean,String)->Unit){
-        viewModelScope.launch{
-            try{
-                val res=r.login(e,p)
-                if (res.code == 200 && res.data != null) {
-                    // 仓库内部已经执行setUserId、登录状态、本地User存储
-                }
-                cb(res.code==200,res.message?:"")
-            }catch(ex:HttpException){
-                val msg=try{
-                    JSONObject(ex.response()?.errorBody()?.string()?:"").getString("message")
-                }catch(e:Exception){
-                    "登录失败"
-                }
-                cb(false,msg)
-            }catch(e:Exception){
-                cb(false,e.message?:"网络异常")
+    // 登录结果状态：Pair<是否成功, 提示消息>
+    private val _loginResult = MutableLiveData<Pair<Boolean, String>>()
+    val loginResult: LiveData<Pair<Boolean, String>> = _loginResult
+
+    // 历史用户列表
+    private val _historyUsers = MutableLiveData<List<UserEntity>>()
+    val historyUsers: LiveData<List<UserEntity>> = _historyUsers
+
+    // 最近登录用户
+    private val _lastUser = MutableLiveData<UserEntity?>()
+    val lastUser: LiveData<UserEntity?> = _lastUser
+
+    fun login(email: String, password: String) {
+        viewModelScope.launch {
+            // Repository 返回 Result<LoginData>，内部已处理异常
+            val result = authRepository.login(email, password)
+            
+            result.onSuccess {
+                _loginResult.value = Pair(true, "登录成功")
+            }
+            
+            result.onFailure { error ->
+                _loginResult.value = Pair(false, error.message ?: "登录失败")
             }
         }
     }
 
-    // 获取所有历史登录用户
-    fun getAllHistoryUsers(callback: (List<UserEntity>) -> Unit) {
+    fun fetchAllHistoryUsers() {
         viewModelScope.launch {
-            callback(userDao.getAllHistoryUsers())
+            _historyUsers.value = userDao.getAllHistoryUsers()
         }
     }
 
-    // 从本地删除某个账号
-    fun deleteLocalUser(user: UserEntity, callback: () -> Unit) {
+    fun deleteLocalUser(user: UserEntity) {
         viewModelScope.launch {
             userDao.deleteUser(user)
-            callback()
+            fetchAllHistoryUsers()
         }
     }
 
-    // 获取最近一次登录的用户
-    fun getLastUser(callback: (UserEntity?) -> Unit) {
+    fun fetchLastUser() {
         viewModelScope.launch {
             val users = userDao.getAllHistoryUsers()
-            if (users.isNotEmpty()) {
-                callback(users[0]) // 按时间倒序排，第一个就是最近的
-            } else {
-                callback(null)
-            }
+            _lastUser.value = users.firstOrNull()
         }
     }
 }

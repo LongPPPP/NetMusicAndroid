@@ -29,27 +29,22 @@ class RegisterActivity : AppCompatActivity() {
         val btnRegister = findViewById<Button>(R.id.btnRegister)
         val tvLogin = findViewById<TextView>(R.id.tvLogin)
 
-        btnRegister.setOnClickListener {
+        // MVVM: 观察注册结果
+        viewModel.registerResult.observe(this) { (success, message) ->
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            if (success) {
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            }
+        }
 
+        btnRegister.setOnClickListener {
             val username = etUsername.text.toString().trim()
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString()
             val confirmPassword = etConfirmPassword.text.toString()
 
-            viewModel.register(
-                username,
-                password,
-                confirmPassword,
-                email
-            ) { success, message ->
-
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-
-                if (success) {
-                    startActivity(Intent(this, LoginActivity::class.java))
-                    finish()
-                }
-            }
+            viewModel.register(username, password, confirmPassword, email)
         }
 
         tvLogin.setOnClickListener {

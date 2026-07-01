@@ -15,11 +15,26 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import org.json.JSONObject
+import retrofit2.HttpException
 
 class AuthRepository private constructor(
     private val userDao: UserDao
 ) {
     private val api = com.example.netmusicandroid.data.api.ApiClient.createService<AuthApiService>()
+
+    private fun parseError(e: Throwable): String {
+        return if (e is HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string()
+                JSONObject(errorBody ?: "").getString("message")
+            } catch (ex: Exception) {
+                e.message() ?: "请求错误"
+            }
+        } else {
+            e.message ?: "网络异常"
+        }
+    }
 
     companion object {
         @Volatile
@@ -43,7 +58,8 @@ class AuthRepository private constructor(
     suspend fun login(
         email: String,
         password: String
-    ) = api.login(LoginRequest(email, password)).also { response ->
+    ): Result<com.example.netmusicandroid.data.model.LoginData> = try {
+        val response = api.login(LoginRequest(email, password))
         if (response.code == 200 && response.data != null) {
             val loginData = response.data
             val now = System.currentTimeMillis()
@@ -67,7 +83,12 @@ class AuthRepository private constructor(
             SpManager.setLoginStatus(true)
             SpManager.setUserId(loginData.user.id.toLong())
             cachedAccessToken = loginData.access_token
+            Result.success(loginData)
+        } else {
+            Result.failure(Exception(response.message ?: "登录失败"))
         }
+    } catch (e: Exception) {
+        Result.failure(Exception(parseError(e)))
     }
 
     suspend fun register(
@@ -75,7 +96,16 @@ class AuthRepository private constructor(
         password: String,
         confirmPassword: String,
         email: String
-    ) = api.register(RegisterRequest(username, password, confirmPassword, email))
+    ): Result<Unit> = try {
+        val response = api.register(RegisterRequest(username, password, confirmPassword, email))
+        if (response.code == 200 || response.code == 201) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception(response.message ?: "注册失败"))
+        }
+    } catch (e: Exception) {
+        Result.failure(Exception(parseError(e)))
+    }
 
     suspend fun refreshAccessToken(): Result<String> {
         return try {

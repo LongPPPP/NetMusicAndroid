@@ -20,10 +20,10 @@ class SingerViewModel : ViewModel() {
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    /**
-     * 根据歌手名字加载详情
-     * 逻辑：列表找ID -> 请求详情
-     */
+
+//     根据歌手name加载详情
+//     逻辑：列表找ID -> 请求详情
+
     fun loadSingerByName(name: String) {
         viewModelScope.launch {
             // 1. 获取歌手列表
@@ -42,7 +42,7 @@ class SingerViewModel : ViewModel() {
         }
     }
 
-    /** 根据歌手ID直接加载详情（无需先查列表） */
+    // 根据歌手ID直接加载详情（无需先查列表）
     fun loadSingerById(id: Int) {
         fetchDetail(id)
     }
