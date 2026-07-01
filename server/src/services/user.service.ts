@@ -124,3 +124,17 @@ export async function updateAvatar(userId: number, avatarUrl: string) {
 
     return user;
 }
+
+// 根据 userId 获取关联的歌手 ID
+export async function getSingerIdByUserId(userId: number) {
+    const singer = await prisma.singer.findUnique({
+        where: {userId},
+        select: {id: true},
+    });
+
+    if (!singer) {
+        throw new NotFoundError('该用户尚未关联歌手');
+    }
+
+    return {singer_id: singer.id};
+}

@@ -57,6 +57,12 @@ export const getMyFavorites = asyncHandler(async (req, res) => {
     return success(res, result);
 });
 
+// 获取当前用户的歌手 ID
+export const getMySingerId = asyncHandler(async (req, res) => {
+    const result = await userService.getSingerIdByUserId(req.userId!);
+    return success(res, result);
+});
+
 // 获取当前用户发布的歌曲（仅 ARTIST）
 export const getMySongs = asyncHandler(async (req, res) => {
     const singer = await prisma.singer.findUnique({
