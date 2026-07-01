@@ -27,9 +27,9 @@ interface PlaylistDetailApiService {
      * @param playlistId 目标歌单id
      * @param songId 待删除歌曲id
      */
-    @DELETE("playlist/song/remove")
+    @DELETE("/playlists/{playlistId}/songs/{songId}")
     suspend fun deleteSong(
-        @Query("playlist_id") playlistId: Int,
-        @Query("song_id") songId: Int
+        @Path("playlistId") playlistId: Int,
+        @Path("songId") songId: Int
     ): Response<ApiResponse<Any>>
 }

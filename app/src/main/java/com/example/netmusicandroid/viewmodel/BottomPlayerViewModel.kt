@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
  * 1. 仓库改用全局单例，所有 VM 实例共用同一份队列、同一份最近播放数据
  * 2. 播放器回调改为注册监听器模式，支持多页面同时监听，互不覆盖
  * 3. VM 销毁时自动移除监听器，避免内存泄漏
+ * 4. 播放按钮增加冷启动容错：播放器未初始化时自动恢复当前歌曲并播放
  */
 class BottomPlayerViewModel : ViewModel() {
     // 仓库改用全局单例，多 VM 实例共享同一份数据源
@@ -111,7 +112,25 @@ class BottomPlayerViewModel : ViewModel() {
 
     // ── 播放控制 ────────────────────────────────
 
-    fun togglePlayPause() = MusicPlayerManager.toggle()
+    /**
+     * 播放/暂停切换
+     * 容错逻辑：播放器未初始化时，自动从队列恢复当前歌曲并播放
+     */
+    fun togglePlayPause() {
+        // 播放器已加载过歌曲，直接切换播放/暂停
+        if (MusicPlayerManager.getCurrentSongId() != -1) {
+            MusicPlayerManager.toggle()
+            return
+        }
+
+        // 播放器未初始化（冷启动/登录后首次点击），从队列恢复当前歌曲
+        viewModelScope.launch {
+            val currentSong = queueRepo.getCurrentSong()
+            if (currentSong != null) {
+                playEntity(currentSong)
+            }
+        }
+    }
 
     /**
      * 下一首：支持循环播放
