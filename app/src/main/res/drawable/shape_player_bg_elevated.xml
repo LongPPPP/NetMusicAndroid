@@ -1,33 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 带明显四周悬浮阴影的圆角背景，阴影向下+向外扩散 -->
+<!-- 半透明磨砂玻璃感：冷白面板 + 高光边 + 阴影，与柔和背景拉开层次 -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- 底层阴影层1：模糊外围淡阴影 -->
+    <!-- 外层柔和阴影 -->
     <item
         android:left="6dp"
-        android:top="4dp"
+        android:top="5dp"
         android:right="6dp"
         android:bottom="8dp">
         <shape android:shape="rectangle">
-            <corners android:radius="16dp"/>
-            <solid android:color="#20000000"/>
+            <corners android:radius="18dp"/>
+            <solid android:color="#22000000"/>
         </shape>
     </item>
-    <!-- 底层阴影层2：主深色投影，突出悬浮感 -->
+    <!-- 内层冷色投影 -->
     <item
         android:left="3dp"
         android:top="2dp"
         android:right="3dp"
         android:bottom="5dp">
         <shape android:shape="rectangle">
-            <corners android:radius="16dp"/>
-            <solid android:color="#35000000"/>
+            <corners android:radius="18dp"/>
+            <solid android:color="#263C4A5C"/>
         </shape>
     </item>
-    <!-- 主体白色圆角面板 -->
+    <!-- 主体玻璃面板：不是纯白，带一点透明冷灰 -->
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="16dp"/>
-            <solid android:color="#FFFFFF"/>
+            <corners android:radius="18dp"/>
+            <solid android:color="#EAF7F9FC"/>
+            <stroke
+                android:width="1dp"
+                android:color="#FFFFFFFF"/>
+        </shape>
+    </item>
+    <!-- 顶部高光，模拟玻璃反光 -->
+    <item
+        android:left="1dp"
+        android:top="1dp"
+        android:right="1dp"
+        android:bottom="45dp">
+        <shape android:shape="rectangle">
+            <corners
+                android:topLeftRadius="18dp"
+                android:topRightRadius="18dp"
+                android:bottomLeftRadius="8dp"
+                android:bottomRightRadius="8dp"/>
+            <solid android:color="#66FFFFFF"/>
+        </shape>
+    </item>
+    <!-- 底部细描边，增强和背景的分离感 -->
+    <item
+        android:left="1dp"
+        android:top="69dp"
+        android:right="1dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#2E8FA0B3"/>
         </shape>
     </item>
 </layer-list>

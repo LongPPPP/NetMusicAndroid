@@ -15,25 +15,33 @@
     android:clipToOutline="true"
     android:outlineProvider="background">
 
-    <!-- 歌曲封面卡片（点击跳转全屏播放页） -->
-    <androidx.cardview.widget.CardView
+    <!-- 唱片式圆形封面（点击跳转全屏播放页） -->
+    <FrameLayout
         android:id="@+id/cv_cover"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:padding="4dp"
+        android:background="@drawable/bg_record_outer"
         android:clickable="true"
         android:focusable="true"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="2dp"
-        app:cardBackgroundColor="@android:color/transparent">
+        android:foreground="?attr/selectableItemBackgroundBorderless">
 
-        <ImageView
-            android:id="@+id/iv_song_cover"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_song_cover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            tools:src="@mipmap/ic_launcher"/>
-    </androidx.cardview.widget.CardView>
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@android:color/transparent">
+
+            <ImageView
+                android:id="@+id/iv_song_cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:src="@mipmap/ic_launcher"/>
+        </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
     <!-- 歌名+歌手（点击跳转全屏播放页） -->
     <LinearLayout

@@ -1,7 +1,9 @@
 package com.example.netmusicandroid.utils
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.view.View
+import android.view.animation.LinearInterpolator
 import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import com.example.netmusicandroid.R
@@ -18,6 +20,12 @@ object BottomPlayerBinder {
         onOpenPlayer: (() -> Unit)? = null
     ) {
         binding.run {
+            val coverRotateAnimator = ObjectAnimator.ofFloat(cvCover, View.ROTATION, 0f, 360f).apply {
+                duration = 12000L
+                repeatCount = ObjectAnimator.INFINITE
+                interpolator = LinearInterpolator()
+            }
+
             bottomVm.songName.observe(lifecycleOwner) { tvSongName.text = it }
             bottomVm.singerName.observe(lifecycleOwner) { tvSinger.text = it }
             bottomVm.coverUrl.observe(lifecycleOwner) { url ->
@@ -30,6 +38,15 @@ object BottomPlayerBinder {
                 ivPlayToggle.setImageResource(
                     if (playing) R.drawable.ic_pause else R.drawable.ic_play_triangle
                 )
+                if (playing) {
+                    if (!coverRotateAnimator.isStarted) {
+                        coverRotateAnimator.start()
+                    } else {
+                        coverRotateAnimator.resume()
+                    }
+                } else if (coverRotateAnimator.isStarted) {
+                    coverRotateAnimator.pause()
+                }
             }
             bottomVm.toastMsg.observe(lifecycleOwner) { msg ->
                 if (msg.isNotEmpty()) {

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:background="@drawable/bg_app_soft">
 
     <!-- 统一规范顶部标题栏 -->
     <LinearLayout
