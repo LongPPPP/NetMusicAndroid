@@ -29,17 +29,27 @@ class SettingViewModel : ViewModel() {
         }
     }
 
-    // ── 修改个人信息 ─────────────────────────────
+    // ── 修改个人信息（suspend，由调用方保证顺序执行）──
 
-    fun updateUserField(field: String, value: String) {
-        viewModelScope.launch {
-            val result = authRepo.updateUser(field, value)
-            result.onSuccess { updatedUser ->
-                _currentUser.postValue(updatedUser)
-                _toastMsg.postValue("修改成功")
-            }.onFailure { e ->
-                _toastMsg.postValue(e.message ?: "修改失败")
-            }
+    /** 更新单个用户字段（username / signature），成功后将最新 UserEntity 同步回 LiveData */
+    suspend fun updateUserField(field: String, value: String) {
+        val result = authRepo.updateUser(field, value)
+        result.onSuccess { updatedUser ->
+            _currentUser.postValue(updatedUser)
+            _toastMsg.postValue("修改成功")
+        }.onFailure { e ->
+            _toastMsg.postValue(e.message ?: "修改失败")
+        }
+    }
+
+    /** 上传头像，成功后将最新 UserEntity 同步回 LiveData */
+    suspend fun uploadAvatar(file: File) {
+        val result = authRepo.uploadAvatar(file)
+        result.onSuccess { updatedUser ->
+            _currentUser.postValue(updatedUser)
+            _toastMsg.postValue("头像修改成功")
+        }.onFailure { e ->
+            _toastMsg.postValue(e.message ?: "头像上传失败")
         }
     }
 
@@ -53,18 +63,6 @@ class SettingViewModel : ViewModel() {
     suspend fun logoutAction() {
         authRepo.logout()
         _toastMsg.postValue("已退出登录")
-    }
-
-    fun uploadAvatar(file: File) {
-        viewModelScope.launch {
-            val result = authRepo.uploadAvatar(file)
-            result.onSuccess { updatedUser ->
-                _currentUser.postValue(updatedUser)
-                _toastMsg.postValue("头像修改成功")
-            }.onFailure { e ->
-                _toastMsg.postValue(e.message ?: "头像上传失败")
-            }
-        }
     }
 
     fun goModifyTheme() {

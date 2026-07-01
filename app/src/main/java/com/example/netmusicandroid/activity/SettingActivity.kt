@@ -117,18 +117,19 @@ class SettingActivity : AppCompatActivity() {
                 // 适配新弹窗回调：接收昵称、签名、临时头像Uri
                 onSaveProfile = { newNick, newSig, tempAvatarUri ->
                     lifecycleScope.launch {
-                        // 1. 如果有新头像，先转临时文件上传
+                        // 1. 先上传头像（suspend，等待完成再继续，避免与后续 updateUserField 并发导致 Room 写入竞态）
                         tempAvatarUri?.let { uri ->
                             val tempFile = File(cacheDir, "avatar_upload_${System.currentTimeMillis()}.jpg")
                             contentResolver.openInputStream(uri)?.use { input ->
                                 tempFile.outputStream().use { output -> input.copyTo(output) }
                             }
-                            // 上传头像，接口内部更新用户avatar字段
                             settingVm.uploadAvatar(tempFile)
                         }
 
-                        // 2. 分别更新昵称/签名（不为null代表有修改）
+                        // 2. 再更新昵称（串行执行，保证 Room 中头像已是新值后再写用户名）
                         newNick?.let { settingVm.updateUserField("username", it) }
+
+                        // 3. 最后更新签名
                         newSig?.let { settingVm.updateUserField("signature", it) }
                     }
                 }

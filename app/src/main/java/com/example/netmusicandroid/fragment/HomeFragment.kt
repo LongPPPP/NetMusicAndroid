@@ -14,6 +14,7 @@ import com.example.netmusicandroid.R
 import com.example.netmusicandroid.activity.BaseActivity
 import com.example.netmusicandroid.activity.PlaylistActivity
 import com.example.netmusicandroid.activity.PlaylistDetailActivity
+import com.example.netmusicandroid.activity.MoreSongActivity
 import com.example.netmusicandroid.activity.SearchActivity
 import com.example.netmusicandroid.activity.SingerActivity
 import com.example.netmusicandroid.activity.SingerListActivity
@@ -96,6 +97,11 @@ class HomeFragment : Fragment() {
         val toSearch = Intent(requireContext(), SearchActivity::class.java)
         view.findViewById<View>(R.id.ll_search_bar).setOnClickListener { startActivity(toSearch) }
         view.findViewById<View>(R.id.btnSearch).setOnClickListener { startActivity(toSearch) }
+
+        // 热门歌曲更多按钮 → 歌曲分页列表页
+        view.findViewById<View>(R.id.tvMoreSong).setOnClickListener {
+            startActivity(Intent(requireContext(), MoreSongActivity::class.java))
+        }
 
         // 歌单更多按钮 → 全部收藏歌单页面
         view.findViewById<View>(R.id.tvMorePlaylist).setOnClickListener {

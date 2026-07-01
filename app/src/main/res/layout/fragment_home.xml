@@ -135,6 +135,14 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/tvMoreSong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="更多"
+                    android:textColor="#999999"
+                    android:textSize="14sp" />
+
             </LinearLayout>
 
             <!-- 热门歌曲列表 -->

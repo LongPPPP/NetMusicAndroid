@@ -1,11 +1,14 @@
 package com.example.netmusicandroid.data.api
 
+import com.example.netmusicandroid.data.model.AvatarUploadData
 import com.example.netmusicandroid.data.model.ApiResponse
 import com.example.netmusicandroid.data.model.LoginData
 import com.example.netmusicandroid.data.model.RefreshTokenData
+import com.example.netmusicandroid.data.model.SingerIdData
 import com.example.netmusicandroid.data.model.UserInfo
 import okhttp3.MultipartBody
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -48,8 +51,12 @@ interface AuthApiService {
     @PATCH("users/me")
     suspend fun updateUser(@Body body: UpdateUserRequest): ApiResponse<UserInfo>
 
-    /** 上传头像 PUT /users/me/avatar */
+    /** 上传头像 PUT /users/me/avatar，服务端返回 {url: "/static/avatars/xxx.jpg"} */
     @Multipart
     @PUT("users/me/avatar")
-    suspend fun uploadAvatar(@Part file: MultipartBody.Part): ApiResponse<UserInfo>
+    suspend fun uploadAvatar(@Part file: MultipartBody.Part): ApiResponse<AvatarUploadData>
+
+    /** 查询当前用户绑定的歌手ID GET /users/me/singer */
+    @GET("users/me/singer")
+    suspend fun getMySinger(): ApiResponse<SingerIdData>
 }

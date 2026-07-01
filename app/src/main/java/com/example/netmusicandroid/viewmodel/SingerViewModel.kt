@@ -42,6 +42,11 @@ class SingerViewModel : ViewModel() {
         }
     }
 
+    /** 根据歌手ID直接加载详情（无需先查列表） */
+    fun loadSingerById(id: Int) {
+        fetchDetail(id)
+    }
+
     private fun fetchDetail(id: Int) {
         viewModelScope.launch {
             val result = repository.fetchSingerDetail(id)

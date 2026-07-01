@@ -193,11 +193,25 @@ class AuthRepository private constructor(
             if (resp.code == 200 && resp.data != null) {
                 val email = SpManager.getCurrentLoginEmail() ?: return Result.failure(Throwable("未登录"))
                 val user = userDao.findUserByEmail(email) ?: return Result.failure(Throwable("本地数据丢失"))
-                val updated = user.copy(avatar = resp.data.avatar ?: user.avatar)
+                val updated = user.copy(avatar = resp.data.url)
                 userDao.saveUser(updated)
                 Result.success(updated)
             } else {
                 Result.failure(Throwable(resp.message ?: "上传失败"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /** 查询当前用户绑定的歌手ID GET /users/me/singer */
+    suspend fun getMySingerId(): Result<Int> {
+        return try {
+            val resp = api.getMySinger()
+            if (resp.code == 200 && resp.data != null) {
+                Result.success(resp.data.singer_id)
+            } else {
+                Result.failure(Throwable(resp.message ?: "查询歌手信息失败"))
             }
         } catch (e: Exception) {
             Result.failure(e)

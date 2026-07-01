@@ -85,6 +85,9 @@
         <activity
             android:name=".activity.SearchActivity"
             android:exported="false" />
+        <activity
+            android:name=".activity.MoreSongActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
