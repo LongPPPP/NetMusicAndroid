@@ -19,7 +19,10 @@ import com.bumptech.glide.Glide
 import com.example.netmusicandroid.R
 import com.example.netmusicandroid.activity.CommentActivity
 import com.example.netmusicandroid.activity.SingerActivity
+import com.example.netmusicandroid.data.repository.PlaylistRepository
 import com.example.netmusicandroid.data.repository.SongRepository
+import com.example.netmusicandroid.dialog.AddToPlaylistDialog
+import com.example.netmusicandroid.sp.SpManager
 import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
 import kotlinx.coroutines.launch
@@ -34,6 +37,8 @@ class PlayerFragment : Fragment() {
     private lateinit var bottomVm: BottomPlayerViewModel
     // 歌曲数据仓库，仅用于补全歌曲详情UI数据
     private val songRepository = SongRepository()
+    // 歌单仓库，用于加载歌单列表和添加歌曲到歌单
+    private val playlistRepository = PlaylistRepository()
 
     // 当前播放歌曲ID，避免重复加载详情
     private var currentSongId: Int = -1
@@ -180,6 +185,41 @@ class PlayerFragment : Fragment() {
 
         // 下一首：统一走VM控制，与迷你播放栏逻辑完全一致
         btnNext.setOnClickListener { bottomVm.playNext() }
+
+        // 添加到歌单
+        val btnAddPlaylist = view.findViewById<ImageButton>(R.id.btnAddPlaylist)
+        btnAddPlaylist.setOnClickListener {
+            val songId = currentSongId
+            if (songId == -1) {
+                Toast.makeText(requireContext(), "暂无播放歌曲", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            lifecycleScope.launch {
+                val userId = SpManager.getUserId().toInt()
+                val resp = playlistRepository.getUserPlaylist(userId)
+                if (resp.isSuccessful) {
+                    val plist = resp.body()?.data?.list ?: emptyList()
+                    if (plist.isEmpty()) {
+                        Toast.makeText(requireContext(), "暂无歌单，请先创建歌单", Toast.LENGTH_SHORT).show()
+                    } else {
+                        AddToPlaylistDialog(requireContext(), plist) { selected ->
+                            lifecycleScope.launch {
+                                val result = playlistRepository.addSongToPlaylist(
+                                    selected.playlist_id, songId
+                                )
+                                result.onSuccess { msg ->
+                                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                                }.onFailure { e ->
+                                    Toast.makeText(requireContext(), e.message ?: "添加失败", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }.show()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "加载歌单失败", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         // 收藏功能逻辑
         btnLike.setOnClickListener {

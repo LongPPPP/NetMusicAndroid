@@ -34,7 +34,7 @@ class FavoritesActivity : AppCompatActivity() {
 
         val rv = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.rvCollectionList)
         songAdapter = SongListAdapter(
-            onSongDeleteClick = { },
+            onSongDeleteClick = { songId -> viewModel.removeFavorite(songId) },
             onSongClick = { songItem ->
                 lifecycleScope.launch {
                     val result = songRepo.fetchSongDetail(songItem.song_id)

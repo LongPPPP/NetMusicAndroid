@@ -42,6 +42,7 @@ class SingerActivity : AppCompatActivity() {
             insets
         }
 
+        val singerId = intent.getIntExtra("SINGER_ID", -1)
         val singerName = intent.getStringExtra("SINGER_NAME") ?: ""
 
         val tvName = findViewById<TextView>(R.id.tvSingerName)
@@ -83,7 +84,12 @@ class SingerActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.loadSingerByName(singerName)
+        // 优先使用歌手ID直接加载；兼容旧版通过名字加载的调用方式
+        if (singerId > 0) {
+            viewModel.loadSingerById(singerId)
+        } else {
+            viewModel.loadSingerByName(singerName)
+        }
     }
 
     private fun deleteSong(songId: Int) {

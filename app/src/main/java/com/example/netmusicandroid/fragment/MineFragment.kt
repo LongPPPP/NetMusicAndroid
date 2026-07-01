@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.netmusicandroid.R
 import com.example.netmusicandroid.activity.BaseActivity
 import com.example.netmusicandroid.activity.CurrentPlaylistActivity
@@ -21,8 +22,9 @@ import com.example.netmusicandroid.activity.PlaylistActivity
 import com.example.netmusicandroid.activity.RecentPlayActivity
 import com.example.netmusicandroid.activity.SearchActivity
 import com.example.netmusicandroid.activity.SettingActivity
-import com.example.netmusicandroid.activity.MySongsActivity
+import com.example.netmusicandroid.activity.SingerActivity
 import com.example.netmusicandroid.activity.UploadSongActivity
+import com.example.netmusicandroid.data.repository.AuthRepository
 import com.example.netmusicandroid.databinding.FragmentMineBinding
 import com.example.netmusicandroid.databinding.LayoutBottomPlayerBinding
 import com.example.netmusicandroid.data.db.UserEntity
@@ -149,18 +151,17 @@ class MineFragment : Fragment() {
         val rawAvatarPath = user.avatar
         val avatarUrl = if (rawAvatarPath.isNullOrBlank()) null else MusicPlayerManager.resolveUrl(rawAvatarPath) ?: rawAvatarPath
 
-        // Fragment标准上下文 + 自定义占位/失败图 + Glide原生圆形裁剪，无多余工具调用
+        // 跳过磁盘缓存确保头像修改后立即刷新（头像URL可能不变但服务端文件已替换）
         Glide.with(this@MineFragment)
             .load(avatarUrl)
             .placeholder(R.drawable.avatar_sketch)
             .error(R.drawable.avatar_sketch)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .circleCrop()
             .into(binding.ivAvatar)
 
         binding.tvUsername.text = user.username
         binding.tvSignature.text = if (user.signature.isBlank()) "这个人很懒，什么都没写" else user.signature
-        binding.tvCollectCount.text = user.favoriteCount.toString()
-        binding.tvCommentCount.text = user.commentCount.toString()
 
         // 判断角色：歌手显示发布/上传歌曲入口，普通用户隐藏
         if (user.role == "ARTIST") {
@@ -203,9 +204,18 @@ class MineFragment : Fragment() {
         binding.llFeedback.setOnClickListener {
             startActivity(Intent(requireContext(), SearchActivity::class.java))
         }
-        // 歌手：我的作品
+        // 歌手：我的作品 → 先查歌手ID，再跳转歌手详情页
         binding.llPublishSong.setOnClickListener {
-            startActivity(Intent(requireContext(), MySongsActivity::class.java))
+            lifecycleScope.launch {
+                val result = AuthRepository.getInstance().getMySingerId()
+                result.onSuccess { singerId ->
+                    val intent = Intent(requireContext(), SingerActivity::class.java)
+                    intent.putExtra("SINGER_ID", singerId)
+                    startActivity(intent)
+                }.onFailure { e ->
+                    Toast.makeText(requireContext(), e.message ?: "获取歌手信息失败", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
         // 歌手：上传歌曲
         binding.llUploadSong.setOnClickListener {
