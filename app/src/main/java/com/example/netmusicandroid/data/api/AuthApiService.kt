@@ -51,5 +51,5 @@ interface AuthApiService {
     /** 上传头像 PUT /users/me/avatar */
     @Multipart
     @PUT("users/me/avatar")
-    suspend fun uploadAvatar(@Part avatar: MultipartBody.Part): ApiResponse<UserInfo>
+    suspend fun uploadAvatar(@Part file: MultipartBody.Part): ApiResponse<UserInfo>
 }

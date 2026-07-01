@@ -40,10 +40,6 @@ class FavoritesActivity : AppCompatActivity() {
                     val result = songRepo.fetchSongDetail(songItem.song_id)
                     result.onSuccess { detail ->
                         bottomVm.playSong(detail)
-                        MusicPlayerManager.play(
-                            MusicPlayerManager.resolveUrl(detail.play_url) ?: return@onSuccess,
-                            detail.song_id
-                        )
                     }
                 }
             }
@@ -94,8 +90,10 @@ class FavoritesActivity : AppCompatActivity() {
         bpBinding.ivPrev.setOnClickListener { bottomVm.playPrev() }
         bpBinding.ivPlayToggle.setOnClickListener { bottomVm.togglePlayPause() }
         bpBinding.ivNext.setOnClickListener { bottomVm.playNext() }
+
         val goPlayer = View.OnClickListener { BaseActivity.navigateToPlayerFrom(this) }
         bpBinding.cvCover.setOnClickListener(goPlayer)
         bpBinding.llSongInfo.setOnClickListener(goPlayer)
+
     }
 }

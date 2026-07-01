@@ -78,7 +78,7 @@ class MineFragment : Fragment() {
         // 全部改用 viewLifecycleOwner，视图销毁自动解绑，避免后台回调崩溃
         bottomVm.songName.observe(viewLifecycleOwner) { bp.tvSongName.text = it }
         bottomVm.singerName.observe(viewLifecycleOwner) { bp.tvSinger.text = it }
-        // 加载歌曲封面
+        // 加载歌曲封面（项目统一工具类）
         bottomVm.coverUrl.observe(viewLifecycleOwner) { url ->
             ImageLoadUtil.loadImage(bp.ivSongCover, MusicPlayerManager.resolveUrl(url))
         }
@@ -145,10 +145,15 @@ class MineFragment : Fragment() {
             return
         }
 
-        // 已登录：加载头像、昵称、签名、收藏/评论数量
-        Glide.with(this)
-            .load(user.avatar)
+        // 已登录：统一url解析，和播放器封面处理规则完全相同
+        val rawAvatarPath = user.avatar
+        val avatarUrl = if (rawAvatarPath.isNullOrBlank()) null else MusicPlayerManager.resolveUrl(rawAvatarPath) ?: rawAvatarPath
+
+        // Fragment标准上下文 + 自定义占位/失败图 + Glide原生圆形裁剪，无多余工具调用
+        Glide.with(this@MineFragment)
+            .load(avatarUrl)
             .placeholder(R.drawable.avatar_sketch)
+            .error(R.drawable.avatar_sketch)
             .circleCrop()
             .into(binding.ivAvatar)
 

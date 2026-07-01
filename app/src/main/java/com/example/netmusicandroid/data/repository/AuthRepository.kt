@@ -180,8 +180,15 @@ class AuthRepository private constructor(
 
     suspend fun uploadAvatar(file: File): Result<UserEntity> {
         return try {
-            val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
-            val part = MultipartBody.Part.createFormData("avatar", file.name, requestBody)
+            val mime = when (file.extension.lowercase()) {
+                "png" -> "image/png"
+                "gif" -> "image/gif"
+                "webp" -> "image/webp"
+                "jpg", "jpeg" -> "image/jpeg"
+                else -> "image/jpeg"
+            }
+            val requestBody = file.asRequestBody(mime.toMediaTypeOrNull())
+            val part = MultipartBody.Part.createFormData("file", file.name, requestBody)
             val resp = api.uploadAvatar(part)
             if (resp.code == 200 && resp.data != null) {
                 val email = SpManager.getCurrentLoginEmail() ?: return Result.failure(Throwable("未登录"))

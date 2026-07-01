@@ -38,11 +38,7 @@ class CurrentPlaylistActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     val result = songRepo.fetchSongDetail(songItem.song_id) // 请求歌曲完整信息
                     result.onSuccess { detail ->
-                        bottomVm.playSong(detail) // 更新播放器数据
-                        MusicPlayerManager.play( // 调用播放器播放音频
-                            MusicPlayerManager.resolveUrl(detail.play_url) ?: return@onSuccess,
-                            detail.song_id
-                        )
+                        bottomVm.playSong(detail) // 更新播放器数据并播放
                     }
                 }
             }

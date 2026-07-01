@@ -23,16 +23,14 @@ class SettingActivity : AppCompatActivity() {
     private lateinit var settingVm: SettingViewModel
     private lateinit var bottomVm: BottomPlayerViewModel
     private var editDialog: EditProfileDialog? = null
+    // 缓存相册选中的临时头像Uri，点击保存才处理上传
+    private var pendingAvatarUri: Uri? = null
 
+    // 相册选择：仅缓存Uri、弹窗预览，不立即上传
     private val pickAvatarLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
+            pendingAvatarUri = it
             editDialog?.setAvatarUri(it)
-            // 将 Uri 复制到临时文件并上传
-            val tempFile = File(cacheDir, "avatar_upload_${System.currentTimeMillis()}.jpg")
-            contentResolver.openInputStream(it)?.use { input ->
-                tempFile.outputStream().use { output -> input.copyTo(output) }
-            }
-            settingVm.uploadAvatar(tempFile)
         }
     }
 
@@ -61,7 +59,6 @@ class SettingActivity : AppCompatActivity() {
     }
 
     // ── 底部播放栏 ──────────────────────────────
-
     private fun initBottomPlayer() {
         val bp = binding.includeBottomPlayer
         bottomVm.songName.observe(this) { bp.tvSongName.text = it }
@@ -112,12 +109,31 @@ class SettingActivity : AppCompatActivity() {
                 ToastUtil.showShort("请先登录")
                 return@setOnClickListener
             }
+            // 打开弹窗前清空上次缓存的头像
+            pendingAvatarUri = null
             editDialog = EditProfileDialog(
-                    this, user,
-                    onPickAvatar = { pickAvatarLauncher.launch("image/*") },
-                    onSave = { field, value -> settingVm.updateUserField(field, value) }
-                )
-                editDialog!!.show()
+                this, user,
+                onPickAvatar = { pickAvatarLauncher.launch("image/*") },
+                // 适配新弹窗回调：接收昵称、签名、临时头像Uri
+                onSaveProfile = { newNick, newSig, tempAvatarUri ->
+                    lifecycleScope.launch {
+                        // 1. 如果有新头像，先转临时文件上传
+                        tempAvatarUri?.let { uri ->
+                            val tempFile = File(cacheDir, "avatar_upload_${System.currentTimeMillis()}.jpg")
+                            contentResolver.openInputStream(uri)?.use { input ->
+                                tempFile.outputStream().use { output -> input.copyTo(output) }
+                            }
+                            // 上传头像，接口内部更新用户avatar字段
+                            settingVm.uploadAvatar(tempFile)
+                        }
+
+                        // 2. 分别更新昵称/签名（不为null代表有修改）
+                        newNick?.let { settingVm.updateUserField("username", it) }
+                        newSig?.let { settingVm.updateUserField("signature", it) }
+                    }
+                }
+            )
+            editDialog!!.show()
         }
 
         // 退出登录（suspend函数需协程包裹调用）
