@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class SingerListViewModel : ViewModel() {
 
-    private val repo = SingerRepository()
+    private val repo = SingerRepository.getInstance()
 
     private val _singers = MutableLiveData<List<SingerItem>>(emptyList())
     val singers: LiveData<List<SingerItem>> = _singers

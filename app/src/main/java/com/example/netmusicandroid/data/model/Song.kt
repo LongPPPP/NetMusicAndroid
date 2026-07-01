@@ -1,10 +1,8 @@
 package com.example.netmusicandroid.data.model
 
-import com.squareup.moshi.JsonClass
 
 
 // 歌曲详情 
-@JsonClass(generateAdapter = true)
 data class SongDetail(
     val song_id: Int,
     val song_name: String,
@@ -15,7 +13,6 @@ data class SongDetail(
 )
 
 // 歌曲列表分页数据 
-@JsonClass(generateAdapter = true)
 data class SongListData(
     val list: List<SongDetail>,
     val total: Int,

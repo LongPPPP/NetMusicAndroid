@@ -13,7 +13,7 @@ import retrofit2.Response
 import kotlinx.coroutines.delay
 
 class UserPlaylistViewModel : ViewModel() {
-    private val mineRepo = PlaylistRepository()
+    private val mineRepo = PlaylistRepository.getInstance()
 
     // 歌单列表数据源
     private val _collectionList = MutableLiveData<List<UserPlaylist>>()

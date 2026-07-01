@@ -4,26 +4,23 @@ import com.example.netmusicandroid.data.api.ApiClient
 import com.example.netmusicandroid.data.api.SingerApiService
 import com.example.netmusicandroid.data.model.SingerDetail
 import com.example.netmusicandroid.data.model.SingerItem
-import org.json.JSONObject
-import retrofit2.HttpException
 
-class SingerRepository {
+class SingerRepository private constructor() {
 
     private val api = ApiClient.createService<SingerApiService>()
 
-    // 统一处理错误解析
-    private fun parseError(e: Throwable): String {
-        return if (e is HttpException) {
-            try {
-                val errorBody = e.response()?.errorBody()?.string()
-                JSONObject(errorBody ?: "").getString("message")
-            } catch (ex: Exception) {
-                e.message() ?: "请求错误"
+    companion object {
+        @Volatile
+        private var INSTANCE: SingerRepository? = null
+
+        fun getInstance(): SingerRepository {
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: SingerRepository().also { INSTANCE = it }
             }
-        } else {
-            e.message ?: "网络异常"
         }
     }
+
+    private fun parseError(e: Throwable): String = RepositoryErrorParser.parse(e)
 
     // 获取歌手详情
     suspend fun fetchSingerDetail(singerId: Int): Result<SingerDetail> = try {

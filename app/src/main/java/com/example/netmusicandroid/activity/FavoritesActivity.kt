@@ -21,7 +21,7 @@ class FavoritesActivity : AppCompatActivity() {
     private lateinit var viewModel: FavoriteViewModel
     private lateinit var bottomVm: BottomPlayerViewModel
     private lateinit var songAdapter: SongListAdapter
-    private val songRepo = SongRepository()
+    private val songRepo = SongRepository.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,28 +72,9 @@ class FavoritesActivity : AppCompatActivity() {
     }
 
     private fun initBottomPlayer() {
-        val bp = findViewById<View>(R.id.include_bottom_player)
-        val bpBinding = com.example.netmusicandroid.databinding.LayoutBottomPlayerBinding.bind(bp)
-        bottomVm.songName.observe(this) { bpBinding.tvSongName.text = it }
-        bottomVm.singerName.observe(this) { bpBinding.tvSinger.text = it }
-        bottomVm.coverUrl.observe(this) { url ->
-            ImageLoadUtil.loadImage(bpBinding.ivSongCover, MusicPlayerManager.resolveUrl(url))
-        }
-        bottomVm.hasCurrentSong.observe(this) { has ->
-            bpBinding.root.visibility = if (has) View.VISIBLE else View.GONE
-        }
-        bottomVm.isPlaying.observe(this) { playing ->
-            bpBinding.ivPlayToggle.setImageResource(
-                if (playing) R.drawable.ic_pause else R.drawable.ic_play_triangle
-            )
-        }
-        bpBinding.ivPrev.setOnClickListener { bottomVm.playPrev() }
-        bpBinding.ivPlayToggle.setOnClickListener { bottomVm.togglePlayPause() }
-        bpBinding.ivNext.setOnClickListener { bottomVm.playNext() }
-
-        val goPlayer = View.OnClickListener { BaseActivity.navigateToPlayerFrom(this) }
-        bpBinding.cvCover.setOnClickListener(goPlayer)
-        bpBinding.llSongInfo.setOnClickListener(goPlayer)
-
+        val bpBinding = com.example.netmusicandroid.databinding.LayoutBottomPlayerBinding.bind(
+            findViewById(R.id.include_bottom_player)
+        )
+        com.example.netmusicandroid.utils.BottomPlayerBinder.bind(this, this, bpBinding, bottomVm)
     }
 }

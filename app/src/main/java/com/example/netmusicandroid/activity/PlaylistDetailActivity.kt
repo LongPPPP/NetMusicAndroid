@@ -11,6 +11,7 @@ import com.example.netmusicandroid.databinding.ActivityPlaylistDetailBinding
 import com.example.netmusicandroid.data.repository.SongRepository
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
 import com.example.netmusicandroid.viewmodel.PlaylistDetailViewModel
+import com.example.netmusicandroid.utils.BottomPlayerBinder
 import com.example.netmusicandroid.utils.ImageLoadUtil
 import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.utils.ToastUtil
@@ -21,7 +22,7 @@ class PlaylistDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlaylistDetailBinding
     private lateinit var playlistDetailVm: PlaylistDetailViewModel
     private lateinit var bottomVm: BottomPlayerViewModel
-    private val songRepo = SongRepository()
+    private val songRepo = SongRepository.getInstance()
     // 歌单ID（从上个页面Intent接收）
     private var targetPlaylistId = -1
     // 歌曲列表Adapter
@@ -66,33 +67,7 @@ class PlaylistDetailActivity : AppCompatActivity() {
     // ── 底部播放栏 ──────────────────────────────
 
     private fun initBottomPlayer() {
-        val bp = binding.includeBottomPlayer
-        bottomVm.songName.observe(this) { bp.tvSongName.text = it }
-        bottomVm.singerName.observe(this) { bp.tvSinger.text = it }
-        bottomVm.coverUrl.observe(this) { url ->
-            ImageLoadUtil.loadImage(bp.ivSongCover, MusicPlayerManager.resolveUrl(url))
-        }
-        bottomVm.hasCurrentSong.observe(this) { has ->
-            bp.root.visibility = if (has) View.VISIBLE else View.GONE
-        }
-        bottomVm.isPlaying.observe(this) { playing ->
-            bp.ivPlayToggle.setImageResource(
-                if (playing) R.drawable.ic_pause else R.drawable.ic_play_triangle
-            )
-        }
-        bottomVm.toastMsg.observe(this) { msg ->
-            if (msg.isNotEmpty()) {
-                ToastUtil.showShort(msg)
-                bottomVm.clearToast()
-            }
-        }
-        bp.ivPrev.setOnClickListener { bottomVm.playPrev() }
-        bp.ivPlayToggle.setOnClickListener { bottomVm.togglePlayPause() }
-        bp.ivNext.setOnClickListener { bottomVm.playNext() }
-
-        val goPlayer = View.OnClickListener { BaseActivity.navigateToPlayerFrom(this) }
-        bp.cvCover.setOnClickListener(goPlayer)
-        bp.llSongInfo.setOnClickListener(goPlayer)
+        BottomPlayerBinder.bind(this, this, binding.includeBottomPlayer, bottomVm)
     }
 
     // 2. 从Intent取出PlaylistId

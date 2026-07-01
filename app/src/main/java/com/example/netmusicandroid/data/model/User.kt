@@ -1,8 +1,6 @@
 package com.example.netmusicandroid.data.model
 
-import com.squareup.moshi.JsonClass
 //各响应体的具体定义
-@JsonClass(generateAdapter = true)
 data class UserInfo(
     val id: Int,
     val username: String,
@@ -15,7 +13,6 @@ data class UserInfo(
     val favorite_count: Int = 0
 )
 
-@JsonClass(generateAdapter = true)
 data class LoginData(
     val user_id: Int,
     val access_token: String,
@@ -23,7 +20,6 @@ data class LoginData(
     val user: UserInfo
 )
 
-@JsonClass(generateAdapter = true)
 data class RefreshTokenData(
     val access_token: String,
     val expires_in: Int

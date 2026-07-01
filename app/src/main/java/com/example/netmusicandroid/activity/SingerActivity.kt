@@ -28,7 +28,7 @@ class SingerActivity : AppCompatActivity() {
 
     private lateinit var viewModel: SingerViewModel
     private lateinit var bottomVm: BottomPlayerViewModel
-    private val songRepository = SongRepository()
+    private val songRepository = SongRepository.getInstance()
     private lateinit var adapter: SingerSongAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,13 +126,7 @@ class SingerActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val result = songRepository.fetchSongDetail(songId)
             result.onSuccess { songDetail ->
-                // 修复：直接调用播放器单例，解决跨 Activity 无法播放的问题
-                val playUrl = MusicPlayerManager.resolveUrl(songDetail.play_url)
-                if (playUrl != null) {
-                    MusicPlayerManager.play(playUrl, songDetail.song_id)
-                }
-
-                // 更新本地 ViewModel 状态（用于当前页面的 UI 同步，如果有的话）
+                // 统一通过 BottomPlayerViewModel 写入播放状态，避免绕过队列/最近播放记录
                 bottomVm.playSong(songDetail)
 
                 // 删掉 finish()，点击后页面不用自动跳转

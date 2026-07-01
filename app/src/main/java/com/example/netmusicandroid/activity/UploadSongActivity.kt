@@ -14,12 +14,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.netmusicandroid.R
 import com.example.netmusicandroid.data.repository.SongRepository
+import com.example.netmusicandroid.utils.FileUtil
 import kotlinx.coroutines.launch
 import java.io.File
 
 class UploadSongActivity : AppCompatActivity() {
 
-    private val repository = SongRepository()
+    private val repository = SongRepository.getInstance()
     private var coverUri: Uri? = null
     private var songUri: Uri? = null
 
@@ -80,9 +81,9 @@ class UploadSongActivity : AppCompatActivity() {
             
             try {
                 // 【核心优化】：使用标准文件名，规避后端字符编码崩溃
-                val songFile = repository.uriToFile(this@UploadSongActivity, songUri!!, "temp_music_file.mp3")
+                val songFile = FileUtil.uriToFile(this@UploadSongActivity, songUri!!, "temp_music_file.mp3")
                 val coverFile = coverUri?.let {
-                    repository.uriToFile(this@UploadSongActivity, it, "temp_cover_file.jpg")
+                    FileUtil.uriToFile(this@UploadSongActivity, it, "temp_cover_file.jpg")
                 }
 
                 val result = repository.publishSong(name, coverFile, songFile)

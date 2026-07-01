@@ -5,6 +5,10 @@ import android.content.SharedPreferences
 import com.example.netmusicandroid.data.model.UserInfo
 import com.google.gson.Gson
 
+@Deprecated(
+    message = "Token 和用户状态已迁移到 Room UserEntity + SpManager。新代码不要使用 SpUtil。",
+    replaceWith = ReplaceWith("SpManager", "com.example.netmusicandroid.sp.SpManager")
+)
 object SpUtil {
     private const val SP_NAME = "user_sp"
     private const val KEY_TOKEN = "token"

@@ -12,6 +12,7 @@ import com.example.netmusicandroid.data.repository.SongRepository
 import com.example.netmusicandroid.databinding.ActivityRecentPlayBinding
 import com.example.netmusicandroid.utils.ImageLoadUtil
 import com.example.netmusicandroid.utils.MusicPlayerManager
+import com.example.netmusicandroid.utils.BottomPlayerBinder
 import com.example.netmusicandroid.utils.ToastUtil
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
 import com.example.netmusicandroid.viewmodel.RecentPlayViewModel
@@ -23,7 +24,7 @@ class RecentPlayActivity : AppCompatActivity() {
     private lateinit var viewModel: RecentPlayViewModel
     private lateinit var bottomVm: BottomPlayerViewModel
     private lateinit var songAdapter: SongListAdapter
-    private val songRepo = SongRepository()
+    private val songRepo = SongRepository.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,33 +51,7 @@ class RecentPlayActivity : AppCompatActivity() {
     // ── 底部播放栏 ──────────────────────────────
 
     private fun initBottomPlayer() {
-        val bp = binding.includeBottomPlayer
-        bottomVm.songName.observe(this) { bp.tvSongName.text = it }
-        bottomVm.singerName.observe(this) { bp.tvSinger.text = it }
-        bottomVm.coverUrl.observe(this) { url ->
-            ImageLoadUtil.loadImage(bp.ivSongCover, MusicPlayerManager.resolveUrl(url))
-        }
-        bottomVm.hasCurrentSong.observe(this) { has ->
-            bp.root.visibility = if (has) View.VISIBLE else View.GONE
-        }
-        bottomVm.isPlaying.observe(this) { playing ->
-            bp.ivPlayToggle.setImageResource(
-                if (playing) R.drawable.ic_pause else R.drawable.ic_play_triangle
-            )
-        }
-        bottomVm.toastMsg.observe(this) { msg ->
-            if (msg.isNotEmpty()) {
-                ToastUtil.showShort(msg)
-                bottomVm.clearToast()
-            }
-        }
-        bp.ivPrev.setOnClickListener { bottomVm.playPrev() }
-        bp.ivPlayToggle.setOnClickListener { bottomVm.togglePlayPause() }
-        bp.ivNext.setOnClickListener { bottomVm.playNext() }
-
-        val goPlayer = View.OnClickListener { BaseActivity.navigateToPlayerFrom(this) }
-        bp.cvCover.setOnClickListener(goPlayer)
-        bp.llSongInfo.setOnClickListener(goPlayer)
+        BottomPlayerBinder.bind(this, this, binding.includeBottomPlayer, bottomVm)
     }
 
     private fun initSongRecycler() {

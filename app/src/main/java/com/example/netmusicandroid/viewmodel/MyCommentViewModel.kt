@@ -4,14 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.netmusicandroid.data.api.ApiClient
-import com.example.netmusicandroid.data.api.SongApiService
 import com.example.netmusicandroid.data.model.MyCommentItem
+import com.example.netmusicandroid.data.repository.SongRepository
 import kotlinx.coroutines.launch
 
 class MyCommentViewModel : ViewModel() {
 
-    private val api = ApiClient.createService<SongApiService>()
+    private val repository = SongRepository.getInstance()
 
     private val _comments = MutableLiveData<List<MyCommentItem>>(emptyList())
     val comments: LiveData<List<MyCommentItem>> = _comments
@@ -31,12 +30,12 @@ class MyCommentViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.postValue(true)
             try {
-                val resp = api.getMyComments(1)
-                if (resp.code == 200 && resp.data != null) {
-                    _comments.postValue(resp.data.list)
-                    hasMore = resp.data.list.size >= resp.data.page_size
-                } else {
-                    _toastMsg.postValue(resp.message ?: "加载失败")
+                val result = repository.fetchMyComments(1)
+                result.onSuccess { data ->
+                    _comments.postValue(data.list)
+                    hasMore = data.list.size >= data.page_size
+                }.onFailure { e ->
+                    _toastMsg.postValue(e.message ?: "加载失败")
                 }
             } catch (e: Exception) {
                 _toastMsg.postValue(e.message ?: "网络异常")
@@ -51,12 +50,14 @@ class MyCommentViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.postValue(true)
             try {
-                val resp = api.getMyComments(currentPage + 1)
-                if (resp.code == 200 && resp.data != null) {
-                    val merged = _comments.value.orEmpty() + resp.data.list
+                val result = repository.fetchMyComments(currentPage + 1)
+                result.onSuccess { data ->
+                    val merged = _comments.value.orEmpty() + data.list
                     _comments.postValue(merged)
-                    currentPage = resp.data.page
-                    hasMore = resp.data.list.size >= resp.data.page_size
+                    currentPage = data.page
+                    hasMore = data.list.size >= data.page_size
+                }.onFailure { e ->
+                    _toastMsg.postValue(e.message ?: "网络异常")
                 }
             } catch (e: Exception) {
                 _toastMsg.postValue(e.message ?: "网络异常")

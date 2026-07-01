@@ -1,8 +1,6 @@
 package com.example.netmusicandroid.data.model
 
-import com.squareup.moshi.JsonClass
 
-@JsonClass(generateAdapter = true)
 data class SongItem(
     val song_id: Int,
     val song_name: String,

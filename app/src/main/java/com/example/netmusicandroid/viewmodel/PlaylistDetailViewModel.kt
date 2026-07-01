@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class PlaylistDetailViewModel : ViewModel() {
     // 仓库实例
-    private val playlistRepo = PlaylistDetailRepository()
+    private val playlistRepo = PlaylistDetailRepository.getInstance()
 
     // region 数据状态
     // 内部可变，外部只读

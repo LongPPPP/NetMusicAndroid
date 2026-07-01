@@ -4,8 +4,19 @@ import com.example.netmusicandroid.data.api.ApiClient
 import com.example.netmusicandroid.data.api.PlaylistDetailApiService
 import com.example.netmusicandroid.data.model.PlaylistDetailData
 
-class PlaylistDetailRepository {
+class PlaylistDetailRepository private constructor() {
     private val playlistDetailApi = ApiClient.createService<PlaylistDetailApiService>()
+
+    companion object {
+        @Volatile
+        private var INSTANCE: PlaylistDetailRepository? = null
+
+        fun getInstance(): PlaylistDetailRepository {
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: PlaylistDetailRepository().also { INSTANCE = it }
+            }
+        }
+    }
 
     suspend fun getPlaylistDetail(playlistId: Int): Result<PlaylistDetailData> {
         return try {

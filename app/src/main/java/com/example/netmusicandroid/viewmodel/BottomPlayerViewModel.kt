@@ -31,8 +31,8 @@ class BottomPlayerViewModel : ViewModel() {
     // 仓库改用全局单例，多 VM 实例共享同一份数据源
     private val queueRepo = PlayQueueRepository.getInstance()
     private val recentRepo = RecentPlayRepository.getInstance()
-    private val playlistRepo = PlaylistRepository()
-    private val songRepo = SongRepository()
+    private val playlistRepo = PlaylistRepository.getInstance()
+    private val songRepo = SongRepository.getInstance()
 
     private val authRepository = AuthRepository.getInstance()
     val currentUserFlow: Flow<UserEntity?> = authRepository.observeCurrentLoginUser()

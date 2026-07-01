@@ -28,6 +28,7 @@ import com.example.netmusicandroid.data.repository.AuthRepository
 import com.example.netmusicandroid.databinding.FragmentMineBinding
 import com.example.netmusicandroid.databinding.LayoutBottomPlayerBinding
 import com.example.netmusicandroid.data.db.UserEntity
+import com.example.netmusicandroid.utils.BottomPlayerBinder
 import com.example.netmusicandroid.utils.ImageLoadUtil
 import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
@@ -74,47 +75,14 @@ class MineFragment : Fragment() {
      * 绑定ViewModel数据、按钮点击跳转、切歌逻辑
      */
     private fun initBottomPlayer() {
-        // 绑定底部播放器include布局
         val bp = LayoutBottomPlayerBinding.bind(binding.root.findViewById(R.id.include_bottom_player))
-
-        // 全部改用 viewLifecycleOwner，视图销毁自动解绑，避免后台回调崩溃
-        bottomVm.songName.observe(viewLifecycleOwner) { bp.tvSongName.text = it }
-        bottomVm.singerName.observe(viewLifecycleOwner) { bp.tvSinger.text = it }
-        // 加载歌曲封面（项目统一工具类）
-        bottomVm.coverUrl.observe(viewLifecycleOwner) { url ->
-            ImageLoadUtil.loadImage(bp.ivSongCover, MusicPlayerManager.resolveUrl(url))
-        }
-        // 无歌曲时隐藏底部播放栏
-        bottomVm.hasCurrentSong.observe(viewLifecycleOwner) { has ->
-            bp.root.visibility = if (has) View.VISIBLE else View.GONE
-        }
-        // 切换播放/暂停图标，同步全局播放状态
-        bottomVm.isPlaying.observe(viewLifecycleOwner) { playing ->
-            bp.ivPlayToggle.setImageResource(
-                if (playing) R.drawable.ic_pause else R.drawable.ic_play_triangle
-            )
-        }
-        // Toast 增加空安全兜底，上下文为空时直接跳过不弹，并清空消息
-        bottomVm.toastMsg.observe(viewLifecycleOwner) { msg ->
-            if (msg.isNotEmpty()) {
-                context?.let { Toast.makeText(it, msg, Toast.LENGTH_SHORT).show() }
-                bottomVm.clearToast()
-            }
-        }
-
-        // 上一首按钮
-        bp.ivPrev.setOnClickListener { bottomVm.playPrev() }
-        // 播放/暂停按钮
-        bp.ivPlayToggle.setOnClickListener { bottomVm.togglePlayPause() }
-        // 下一首按钮
-        bp.ivNext.setOnClickListener { bottomVm.playNext() }
-
-        // 点击封面/歌曲信息跳转到全屏播放页
-        val goPlayer = View.OnClickListener {
-            (requireActivity() as BaseActivity).navigateToPlayer()
-        }
-        bp.cvCover.setOnClickListener(goPlayer)
-        bp.llSongInfo.setOnClickListener(goPlayer)
+        BottomPlayerBinder.bind(
+            viewLifecycleOwner,
+            requireContext(),
+            bp,
+            bottomVm,
+            onOpenPlayer = { (requireActivity() as BaseActivity).navigateToPlayer() }
+        )
     }
 
     /**

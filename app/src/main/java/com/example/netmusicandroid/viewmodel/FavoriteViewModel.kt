@@ -4,16 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.netmusicandroid.data.api.ApiClient
-import com.example.netmusicandroid.data.api.SongApiService
 import com.example.netmusicandroid.data.model.SongItem
 import com.example.netmusicandroid.data.repository.PlaylistRepository
+import com.example.netmusicandroid.data.repository.SongRepository
 import kotlinx.coroutines.launch
 
 class FavoriteViewModel : ViewModel() {
 
-    private val api = ApiClient.createService<SongApiService>()
-    private val playlistRepo = PlaylistRepository()
+    private val songRepo = SongRepository.getInstance()
+    private val playlistRepo = PlaylistRepository.getInstance()
 
     // 收藏歌单 ID，加载后缓存，供删除时使用
     private var favoritePlaylistId: Int = -1
@@ -34,13 +33,13 @@ class FavoriteViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.postValue(true)
             try {
-                val resp = api.getFavorites()
-                if (resp.code == 200 && resp.data != null) {
-                    favoritePlaylistId = resp.data.playlist_id
-                    _songs.postValue(resp.data.songs)
-                    _playlistName.postValue(resp.data.playlist_name)
-                } else {
-                    _toastMsg.postValue(resp.message ?: "加载失败")
+                val result = songRepo.fetchFavorites()
+                result.onSuccess { data ->
+                    favoritePlaylistId = data.playlist_id
+                    _songs.postValue(data.songs)
+                    _playlistName.postValue(data.playlist_name)
+                }.onFailure { e ->
+                    _toastMsg.postValue(e.message ?: "加载失败")
                 }
             } catch (e: Exception) {
                 _toastMsg.postValue(e.message ?: "网络异常")

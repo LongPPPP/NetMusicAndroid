@@ -49,13 +49,11 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.material)
 
-    // ========== 网络 Retrofit + OkHttp + Moshi/Gson ==========
+    // ========== 网络 Retrofit + OkHttp + Gson ==========
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
-    implementation(libs.retrofit.converter.moshi)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging.interceptor)
-    implementation(libs.moshi.kotlin)
 
     // ========== 图片加载 Glide ==========
     implementation("com.github.bumptech.glide:glide:4.16.0")

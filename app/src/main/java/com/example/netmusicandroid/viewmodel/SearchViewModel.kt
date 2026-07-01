@@ -4,17 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.netmusicandroid.data.api.ApiClient
-import com.example.netmusicandroid.data.api.SearchApiService
 import com.example.netmusicandroid.data.model.SearchSongItem
 import com.example.netmusicandroid.data.model.SingerItem
 import com.example.netmusicandroid.data.model.UserPlaylist
+import com.example.netmusicandroid.data.repository.SearchRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
 
-    private val api = ApiClient.createService<SearchApiService>()
+    private val repository = SearchRepository.getInstance()
 
     // ── 分类状态（0=歌曲, 1=歌手, 2=歌单） ────────
 
@@ -95,29 +94,20 @@ class SearchViewModel : ViewModel() {
     }
 
     private suspend fun searchSongs(keyword: String) {
-        val resp = api.searchSongs(keyword)
-        if (resp.code == 200 && resp.data != null) {
-            _songResults.postValue(resp.data.list)
-        } else {
-            _toastMsg.postValue(resp.message ?: "歌曲搜索失败")
-        }
+        repository.searchSongs(keyword)
+            .onSuccess { _songResults.postValue(it.list) }
+            .onFailure { _toastMsg.postValue(it.message ?: "歌曲搜索失败") }
     }
 
     private suspend fun searchSingers(keyword: String) {
-        val resp = api.searchSingers(keyword)
-        if (resp.code == 200 && resp.data != null) {
-            _singerResults.postValue(resp.data.list)
-        } else {
-            _toastMsg.postValue(resp.message ?: "歌手搜索失败")
-        }
+        repository.searchSingers(keyword)
+            .onSuccess { _singerResults.postValue(it.list) }
+            .onFailure { _toastMsg.postValue(it.message ?: "歌手搜索失败") }
     }
 
     private suspend fun searchPlaylists(keyword: String) {
-        val resp = api.searchPlaylists(keyword)
-        if (resp.code == 200 && resp.data != null) {
-            _playlistResults.postValue(resp.data.list)
-        } else {
-            _toastMsg.postValue(resp.message ?: "歌单搜索失败")
-        }
+        repository.searchPlaylists(keyword)
+            .onSuccess { _playlistResults.postValue(it.list) }
+            .onFailure { _toastMsg.postValue(it.message ?: "歌单搜索失败") }
     }
 }

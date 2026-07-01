@@ -23,6 +23,7 @@ import com.example.netmusicandroid.adapter.HomeSongAdapter
 import com.example.netmusicandroid.adapter.SearchSingerAdapter
 import com.example.netmusicandroid.data.repository.SongRepository
 import com.example.netmusicandroid.databinding.LayoutBottomPlayerBinding
+import com.example.netmusicandroid.utils.BottomPlayerBinder
 import com.example.netmusicandroid.utils.ImageLoadUtil
 import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
@@ -44,7 +45,7 @@ class HomeFragment : Fragment() {
     private lateinit var playlistVm: UserPlaylistViewModel
     private lateinit var singerListVm: SingerListViewModel
     // 歌曲数据仓库，请求网络歌曲
-    private val songRepository = SongRepository()
+    private val songRepository = SongRepository.getInstance()
     // 三个RecyclerView适配器
     private lateinit var songAdapter: HomeSongAdapter
     private lateinit var playlistAdapter: HomePlaylistAdapter
@@ -131,38 +132,13 @@ class HomeFragment : Fragment() {
      */
     private fun initBottomPlayer(view: View) {
         val bp = LayoutBottomPlayerBinding.bind(view.findViewById(R.id.include_bottom_player))
-
-        // 全部改用 viewLifecycleOwner，视图销毁自动解绑，避免后台回调崩溃
-        bottomVm.songName.observe(viewLifecycleOwner) { bp.tvSongName.text = it }
-        bottomVm.singerName.observe(viewLifecycleOwner) { bp.tvSinger.text = it }
-        bottomVm.coverUrl.observe(viewLifecycleOwner) { url ->
-            ImageLoadUtil.loadImage(bp.ivSongCover, MusicPlayerManager.resolveUrl(url))
-        }
-        bottomVm.hasCurrentSong.observe(viewLifecycleOwner) { has ->
-            bp.root.visibility = if (has) View.VISIBLE else View.GONE
-        }
-        bottomVm.isPlaying.observe(viewLifecycleOwner) { playing ->
-            bp.ivPlayToggle.setImageResource(
-                if (playing) R.drawable.ic_pause else R.drawable.ic_play_triangle
-            )
-        }
-        // Toast 增加空安全兜底，上下文为空时直接跳过不弹
-        bottomVm.toastMsg.observe(viewLifecycleOwner) { msg ->
-            if (msg.isNotEmpty()) {
-                context?.let { Toast.makeText(it, msg, Toast.LENGTH_SHORT).show() }
-                bottomVm.clearToast()
-            }
-        }
-
-        bp.ivPrev.setOnClickListener { bottomVm.playPrev() }
-        bp.ivPlayToggle.setOnClickListener { bottomVm.togglePlayPause() }
-        bp.ivNext.setOnClickListener { bottomVm.playNext() }
-
-        val goPlayer = View.OnClickListener {
-            (requireActivity() as BaseActivity).navigateToPlayer()
-        }
-        bp.cvCover.setOnClickListener(goPlayer)
-        bp.llSongInfo.setOnClickListener(goPlayer)
+        BottomPlayerBinder.bind(
+            viewLifecycleOwner,
+            requireContext(),
+            bp,
+            bottomVm,
+            onOpenPlayer = { (requireActivity() as BaseActivity).navigateToPlayer() }
+        )
     }
 
     /**

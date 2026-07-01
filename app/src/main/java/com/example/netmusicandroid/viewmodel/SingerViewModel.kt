@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class SingerViewModel : ViewModel() {
 
-    private val repository = SingerRepository()
+    private val repository = SingerRepository.getInstance()
 
     // 歌手详情数据
     private val _singerDetail = MutableLiveData<SingerDetail?>()

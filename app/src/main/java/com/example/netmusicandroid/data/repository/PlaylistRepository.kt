@@ -10,8 +10,19 @@ import com.example.netmusicandroid.data.model.CreatePlaylistResp
 import com.example.netmusicandroid.data.model.UserPlaylist
 import retrofit2.Response
 
-class PlaylistRepository {
+class PlaylistRepository private constructor() {
     private val api = ApiClient.createService<PlaylistApiService>()
+
+    companion object {
+        @Volatile
+        private var INSTANCE: PlaylistRepository? = null
+
+        fun getInstance(): PlaylistRepository {
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: PlaylistRepository().also { INSTANCE = it }
+            }
+        }
+    }
 
     suspend fun getUserInfo(): Response<ApiResponse<UserInfo>> {
         return api.getCurrentUserInfo()

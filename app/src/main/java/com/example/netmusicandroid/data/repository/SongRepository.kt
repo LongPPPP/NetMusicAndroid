@@ -1,39 +1,35 @@
 package com.example.netmusicandroid.data.repository
 
-import android.content.Context
-import android.net.Uri
 import com.example.netmusicandroid.data.api.ApiClient
 import com.example.netmusicandroid.data.api.SongApiService
 import com.example.netmusicandroid.data.api.CommentRequest
 import com.example.netmusicandroid.data.model.CommentItem
 import com.example.netmusicandroid.data.model.CommentListData
+import com.example.netmusicandroid.data.model.FavoriteData
+import com.example.netmusicandroid.data.model.MyCommentListData
 import com.example.netmusicandroid.data.model.SongDetail
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
-import retrofit2.HttpException
 import java.io.File
-import java.io.FileOutputStream
 
-class SongRepository {
+class SongRepository private constructor() {
 
     private val api = ApiClient.createService<SongApiService>()
 
-    private fun parseError(e: Throwable): String {
-        return if (e is HttpException) {
-            try {
-                val errorBody = e.response()?.errorBody()?.string()
-                JSONObject(errorBody ?: "").getString("message")
-            } catch (ex: Exception) {
-                e.message() ?: "请求错误"
+    companion object {
+        @Volatile
+        private var INSTANCE: SongRepository? = null
+
+        fun getInstance(): SongRepository {
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: SongRepository().also { INSTANCE = it }
             }
-        } else {
-            e.message ?: "网络异常"
         }
     }
+
+    private fun parseError(e: Throwable): String = RepositoryErrorParser.parse(e)
 
     /** 上架歌曲 */
     suspend fun publishSong(
@@ -76,18 +72,8 @@ class SongRepository {
         Result.failure(Exception(parseError(e)))
     }
 
-    fun uriToFile(context: Context, uri: Uri, fileName: String): File {
-        val inputStream = context.contentResolver.openInputStream(uri)
-        val file = File(context.cacheDir, fileName)
-        val outputStream = FileOutputStream(file)
-        inputStream?.copyTo(outputStream)
-        inputStream?.close()
-        outputStream.close()
-        return file
-    }
-
-    suspend fun fetchSongs(page: Int = 1): Result<List<SongDetail>> = try {
-        val response = api.getSongs(page)
+    suspend fun fetchSongs(page: Int = 1, pageSize: Int = 20): Result<List<SongDetail>> = try {
+        val response = api.getSongs(page = page, pageSize = pageSize)
         if (response.code != 200) Result.failure(Exception(response.message))
         else Result.success(response.data?.list ?: emptyList())
     } catch (e: Exception) { Result.failure(Exception(parseError(e))) }
@@ -116,8 +102,20 @@ class SongRepository {
         else Result.success(Unit)
     } catch (e: Exception) { Result.failure(Exception(parseError(e))) }
 
-    suspend fun fetchFavorites(): Result<com.example.netmusicandroid.data.model.FavoriteData> = try {
-        val response = api.getFavorites()
+    suspend fun fetchFavorites(page: Int = 1, pageSize: Int = 20): Result<FavoriteData> = try {
+        val response = api.getFavorites(page, pageSize)
+        if (response.code != 200) Result.failure(Exception(response.message))
+        else Result.success(response.data!!)
+    } catch (e: Exception) { Result.failure(Exception(parseError(e))) }
+
+    suspend fun fetchMySongs(page: Int = 1, pageSize: Int = 20): Result<List<SongDetail>> = try {
+        val response = api.getMySongs(page, pageSize)
+        if (response.code != 200) Result.failure(Exception(response.message))
+        else Result.success(response.data?.list ?: emptyList())
+    } catch (e: Exception) { Result.failure(Exception(parseError(e))) }
+
+    suspend fun fetchMyComments(page: Int = 1, pageSize: Int = 20): Result<MyCommentListData> = try {
+        val response = api.getMyComments(page, pageSize)
         if (response.code != 200) Result.failure(Exception(response.message))
         else Result.success(response.data!!)
     } catch (e: Exception) { Result.failure(Exception(parseError(e))) }

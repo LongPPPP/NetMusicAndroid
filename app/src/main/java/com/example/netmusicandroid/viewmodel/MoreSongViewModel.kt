@@ -4,14 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.netmusicandroid.data.api.ApiClient
-import com.example.netmusicandroid.data.api.SongApiService
 import com.example.netmusicandroid.data.model.SongDetail
+import com.example.netmusicandroid.data.repository.SongRepository
 import kotlinx.coroutines.launch
 
 class MoreSongViewModel : ViewModel() {
 
-    private val api = ApiClient.createService<SongApiService>()
+    private val repository = SongRepository.getInstance()
 
     private val _songs = MutableLiveData<List<SongDetail>>(emptyList())
     val songs: LiveData<List<SongDetail>> = _songs
@@ -42,15 +41,14 @@ class MoreSongViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val page = currentPage + 1
-                val resp = api.getSongs(page = page, pageSize = pageSize)
-                if (resp.code == 200 && resp.data != null) {
-                    val newList = resp.data.list
+                val result = repository.fetchSongs(page = page, pageSize = pageSize)
+                result.onSuccess { newList ->
                     val merged = (_songs.value ?: emptyList()) + newList
                     _songs.postValue(merged)
                     currentPage = page
                     _hasMore.postValue(newList.size >= pageSize)
-                } else {
-                    _toastMsg.postValue(resp.message ?: "加载失败")
+                }.onFailure { e ->
+                    _toastMsg.postValue(e.message ?: "加载失败")
                 }
             } catch (e: Exception) {
                 _toastMsg.postValue(e.message ?: "网络异常")

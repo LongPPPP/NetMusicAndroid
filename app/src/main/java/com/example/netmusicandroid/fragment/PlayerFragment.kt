@@ -36,9 +36,9 @@ class PlayerFragment : Fragment() {
     // 全局共享播放器VM，与底部迷你播放栏共用同一实例
     private lateinit var bottomVm: BottomPlayerViewModel
     // 歌曲数据仓库，仅用于补全歌曲详情UI数据
-    private val songRepository = SongRepository()
+    private val songRepository = SongRepository.getInstance()
     // 歌单仓库，用于加载歌单列表和添加歌曲到歌单
-    private val playlistRepository = PlaylistRepository()
+    private val playlistRepository = PlaylistRepository.getInstance()
 
     // 当前播放歌曲ID，避免重复加载详情
     private var currentSongId: Int = -1

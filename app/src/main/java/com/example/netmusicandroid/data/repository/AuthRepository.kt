@@ -51,7 +51,7 @@ class AuthRepository private constructor(
             val userEntity = UserEntity(
                 email = loginData.user.email,
                 username = loginData.user.username,
-                password = password,
+                password = "",
                 lastLoginTime = now,
                 avatar = loginData.user.avatar ?: "",
                 signature = loginData.user.signature ?: "",

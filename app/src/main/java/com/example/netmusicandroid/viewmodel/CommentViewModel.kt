@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class CommentViewModel : ViewModel() {
 
-    private val repository = SongRepository()
+    private val repository = SongRepository.getInstance()
 
     // 评论列表数据
     private val _comments = MutableLiveData<List<CommentItem>>(emptyList())

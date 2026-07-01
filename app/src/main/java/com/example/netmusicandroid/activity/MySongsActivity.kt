@@ -28,7 +28,7 @@ class MySongsActivity : AppCompatActivity() {
     // 歌曲列表适配器
     private lateinit var songAdapter: SongListAdapter
     // 歌曲数据仓库，请求歌曲详情
-    private val songRepo = SongRepository()
+    private val songRepo = SongRepository.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,35 +99,9 @@ class MySongsActivity : AppCompatActivity() {
      * 绑定播放数据、切歌按钮、跳转全屏播放器逻辑
      */
     private fun initBottomPlayer() {
-        val bp = findViewById<View>(R.id.include_bottom_player)
-        val bpBinding = com.example.netmusicandroid.databinding.LayoutBottomPlayerBinding.bind(bp)
-
-        // 监听歌曲、歌手名称更新UI
-        bottomVm.songName.observe(this) { bpBinding.tvSongName.text = it }
-        bottomVm.singerName.observe(this) { bpBinding.tvSinger.text = it }
-        // 加载歌曲封面图
-        bottomVm.coverUrl.observe(this) { url ->
-            ImageLoadUtil.loadImage(bpBinding.ivSongCover, MusicPlayerManager.resolveUrl(url))
-        }
-        // 无播放歌曲时隐藏底部栏
-        bottomVm.hasCurrentSong.observe(this) { has ->
-            bpBinding.root.visibility = if (has) View.VISIBLE else View.GONE
-        }
-        // 切换播放/暂停图标
-        bottomVm.isPlaying.observe(this) { playing ->
-            bpBinding.ivPlayToggle.setImageResource(
-                if (playing) R.drawable.ic_pause else R.drawable.ic_play_triangle
-            )
-        }
-
-        // 切歌按钮事件
-        bpBinding.ivPrev.setOnClickListener { bottomVm.playPrev() }
-        bpBinding.ivPlayToggle.setOnClickListener { bottomVm.togglePlayPause() }
-        bpBinding.ivNext.setOnClickListener { bottomVm.playNext() }
-
-        // 点击封面/歌曲信息跳转全屏播放页
-        val goPlayer = View.OnClickListener { BaseActivity.navigateToPlayerFrom(this) }
-        bpBinding.cvCover.setOnClickListener(goPlayer)
-        bpBinding.llSongInfo.setOnClickListener(goPlayer)
+        val bpBinding = com.example.netmusicandroid.databinding.LayoutBottomPlayerBinding.bind(
+            findViewById(R.id.include_bottom_player)
+        )
+        com.example.netmusicandroid.utils.BottomPlayerBinder.bind(this, this, bpBinding, bottomVm)
     }
 }
