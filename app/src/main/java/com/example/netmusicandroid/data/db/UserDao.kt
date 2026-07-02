@@ -29,4 +29,10 @@ interface UserDao {
     // 新增：流式监听指定邮箱用户的数据变化（UI自动刷新核心）
     @Query("SELECT * FROM local_users WHERE email = :email LIMIT 1")
     fun observeUserByEmail(email: String): Flow<UserEntity?>
+
+    @Query("UPDATE local_users SET favoriteCount = MAX(favoriteCount + :delta, 0) WHERE email = :email")
+    suspend fun updateFavoriteCount(email: String, delta: Int)
+
+    @Query("UPDATE local_users SET commentCount = MAX(commentCount + :delta, 0) WHERE email = :email")
+    suspend fun updateCommentCount(email: String, delta: Int)
 }

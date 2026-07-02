@@ -217,6 +217,7 @@ class BottomPlayerViewModel : ViewModel() {
                 val res = playlistRepo.removeFavorite(favoritePlaylistId, song.song_id)
                 if (res.isSuccess) {
                     _isLiked.postValue(false)
+                    authRepository.updateCurrentUserFavoriteCount(-1)
                     _toastMsg.postValue("已取消收藏")
                 } else {
                     _toastMsg.postValue("取消收藏失败")
@@ -226,6 +227,7 @@ class BottomPlayerViewModel : ViewModel() {
                 val res = playlistRepo.addFavorite(favoritePlaylistId, song.song_id)
                 if (res.isSuccess) {
                     _isLiked.postValue(true)
+                    authRepository.updateCurrentUserFavoriteCount(1)
                     _toastMsg.postValue("收藏成功")
                 } else {
                     _toastMsg.postValue("收藏失败")

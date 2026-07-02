@@ -36,8 +36,9 @@ class SongListAdapter(
             binding.tvSongName.text = item.song_name
             binding.tvArtist.text = item.singer_name
             binding.tvDuration.text = formatDuration(item.duration)
-            binding.ivDelete.visibility = if (showDeleteButton) View.VISIBLE else View.GONE
+            binding.ivDelete.visibility = if (showDeleteButton) View.VISIBLE else View.INVISIBLE
             binding.ivDelete.isEnabled = showDeleteButton
+            binding.ivDelete.isClickable = showDeleteButton
             ImageLoadUtil.loadImage(binding.ivSongCover, MusicPlayerManager.resolveUrl(item.cover_url))
             binding.ivDelete.setOnClickListener {
                 onSongDeleteClick.invoke(item.song_id)

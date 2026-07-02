@@ -16,6 +16,7 @@ class FavoriteViewModel : ViewModel() {
 
     private val songRepo = SongRepository.getInstance()
     private val playlistRepo = PlaylistRepository.getInstance()
+    private val authRepository = com.example.netmusicandroid.data.repository.AuthRepository.getInstance()
 
     // 收藏歌单 ID，加载后缓存，供删除时使用
     private var favoritePlaylistId: Int = -1
@@ -61,6 +62,7 @@ class FavoriteViewModel : ViewModel() {
             val result = playlistRepo.removeFavorite(favoritePlaylistId, songId)
             result.onSuccess {
                 updateState { copy(songs = songs.filter { it.song_id != songId }) }
+                authRepository.updateCurrentUserFavoriteCount(-1)
                 sendToast("已取消收藏")
             }.onFailure { e ->
                 sendToast(e.message ?: "取消收藏失败")

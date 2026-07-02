@@ -39,9 +39,6 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:scaleType="centerCrop"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="@drawable/bg_icon_click_feedback"
                 android:contentDescription="@string/cd_user_avatar"
                 tools:src="@drawable/avatar_sketch"
                 android:background="@drawable/shape_circle"/>
@@ -85,7 +82,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="32dp">
+            android:layout_marginVertical="16dp">
 
             <!-- 收藏模块 -->
             <LinearLayout
@@ -99,21 +96,38 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <!-- 空心爱心图标（未收藏状态，drawable：ic_heart_empty） -->
-                <ImageView
-                    android:id="@+id/ivHeartIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_heart_empty"
-                    android:scaleType="centerInside"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <!-- 空心爱心图标（未收藏状态，drawable：ic_heart_empty） -->
+                    <ImageView
+                        android:id="@+id/ivHeartIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_heart_empty" />
+
+                    <TextView
+                        android:id="@+id/tvFavoriteCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:textColor="#222222"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        tools:text="12" />
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:text="@string/text_collect"
-                    android:textSize="14sp"
                     android:textColor="#777777"
-                    android:layout_marginTop="4dp"/>
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <!-- 分割线 -->
@@ -134,20 +148,37 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <!-- 评论气泡图标 -->
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_comment"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <!-- 评论气泡图标 -->
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_comment" />
+
+                    <TextView
+                        android:id="@+id/tvCommentCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:textColor="#222222"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        tools:text="8" />
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:text="@string/text_my_comment"
-                    android:textSize="14sp"
                     android:textColor="#777777"
-                    android:layout_marginTop="4dp"/>
+                    android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>
 

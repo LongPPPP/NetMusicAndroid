@@ -108,6 +108,8 @@ class MineFragment : Fragment() {
             binding.ivAvatar.setImageResource(R.drawable.avatar_sketch)
             binding.tvUsername.text = "点击头像登录"
             binding.tvSignature.text = ""
+            binding.tvFavoriteCount.text = "0"
+            binding.tvCommentCount.text = "0"
             // 隐藏歌手上传相关入口
             binding.llPublishSong.visibility = View.GONE
             binding.dividerPublishSong.visibility = View.GONE
@@ -129,6 +131,8 @@ class MineFragment : Fragment() {
 
         binding.tvUsername.text = user.username
         binding.tvSignature.text = if (user.signature.isBlank()) "这个人很懒，什么都没写" else user.signature
+        binding.tvFavoriteCount.text = user.favoriteCount.toString()
+        binding.tvCommentCount.text = user.commentCount.toString()
 
         // 判断角色：歌手显示发布/上传歌曲入口，普通用户隐藏
         if (user.role == "ARTIST") {

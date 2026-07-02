@@ -227,5 +227,19 @@ class AuthRepository private constructor(
         }
     }
 
+    suspend fun updateCurrentUserFavoriteCount(delta: Int) {
+        val email = SpManager.getCurrentLoginEmail()
+        if (!email.isNullOrBlank()) {
+            userDao.updateFavoriteCount(email, delta)
+        }
+    }
+
+    suspend fun updateCurrentUserCommentCount(delta: Int) {
+        val email = SpManager.getCurrentLoginEmail()
+        if (!email.isNullOrBlank()) {
+            userDao.updateCommentCount(email, delta)
+        }
+    }
+
     fun isLogin(): Boolean = SpManager.getLoginStatus()
 }

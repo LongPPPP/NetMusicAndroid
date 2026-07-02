@@ -5,12 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.netmusicandroid.data.model.CommentItem
+import com.example.netmusicandroid.data.repository.AuthRepository
 import com.example.netmusicandroid.data.repository.SongRepository
 import kotlinx.coroutines.launch
 
 class CommentViewModel : ViewModel() {
 
     private val repository = SongRepository.getInstance()
+    private val authRepository = AuthRepository.getInstance()
 
     // 评论列表数据
     private val _comments = MutableLiveData<List<CommentItem>>(emptyList())
@@ -76,6 +78,7 @@ class CommentViewModel : ViewModel() {
                 val currentList = _comments.value?.toMutableList() ?: mutableListOf()
                 currentList.add(0, newItem)
                 _comments.value = currentList
+                authRepository.updateCurrentUserCommentCount(1)
                 onResult(true, "发表成功")
             }.onFailure { ex ->
                 onResult(false, ex.message ?: "发表失败")
@@ -94,6 +97,7 @@ class CommentViewModel : ViewModel() {
                 if (index != -1) {
                     currentList.removeAt(index)
                     _comments.value = currentList
+                    authRepository.updateCurrentUserCommentCount(-1)
                 }
                 onResult(true, "删除成功")
             }.onFailure { ex ->
