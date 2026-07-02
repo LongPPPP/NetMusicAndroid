@@ -1,45 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 全局底部播放栏：悬浮阴影 + 圆角 + 封面卡片 + 跑马灯歌名 + 播放控制 -->
+<!-- 全局底部播放栏：悬浮阴影 + 圆角 + 黑胶唱片 + 跑马灯歌名 + 播放控制 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="72dp"
-    android:gravity="center_vertical"
-    android:paddingHorizontal="16dp"
-    android:paddingTop="6dp"
-    android:paddingBottom="6dp"
     android:layout_marginHorizontal="8dp"
     android:background="@drawable/shape_player_bg_elevated"
-    android:elevation="4dp"
     android:clipToOutline="true"
-    android:outlineProvider="background">
+    android:elevation="4dp"
+    android:gravity="center_vertical"
+    android:outlineProvider="background"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp">
 
-    <!-- 唱片式圆形封面（点击跳转全屏播放页） -->
+    <!-- 黑胶唱片封面（点击跳转全屏播放页），外层 disc_ip6 与封面一起旋转 -->
     <FrameLayout
         android:id="@+id/cv_cover"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:padding="4dp"
-        android:background="@drawable/bg_record_outer"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?attr/selectableItemBackgroundBorderless">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_song_cover"
+        <ImageView
+            android:id="@+id/iv_disc"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="@android:color/transparent">
+            android:contentDescription="唱片"
+            android:scaleType="fitCenter"
+            android:src="@drawable/disc_ip6" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_song_cover"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="0dp">
 
             <ImageView
                 android:id="@+id/iv_song_cover"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:contentDescription="歌曲封面"
                 android:scaleType="centerCrop"
-                tools:src="@mipmap/ic_launcher"/>
+                tools:src="@mipmap/ic_launcher" />
         </androidx.cardview.widget.CardView>
     </FrameLayout>
 
@@ -48,8 +56,8 @@
         android:id="@+id/ll_song_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_marginStart="12dp"
+        android:layout_weight="1"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
@@ -59,26 +67,26 @@
             android:id="@+id/tv_song_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@color/color_text_primary"
-            android:maxLines="1"
             android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:singleLine="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            tools:text="Lover"/>
+            android:marqueeRepeatLimit="marquee_forever"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="@color/color_text_primary"
+            android:textSize="16sp"
+            tools:text="Lover" />
 
         <TextView
             android:id="@+id/tv_singer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:textColor="@color/color_text_secondary"
             android:layout_marginTop="2dp"
-            android:maxLines="1"
             android:ellipsize="end"
-            tools:text="Taylor Swift"/>
+            android:maxLines="1"
+            android:textColor="@color/color_text_secondary"
+            android:textSize="13sp"
+            tools:text="Taylor Swift" />
     </LinearLayout>
 
     <!-- 播放控制按钮组：上一曲 / 播放暂停 / 下一曲 -->
@@ -92,28 +100,28 @@
             android:id="@+id/iv_prev"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/ic_prev"
             android:clickable="true"
             android:focusable="true"
-            android:foreground="?attr/selectableItemBackgroundBorderless"/>
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_prev" />
 
         <ImageView
             android:id="@+id/iv_play_toggle"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginHorizontal="12dp"
-            android:src="@drawable/ic_play_triangle"
             android:clickable="true"
             android:focusable="true"
-            android:foreground="?attr/selectableItemBackgroundBorderless"/>
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_play_triangle" />
 
         <ImageView
             android:id="@+id/iv_next"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/ic_next"
             android:clickable="true"
             android:focusable="true"
-            android:foreground="?attr/selectableItemBackgroundBorderless"/>
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_next" />
     </LinearLayout>
 </LinearLayout>

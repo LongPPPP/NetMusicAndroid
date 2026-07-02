@@ -1,12 +1,15 @@
 package com.example.netmusicandroid.fragment
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
@@ -26,6 +29,7 @@ import com.example.netmusicandroid.sp.SpManager
 import com.example.netmusicandroid.utils.MusicPlayerManager
 import com.example.netmusicandroid.viewmodel.BottomPlayerViewModel
 import kotlinx.coroutines.launch
+
 
 /**
  * 全屏播放器Fragment
@@ -86,6 +90,8 @@ class PlayerFragment : Fragment() {
         // 绑定所有控件
         val tvSongName = view.findViewById<TextView>(R.id.tvSongName)
         val tvSinger = view.findViewById<TextView>(R.id.tvSinger)
+        val imgNeedle = view.findViewById<ImageView>(R.id.imgNeedle)
+        val recordContainer = view.findViewById<View>(R.id.recordContainer)
         val imgCover = view.findViewById<ImageView>(R.id.imgCover)
         val btnPlay = view.findViewById<ImageButton>(R.id.btnPlay)
         val btnPrev = view.findViewById<ImageButton>(R.id.btnPrev)
@@ -94,6 +100,11 @@ class PlayerFragment : Fragment() {
         val seekBar = view.findViewById<SeekBar>(R.id.seekBar)
         val tvCurrentTime = view.findViewById<TextView>(R.id.tvCurrentTime)
         val tvTotalTime = view.findViewById<TextView>(R.id.tvTotalTime)
+        val recordRotateAnimator = ObjectAnimator.ofFloat(recordContainer, View.ROTATION, 0f, 360f).apply {
+            duration = 20000L
+            repeatCount = ObjectAnimator.INFINITE
+            interpolator = LinearInterpolator()
+        }
 
         // 页面初始化同步已有进度
         val currentDuration = MusicPlayerManager.getDuration()
@@ -163,6 +174,12 @@ class PlayerFragment : Fragment() {
         bottomVm.isPlaying.observe(viewLifecycleOwner) { isPlaying ->
             if (isPlaying) {
                 btnPlay.setImageResource(R.drawable.pause_button)
+                if (!recordRotateAnimator.isStarted) {
+                    recordRotateAnimator.start()
+                } else {
+                    recordRotateAnimator.resume()
+                }
+                imgNeedle.animate().rotation(0f).setDuration(220L).start()
                 // 修复：只有播放器已准备完成，才启动进度刷新，避免提前启动乱跳
                 if (MusicPlayerManager.getDuration() > 0) {
                     handler.removeCallbacks(updateProgressTask)
@@ -170,6 +187,10 @@ class PlayerFragment : Fragment() {
                 }
             } else {
                 btnPlay.setImageResource(R.drawable.play_button)
+                if (recordRotateAnimator.isStarted) {
+                    recordRotateAnimator.pause()
+                }
+                imgNeedle.animate().rotation(-28f).setDuration(220L).start()
                 handler.removeCallbacks(updateProgressTask)
             }
         }
@@ -271,6 +292,14 @@ class PlayerFragment : Fragment() {
                 intent.putExtra("SINGER_NAME", name)
                 startActivity(intent)
             }
+        }
+
+        imgNeedle.post {
+            imgNeedle.pivotX = 0f
+            imgNeedle.pivotY = 0f
+
+            Log.d("TEST", "${imgNeedle.pivotX},${imgNeedle.pivotY}")
+            imgNeedle.rotation = 30f
         }
     }
 

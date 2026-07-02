@@ -1,183 +1,238 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/color_surface_soft"
+    android:paddingHorizontal="18dp">
 
-    <!-- 播放卡片 -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/playerCard"
-        android:layout_width="0dp"
-        android:layout_height="600dp"
-        android:layout_margin="10dp"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="8dp"
-        app:cardBackgroundColor="@color/color_surface"
-        app:cardUseCompatPadding="true"
-        app:cardPreventCornerOverlap="true"
-        app:layout_constraintTop_toTopOf="parent"
+    <!-- 唱针悬浮在唱片上方，模拟网易云黑胶播放器结构 -->
+
+    <!-- 黑胶唱片区域：外层 disc_ip6 旋转，内层封面随唱片一起转动 -->
+
+    <ImageView
+        android:id="@+id/imgNeedle"
+        android:layout_width="122dp"
+        android:layout_height="168dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="85dp"
+        android:contentDescription="唱针"
+        android:elevation="8dp"
+        android:pivotX="0"
+        android:pivotY="0"
+        android:rotation="-28"
+        android:src="@drawable/needle_ip6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <FrameLayout
+        android:id="@+id/recordContainer"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="122dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/imgDisc"
             android:layout_width="match_parent"
-            android:layout_height="600dp"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:layout_height="match_parent"
+            android:contentDescription="唱片"
+            android:scaleType="fitCenter"
+            android:src="@drawable/disc_ip6" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="168dp"
+            android:layout_height="168dp"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="84dp"
+            app:cardElevation="0dp">
 
             <ImageView
                 android:id="@+id/imgCover"
                 android:layout_width="match_parent"
-                android:layout_height="370dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/disk" />
+                android:layout_height="match_parent"
+                android:contentDescription="歌曲封面"
+                android:scaleType="centerCrop"
+                android:src="@drawable/disk"
+                tools:src="@drawable/disk" />
+        </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
-            <LinearLayout
+    <LinearLayout
+        android:id="@+id/songInfoPanel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recordContainer">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvSongName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="歌曲名"
+                android:textColor="@color/color_text_primary"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                tools:text="晴天" />
 
-                <LinearLayout
-                    android:layout_width="296dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tvSongName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="歌曲名"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/tvSinger"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="歌手"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <ImageButton
-                    android:id="@+id/btnComment"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="11.5dp"
-                    android:contentDescription="评论按钮"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/music_filter_icon_242128" />
-            </LinearLayout>
-
-            <SeekBar
-                android:id="@+id/seekBar"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tvSinger"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:max="1000000"
-                android:progress="0" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="12dp">
-
-                <TextView
-                    android:id="@+id/tvCurrentTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="00:00"
-                    android:textColor="@color/color_text_tertiary"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/tvTotalTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="00:00"
-                    android:textColor="@color/color_text_tertiary"
-                    android:textSize="12sp" />
-            </RelativeLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
-
-                <!-- 新增：左侧 添加歌单按钮 -->
-                <ImageButton
-                    android:id="@+id/btnAddPlaylist"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center_vertical|start"
-                    android:layout_marginStart="12dp"
-                    android:contentDescription="添加到歌单"
-                    android:src="@drawable/ic_add"
-                    android:background="@android:color/transparent"
-                    android:scaleType="centerInside" />
-
-                <!-- 中间播放控制区域 -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <ImageButton
-                        android:id="@+id/btnPrev"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_marginEnd="20dp"
-                        android:contentDescription="上一首"
-                        android:src="@drawable/ic_prev"
-                        android:background="@android:color/transparent"
-                        android:scaleType="centerInside" />
-
-                    <ImageButton
-                        android:id="@+id/btnPlay"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:contentDescription="播放按钮"
-                        android:src="@drawable/play_button"
-                        android:background="@android:color/transparent"
-                        android:scaleType="centerInside" />
-
-                    <ImageButton
-                        android:id="@+id/btnNext"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_marginStart="20dp"
-                        android:contentDescription="下一首"
-                        android:src="@drawable/ic_next"
-                        android:background="@android:color/transparent"
-                        android:scaleType="centerInside" />
-
-                </LinearLayout>
-
-                <!-- 右侧爱心收藏按钮 -->
-                <ImageButton
-                    android:id="@+id/btnLike"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center_vertical|end"
-                    android:layout_marginEnd="12dp"
-                    android:contentDescription="收藏按钮"
-                    android:src="@drawable/ic_heart_empty"
-                    android:background="@android:color/transparent"
-                    android:scaleType="centerInside" />
-
-            </FrameLayout>
-
+                android:layout_marginTop="6dp"
+                android:clickable="true"
+                android:ellipsize="end"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:maxLines="1"
+                android:text="歌手"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="14sp"
+                tools:text="周杰伦" />
         </LinearLayout>
 
-    </com.google.android.material.card.MaterialCardView>
+        <ImageButton
+            android:id="@+id/btnComment"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="12dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="评论按钮"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:padding="11.5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/music_filter_icon_242128" />
+    </LinearLayout>
 
-    <!-- 底部导航栏由 MainActivity 统一提供 -->
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:max="1000000"
+        android:progress="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/songInfoPanel" />
 
+    <RelativeLayout
+        android:id="@+id/timeRow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seekBar">
+
+        <TextView
+            android:id="@+id/tvCurrentTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@color/color_text_tertiary"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvTotalTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="00:00"
+            android:textColor="@color/color_text_tertiary"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/controlPanel"
+        android:layout_width="0dp"
+        android:layout_height="88dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/timeRow">
+
+        <ImageButton
+            android:id="@+id/btnAddPlaylist"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|start"
+            android:background="@android:color/transparent"
+            android:contentDescription="添加到歌单"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_add" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnPrev"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginEnd="22dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="上一首"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_prev" />
+
+            <ImageButton
+                android:id="@+id/btnPlay"
+                android:layout_width="68dp"
+                android:layout_height="68dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="播放按钮"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:scaleType="centerInside"
+                android:src="@drawable/play_button" />
+
+            <ImageButton
+                android:id="@+id/btnNext"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="22dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="下一首"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_next" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnLike"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|end"
+            android:background="@android:color/transparent"
+            android:contentDescription="收藏按钮"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_heart_empty" />
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
