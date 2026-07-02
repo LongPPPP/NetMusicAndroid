@@ -2,7 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import prisma from '../config/database';
 import {AuthErrorMessage} from '../constants/errorString';
-import {ConflictError, NotFoundError, ValidationError} from '../errors/AppError';
+import {NotFoundError, ValidationError} from '../errors/AppError';
+import {prismaError} from '../utils/prisma';
 import {sanitize} from '../utils/sanitize';
 
 /** 返回给前端的用户公开信息字段 */
@@ -83,19 +84,11 @@ export async function updateUser(userId: number, field: string, value: string) {
             });
         }
         case 'email': {
-            // 检查新邮箱是否已被其他用户占用
-            const existing = await prisma.user.findFirst({
-                where: {email: value, id: {not: userId}},
-                select: {id: true},
-            });
-            if (existing) {
-                throw new ConflictError(AuthErrorMessage.EMAIL_EXISTS);
-            }
             return prisma.user.update({
                 where: {id: userId},
                 data: {email: value},
                 select: userSelect,
-            });
+            }).catch(prismaError({P2002: AuthErrorMessage.EMAIL_EXISTS}));
         }
         default:
             throw new ValidationError('不支持修改的字段');

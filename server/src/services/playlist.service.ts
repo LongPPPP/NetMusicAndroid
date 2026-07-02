@@ -1,6 +1,7 @@
 import prisma from '../config/database';
 import {PlaylistErrorMessage} from '../constants/errorString';
-import {ConflictError, ForbiddenError, NotFoundError} from '../errors/AppError';
+import {ForbiddenError, NotFoundError} from '../errors/AppError';
+import {prismaError} from '../utils/prisma';
 import {sanitize} from '../utils/sanitize';
 import type {CreatePlaylistInput, UpdatePlaylistInput} from '../validators/playlist.validator';
 
@@ -80,15 +81,8 @@ export async function getPlaylistDetail(playlistId: number) {
 export async function createPlaylist(userId: number, data: CreatePlaylistInput) {
     const name = sanitize(data.name);
 
-    const existing = await prisma.playlist.findUnique({
-        where: {userId_name: {userId, name}},
-        select: {id: true},
-    });
-    if (existing) {
-        throw new ConflictError(PlaylistErrorMessage.NAME_EXISTS);
-    }
-
-    const playlist = await prisma.playlist.create({data: {userId, name}});
+    const playlist = await prisma.playlist.create({data: {userId, name}})
+        .catch(prismaError({P2002: PlaylistErrorMessage.NAME_EXISTS}));
     return {playlist_id: playlist.id};
 }
 
@@ -119,30 +113,17 @@ export async function addSongToPlaylist(playlistId: number, songId: number, user
         throw new NotFoundError('歌曲不存在');
     }
 
-    const existing = await prisma.playlistSong.findUnique({
-        where: {playlistId_songId: {playlistId, songId}},
-    });
-    if (existing) {
-        throw new ConflictError('歌曲已在歌单中');
-    }
-
-    await prisma.playlistSong.create({data: {playlistId, songId}});
+    await prisma.playlistSong.create({data: {playlistId, songId}})
+        .catch(prismaError({P2002: '歌曲已在歌单中'}));
 }
 
 // 歌单移除歌曲
 export async function removeSongFromPlaylist(playlistId: number, songId: number, userId: number) {
     await assertPlaylistOwner(playlistId, userId);
 
-    const link = await prisma.playlistSong.findUnique({
-        where: {playlistId_songId: {playlistId, songId}},
-    });
-    if (!link) {
-        throw new NotFoundError('歌曲不在该歌单中');
-    }
-
     await prisma.playlistSong.delete({
         where: {playlistId_songId: {playlistId, songId}},
-    });
+    }).catch(prismaError({P2025: '歌曲不在该歌单中'}));
 }
 
 // 重命名歌单
@@ -153,15 +134,6 @@ export async function renamePlaylist(playlistId: number, userId: number, data: U
     }
 
     const name = sanitize(data.name);
-
-    // 检查同一用户下是否有重名歌单
-    const existing = await prisma.playlist.findUnique({
-        where: {userId_name: {userId, name}},
-        select: {id: true},
-    });
-    if (existing && existing.id !== playlistId) {
-        throw new ConflictError(PlaylistErrorMessage.NAME_EXISTS);
-    }
 
     const playlist = await prisma.playlist.update({
         where: {id: playlistId},
@@ -177,7 +149,10 @@ export async function renamePlaylist(playlistId: number, userId: number, data: U
                 take: 5,
             },
         },
-    });
+    }).catch(prismaError({
+        P2002: PlaylistErrorMessage.NAME_EXISTS,
+        P2025: PlaylistErrorMessage.NOT_FOUND,
+    }));
 
     return {
         playlist_id: playlist.id,
@@ -195,5 +170,6 @@ export async function deletePlaylist(playlistId: number, userId: number) {
         throw new ForbiddenError(PlaylistErrorMessage.FAVORITE_PROTECTED);
     }
 
-    await prisma.playlist.delete({where: {id: playlistId}});
+    await prisma.playlist.delete({where: {id: playlistId}})
+        .catch(prismaError({P2025: PlaylistErrorMessage.NOT_FOUND}));
 }

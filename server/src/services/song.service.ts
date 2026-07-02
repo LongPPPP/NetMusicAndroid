@@ -2,7 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import prisma from '../config/database';
 import {CommentErrorMessage, SongErrorMessage} from '../constants/errorString';
-import {ConflictError, ForbiddenError, NotFoundError, ValidationError} from '../errors/AppError';
+import {ForbiddenError, NotFoundError} from '../errors/AppError';
+import {prismaError, isPrismaCode} from '../utils/prisma';
 import {sanitize} from '../utils/sanitize';
 import type {CreateCommentInput, CreateSongInput, GetCommentsInput, GetSongsInput} from '../validators/song.validator';
 
@@ -122,14 +123,6 @@ export async function getSongComments(songId: number, params: GetCommentsInput) 
 
 // 发表评论
 export async function createComment(songId: number, userId: number, data: CreateCommentInput) {
-    const song = await prisma.song.findUnique({
-        where: {id: songId},
-        select: {id: true},
-    });
-    if (!song) {
-        throw new NotFoundError(CommentErrorMessage.SONG_NOT_FOUND);
-    }
-
     const content = sanitize(data.content);
 
     const user = await prisma.user.findUnique({
@@ -151,7 +144,7 @@ export async function createComment(songId: number, userId: number, data: Create
             content: true,
             createdAt: true,
         },
-    });
+    }).catch(prismaError({P2003: CommentErrorMessage.SONG_NOT_FOUND}));
 
     return {
         comment_id: comment.id,
@@ -164,18 +157,23 @@ export async function createComment(songId: number, userId: number, data: Create
 
 // 删除评论
 export async function deleteComment(songId: number, commentId: number, userId: number) {
-    const comment = await prisma.comment.findUnique({
-        where: {id: commentId},
-        select: {songId: true, userId: true},
+    const {count} = await prisma.comment.deleteMany({
+        where: {id: commentId, songId, userId},
     });
-    if (!comment || comment.songId !== songId) {
-        throw new NotFoundError(CommentErrorMessage.NOT_FOUND);
+    if (count === 0) {
+        // 事后诊断：区分"不存在"和"无权限"
+        const comment = await prisma.comment.findUnique({
+            where: {id: commentId},
+            select: {id: true, songId: true, userId: true},
+        });
+        if (!comment || comment.songId !== songId) {
+            throw new NotFoundError(CommentErrorMessage.NOT_FOUND);
+        }
+        if (comment.userId !== userId) {
+            throw new ForbiddenError(CommentErrorMessage.NOT_AUTHOR);
+        }
+        // 并发请求已删除 → 最终状态正确，静默返回
     }
-    if (comment.userId !== userId) {
-        throw new ForbiddenError(CommentErrorMessage.NOT_AUTHOR);
-    }
-
-    await prisma.comment.delete({where: {id: commentId}});
 }
 
 // 获取当前用户的所有评论（按时间倒序）
@@ -242,8 +240,9 @@ export async function deleteSong(songId: number, singerId: number) {
         throw new ForbiddenError(SongErrorMessage.NOT_OWNER);
     }
 
-    // 删 DB 记录（级联删评论和歌单关联）
-    await prisma.song.delete({where: {id: songId}});
+    // 删 DB 记录（级联删评论和歌单关联），防并发
+    await prisma.song.delete({where: {id: songId}})
+        .catch(prismaError({P2025: SongErrorMessage.NOT_FOUND}));
 
     // 清理本地文件（不阻塞，失败忽略）
     if (song.playUrl?.startsWith('/static/')) {
@@ -264,36 +263,41 @@ export async function toggleFavorite(userId: number, songId: number) {
         throw new NotFoundError(SongErrorMessage.NOT_FOUND);
     }
 
-    // 找用户的收藏歌单
-    const favPlaylist = await prisma.playlist.findFirst({
+    // 确保收藏歌单存在（并发安全：P2002 → 重取）
+    let favPlaylist = await prisma.playlist.findFirst({
         where: {userId, isFavorite: true},
         select: {id: true},
     });
     if (!favPlaylist) {
-        // 极端情况：收藏歌单被手动删除则重建
-        const newFav = await prisma.playlist.create({
+        const created = await prisma.playlist.create({
             data: {userId, name: '我的收藏', isFavorite: true},
-        });
-        await prisma.playlistSong.create({
-            data: {playlistId: newFav.id, songId},
-        });
-        return {favorited: true};
+            select: {id: true},
+        }).catch(prismaError({P2002: undefined}));
+        if (created) {
+            favPlaylist = created;
+        } else {
+            // 并发请求已创建，重新查询
+            favPlaylist = await prisma.playlist.findFirst({
+                where: {userId, isFavorite: true},
+                select: {id: true},
+            });
+        }
     }
 
-    const existing = await prisma.playlistSong.findUnique({
-        where: {playlistId_songId: {playlistId: favPlaylist.id, songId}},
-    });
-
-    if (existing) {
-        await prisma.playlistSong.delete({
-            where: {playlistId_songId: {playlistId: favPlaylist.id, songId}},
-        });
-        return {favorited: false};
-    } else {
+    // 原子 toggle：先尝试创建，若已存在则删除
+    try {
         await prisma.playlistSong.create({
-            data: {playlistId: favPlaylist.id, songId},
+            data: {playlistId: favPlaylist!.id, songId},
         });
         return {favorited: true};
+    } catch (err) {
+        if (isPrismaCode(err, 'P2002')) {
+            await prisma.playlistSong.delete({
+                where: {playlistId_songId: {playlistId: favPlaylist!.id, songId}},
+            }).catch(prismaError({P2025: undefined})); // 并发 toggle 已删除 → 忽略
+            return {favorited: false};
+        }
+        throw err;
     }
 }
 
