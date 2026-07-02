@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="@color/color_surface">
 
     <!-- 统一标题栏 -->
     <LinearLayout
@@ -31,7 +31,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/title_singer_detail"
-            android:textColor="#222222"
+            android:textColor="@color/color_text_primary"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="歌手名称"
-        android:textColor="#333333"
+        android:textColor="@color/color_text_primary"
         android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -74,7 +74,7 @@
         android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="歌手简介加载中..."
-        android:textColor="#999999"
+        android:textColor="@color/color_text_tertiary"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

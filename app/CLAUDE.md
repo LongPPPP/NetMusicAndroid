@@ -51,7 +51,7 @@ Activity/Fragment → ViewModel → Repository → ApiService (Retrofit)
 
 - **LoginActivity** is the launcher activity (`MAIN` intent filter in AndroidManifest).
 - **BaseActivity** hosts a `BottomNavigationView` with 3 tabs: Home (`HomeFragment`), Player (`PlayerFragment`), Mine (`MineFragment`).
-- Other activities (Playlist, Singer, Comment, Setting, PlaylistDetail, Register, Search, Favorites, etc.) are stand-alone, started via `startActivity`.
+- Other activities (Playlist, Singer list/detail, Comment, Setting, Playlist detail, Register, Search, Favorites, RecentPlay, CurrentPlaylist, MySongs, etc.) are stand-alone, started via `startActivity`.
 - **`BaseActivity.navigateToPlayerFrom(ctx)`** (static): external activities use this to return to BaseActivity and open the full-screen player tab. Uses `FLAG_ACTIVITY_CLEAR_TOP | FLAG_ACTIVITY_SINGLE_TOP`.
 - **`BaseActivity.globalGoLogin()`** (static): logs out and navigates to LoginActivity with `FLAG_ACTIVITY_CLEAR_TASK | FLAG_ACTIVITY_NEW_TASK`.
 - **`BaseActivity.isAppForeground()`**: guards UI operations (like navigating to login) from running while the app is in the background.
@@ -99,7 +99,7 @@ Play queue is managed by `PlayQueueRepository` (global singleton, Room-backed). 
 
 ### API Base URL
 
-Defined in `ApiConst.kt`: `http://10.0.2.2:3000/api/v1/` (Android emulator's alias for host `localhost:3000`). The backend runs on port 3000. Static assets (song files, covers, avatars) are served from the same host. `ApiConst.STATIC_BASE` holds an alternative LAN IP for physical device testing.
+Defined in `ApiConst.kt`: `http://10.0.2.2:3000/api/v1/` (Android emulator's alias for host `localhost:3000`). The backend runs on port 3000. Static assets (song files, covers, avatars) are served from the same host; `MusicPlayerManager.resolveUrl(path)` derives the static host by stripping `/api/v1/` from `ApiConst.BASE_URL`. For physical-device testing, replace `BASE_URL` with the computer's LAN IP.
 
 ### SpManager vs SpUtil
 
@@ -137,3 +137,4 @@ File uploads use **multer**; avatars land in `../server/static/avatars/`. API va
 - Room `UserEntity` uses email as `@PrimaryKey`; `OnConflictStrategy.REPLACE` on insert means re-login overwrites previous token data for the same email.
 - The OkHttp token refresh uses a global `Mutex` to prevent concurrent refresh calls.
 - Glide loads for user avatars should use `DiskCacheStrategy.NONE` — the avatar file may change on the server even if the URL path stays the same.
+- Mine page favorite/comment counts are rendered from the observed Room `UserEntity` (`favoriteCount` / `commentCount`). After successful favorite/comment add/remove operations, update those local counters via `AuthRepository.updateCurrentUserFavoriteCount(delta)` / `updateCurrentUserCommentCount(delta)` instead of making an extra profile request.

@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="添加到歌单"
-            android:textColor="#000000"
+            android:textColor="@color/color_text_primary"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -49,7 +49,7 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:text="@string/text_btn_cancel"
-            android:textColor="#111111"
+            android:textColor="@color/color_text_primary"
             android:textSize="16sp"
             android:background="@drawable/shape_btn_cancel" />
 
@@ -63,7 +63,7 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:text="@string/text_btn_confirm"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/color_text_inverse"
             android:textSize="16sp"
             android:background="@drawable/shape_btn_confirm" />
     </LinearLayout>

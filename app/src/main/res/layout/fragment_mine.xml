@@ -61,7 +61,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="26sp"
-                        android:textColor="#111111"
+                        android:textColor="@color/color_text_primary"
                         tools:text="@string/toast_demo_username"/>
 
                 </LinearLayout>
@@ -71,7 +71,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
-                    android:textColor="#000000"
+                    android:textColor="@color/color_text_primary"
                     android:layout_marginTop="4dp"
                     tools:text="@string/toast_demo_signature"/>
 
@@ -115,7 +115,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
-                        android:textColor="#222222"
+                        android:textColor="@color/color_text_primary"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         tools:text="12" />
@@ -126,7 +126,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="@string/text_collect"
-                    android:textColor="#777777"
+                    android:textColor="@color/color_text_secondary"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -134,7 +134,7 @@
             <View
                 android:layout_width="1dp"
                 android:layout_height="40dp"
-                android:background="#EEEEEE"/>
+                android:background="@color/color_divider"/>
 
             <!-- 我的评论模块 -->
             <LinearLayout
@@ -166,7 +166,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
-                        android:textColor="#222222"
+                        android:textColor="@color/color_text_primary"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         tools:text="8" />
@@ -177,7 +177,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="@string/text_my_comment"
-                    android:textColor="#777777"
+                    android:textColor="@color/color_text_secondary"
                     android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>
@@ -213,7 +213,7 @@
                     android:layout_weight="1"
                     android:text="当前播放"
                     android:textSize="16sp"
-                    android:textColor="#222222"
+                    android:textColor="@color/color_text_primary"
                     android:layout_marginStart="14dp"/>
 
                 <ImageView
@@ -226,7 +226,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#EEEEEE"
+                android:background="@color/color_divider"
                 android:layout_marginHorizontal="16dp"/>
 
             <!-- 1. 最近播放 -->
@@ -252,7 +252,7 @@
                     android:layout_weight="1"
                     android:text="@string/text_recent_play"
                     android:textSize="16sp"
-                    android:textColor="#222222"
+                    android:textColor="@color/color_text_primary"
                     android:layout_marginStart="14dp"/>
 
                 <ImageView
@@ -265,7 +265,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#EEEEEE"
+                android:background="@color/color_divider"
                 android:layout_marginHorizontal="16dp"/>
 
             <!-- 2. 我的歌单 -->
@@ -291,7 +291,7 @@
                     android:layout_weight="1"
                     android:text="@string/text_my_playlist"
                     android:textSize="16sp"
-                    android:textColor="#222222"
+                    android:textColor="@color/color_text_primary"
                     android:layout_marginStart="14dp"/>
 
                 <ImageView
@@ -304,7 +304,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#EEEEEE"
+                android:background="@color/color_divider"
                 android:layout_marginHorizontal="16dp"/>
 
             <LinearLayout
@@ -330,7 +330,7 @@
                     android:layout_weight="1"
                     android:text="我发表的歌曲"
                     android:textSize="16sp"
-                    android:textColor="#222222"
+                    android:textColor="@color/color_text_primary"
                     android:layout_marginStart="14dp"/>
 
                 <ImageView
@@ -345,7 +345,7 @@
                 android:id="@+id/dividerPublishSong"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#EEEEEE"
+                android:background="@color/color_divider"
                 android:layout_marginHorizontal="16dp"
                 android:visibility="gone"/>
 
@@ -374,7 +374,7 @@
                     android:layout_weight="1"
                     android:text="上架歌曲"
                     android:textSize="16sp"
-                    android:textColor="#222222"
+                    android:textColor="@color/color_text_primary"
                     android:layout_marginStart="14dp"/>
 
                 <ImageView
@@ -387,7 +387,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#EEEEEE"
+                android:background="@color/color_divider"
                 android:layout_marginHorizontal="16dp"/>
 
             <!-- 4. 设置 -->
@@ -413,7 +413,7 @@
                     android:layout_weight="1"
                     android:text="@string/text_setting"
                     android:textSize="16sp"
-                    android:textColor="#222222"
+                    android:textColor="@color/color_text_primary"
                     android:layout_marginStart="14dp"/>
 
                 <ImageView
@@ -426,7 +426,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#EEEEEE"
+                android:background="@color/color_divider"
                 android:layout_marginHorizontal="16dp"/>
 
             <!-- 4. 帮助与反馈 -->
@@ -452,7 +452,7 @@
                     android:layout_weight="1"
                     android:text="@string/text_feedback"
                     android:textSize="16sp"
-                    android:textColor="#222222"
+                    android:textColor="@color/color_text_primary"
                     android:layout_marginStart="14dp"/>
 
                 <ImageView

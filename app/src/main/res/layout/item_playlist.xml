@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textColor="#222222"
+        android:textColor="@color/color_text_primary"
         android:textSize="14sp"
         android:textStyle="bold"
         android:maxLines="1"
@@ -54,7 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:textColor="#999999"
+        android:textColor="@color/color_text_tertiary"
         android:textSize="12sp"
         android:maxLines="1"
         tools:text="32首" />

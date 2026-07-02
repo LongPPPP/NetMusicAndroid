@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F6F6"
+    android:background="@color/color_surface_subtle"
     android:paddingHorizontal="20dp"
     tools:context=".activity.SearchActivity">
 
@@ -33,7 +33,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/title_search"
-            android:textColor="#111111"
+            android:textColor="@color/color_text_primary"
             android:textSize="21sp" />
 
         <View
@@ -61,8 +61,8 @@
             android:layout_weight="1"
             android:background="@null"
             android:hint="搜索"
-            app:hintTextColor="#909090"
-            android:textColor="#212121"
+            app:hintTextColor="@color/color_text_tertiary"
+            android:textColor="@color/color_text_primary"
             android:textSize="18sp" />
 
         <ImageView
@@ -70,7 +70,7 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:src="@android:drawable/ic_menu_search"
-            app:tint="#333333" />
+            app:tint="@color/color_text_primary" />
     </LinearLayout>
 
     <!-- 分类按钮行：移除android:gap，中间按钮加左边距替代间距 -->
@@ -90,7 +90,7 @@
             android:background="@drawable/bg_round_white"
             android:gravity="center"
             android:text="歌曲"
-            android:textColor="#212121"
+            android:textColor="@color/color_text_primary"
             android:textSize="18sp" />
 
         <TextView
@@ -102,7 +102,7 @@
             android:background="@drawable/bg_round_white"
             android:gravity="center"
             android:text="歌手"
-            android:textColor="#212121"
+            android:textColor="@color/color_text_primary"
             android:textSize="18sp" />
 
         <TextView
@@ -114,7 +114,7 @@
             android:background="@drawable/bg_round_white"
             android:gravity="center"
             android:text="歌单"
-            android:textColor="#212121"
+            android:textColor="@color/color_text_primary"
             android:textSize="18sp" />
     </LinearLayout>
 

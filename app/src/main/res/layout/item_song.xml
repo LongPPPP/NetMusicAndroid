@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="歌曲名称"
-            android:textColor="#333333"
+            android:textColor="@color/color_text_primary"
             android:textSize="16sp"
             android:textStyle="bold"
             android:maxLines="1"
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="歌手名称"
-            android:textColor="#999999"
+            android:textColor="@color/color_text_tertiary"
             android:textSize="13sp"
             android:maxLines="1"
             android:ellipsize="end" />
@@ -60,6 +60,6 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:src="@drawable/music_filter_icon_242128"
-        android:tint="#CCCCCC" />
+        android:tint="@color/neutral_400" />
 
 </LinearLayout>

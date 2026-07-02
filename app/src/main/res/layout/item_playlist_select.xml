@@ -22,7 +22,7 @@
             android:id="@+id/tvPlaylistName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#111111"
+            android:textColor="@color/color_text_primary"
             android:textSize="15sp"
             tools:text="我的收藏歌单" />
 
@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:textColor="#999999"
+            android:textColor="@color/color_text_tertiary"
             android:textSize="12sp"
             tools:text="12首" />
     </LinearLayout>
@@ -41,6 +41,6 @@
         android:id="@+id/vSelectedBar"
         android:layout_width="4dp"
         android:layout_height="32dp"
-        android:background="#4A90D9"
+        android:background="@color/brand_info"
         android:visibility="invisible" />
 </LinearLayout>

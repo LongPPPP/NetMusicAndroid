@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="首页"
-            android:textColor="#111111"
+            android:textColor="@color/color_text_primary"
             android:textSize="21sp" />
 
         <ImageButton
@@ -73,7 +73,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:text="搜索歌曲、歌手、歌单"
-                    android:textColor="#909090"
+                    android:textColor="@color/color_text_tertiary"
                     android:textSize="15sp" />
             </LinearLayout>
             <!-- ========== 原有搜索框代码结束 ========== -->
@@ -92,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="我的歌单"
-                    android:textColor="#222222"
+                    android:textColor="@color/color_text_primary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -101,7 +101,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="更多"
-                    android:textColor="#999999"
+                    android:textColor="@color/color_text_tertiary"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -131,7 +131,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="热门歌曲"
-                    android:textColor="#222222"
+                    android:textColor="@color/color_text_primary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -140,7 +140,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="更多"
-                    android:textColor="#999999"
+                    android:textColor="@color/color_text_tertiary"
                     android:textSize="14sp" />
 
             </LinearLayout>
@@ -169,7 +169,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="推荐歌手"
-                    android:textColor="#222222"
+                    android:textColor="@color/color_text_primary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -178,7 +178,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="更多"
-                    android:textColor="#999999"
+                    android:textColor="@color/color_text_tertiary"
                     android:textSize="14sp" />
             </LinearLayout>
 

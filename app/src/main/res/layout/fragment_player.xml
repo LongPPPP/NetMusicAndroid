@@ -12,7 +12,7 @@
         android:layout_margin="10dp"
         app:cardCornerRadius="20dp"
         app:cardElevation="8dp"
-        app:cardBackgroundColor="#FFFFFF"
+        app:cardBackgroundColor="@color/color_surface"
         app:cardUseCompatPadding="true"
         app:cardPreventCornerOverlap="true"
         app:layout_constraintTop_toTopOf="parent"
@@ -91,7 +91,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="00:00"
-                    android:textColor="#999999"
+                    android:textColor="@color/color_text_tertiary"
                     android:textSize="12sp" />
 
                 <TextView
@@ -100,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:text="00:00"
-                    android:textColor="#999999"
+                    android:textColor="@color/color_text_tertiary"
                     android:textSize="12sp" />
             </RelativeLayout>
 

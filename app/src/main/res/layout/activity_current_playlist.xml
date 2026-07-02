@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/color_surface"
     tools:context=".activity.CurrentPlaylistActivity">
 
     <!-- 滚动容器 + 底部播放器 -->
@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:text="当前播放"
-                    android:textColor="#111111"
+                    android:textColor="@color/color_text_primary"
                     android:textSize="21sp"/>
 
             </RelativeLayout>
@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/text_playlist_total_count"
-                android:textColor="#777777"
+                android:textColor="@color/color_text_secondary"
                 android:textSize="14sp"
                 android:layout_marginTop="8dp"/>
 

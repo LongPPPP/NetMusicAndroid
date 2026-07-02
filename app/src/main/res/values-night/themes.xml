@@ -1,8 +1,8 @@
 <resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.NetMusicAndroid" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">#E0E0E0</item>
-        <item name="colorPrimaryDark">#000000</item>
-        <item name="colorAccent">#757575</item>
+        <item name="colorPrimary">@color/color_ripple_selected</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="colorAccent">@color/color_text_secondary</item>
     </style>
 </resources>

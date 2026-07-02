@@ -16,11 +16,11 @@
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="@color/color_surface"
         android:paddingBottom="2dp"
-        app:itemIconTint="#212121"
-        app:itemRippleColor="#E0E0E0"
-        app:itemTextColor="#212121"
+        app:itemIconTint="@color/color_primary"
+        app:itemRippleColor="@color/color_ripple_selected"
+        app:itemTextColor="@color/color_primary"
         app:menu="@menu/bottom_menu" />
 
 </LinearLayout>

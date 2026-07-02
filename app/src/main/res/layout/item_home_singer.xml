@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="歌手名"
-        android:textColor="#333333"
+        android:textColor="@color/color_text_primary"
         android:textSize="14sp"
         android:maxLines="1"
         android:ellipsize="end" />

@@ -43,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:text="@string/text_my_playlist_title"
-                    android:textColor="#111111"
+                    android:textColor="@color/color_text_primary"
                     android:textSize="21sp"/>
 
                 <!-- 右上角新建歌单按钮 -->
@@ -71,7 +71,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/text_create_playlist"
-                        android:textColor="#666666"
+                        android:textColor="@color/color_text_secondary"
                         android:textSize="11sp"
                         android:layout_marginTop="2dp"/>
                 </LinearLayout>
@@ -83,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/text_playlist_total_count"
-                android:textColor="#777777"
+                android:textColor="@color/color_text_secondary"
                 android:textSize="14sp"
                 android:layout_marginTop="8dp"/>
 

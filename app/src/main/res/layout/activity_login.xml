@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FF"
+    android:background="@color/color_surface_soft"
     android:importantForAutofill="noExcludeDescendants">
 
     <LinearLayout
@@ -31,14 +31,14 @@
             android:text="NetMusic"
             android:textSize="32sp"
             android:textStyle="bold"
-            android:textColor="#333333"
+            android:textColor="@color/color_text_primary"
             android:layout_marginTop="16dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="发现好音乐，遇见好心情"
-            android:textColor="#999999"
+            android:textColor="@color/color_text_tertiary"
             android:textSize="14sp"
             android:layout_marginTop="8dp"/>
 
@@ -90,7 +90,7 @@
             android:layout_height="56dp"
             android:layout_marginTop="28dp"
             android:text="登录"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/color_text_inverse"
             android:textSize="18sp"
             android:background="@drawable/bg_login_button"/>
 
@@ -99,7 +99,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="还没有账号？去注册"
-            android:textColor="#6D7CFF"
+            android:textColor="@color/color_text_link"
             android:textSize="14sp"
             android:layout_marginTop="24dp"/>
 

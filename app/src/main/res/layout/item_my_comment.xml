@@ -15,7 +15,7 @@
         android:id="@+id/tvSongName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#111111"
+        android:textColor="@color/color_text_primary"
         android:textSize="16sp"
         android:textStyle="bold" />
 
@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:textColor="#444444"
+        android:textColor="@color/color_text_secondary"
         android:textSize="15sp"
         android:maxLines="3"
         android:ellipsize="end" />
@@ -34,6 +34,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textColor="#999999"
+        android:textColor="@color/color_text_tertiary"
         android:textSize="12sp" />
 </LinearLayout>

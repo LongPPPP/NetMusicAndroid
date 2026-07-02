@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/color_surface"
     tools:context=".activity.PlaylistDetailActivity">
 
     <!-- 顶部导航栏 统一规范标题栏 -->
@@ -36,7 +36,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/title_playlist_detail"
-            android:textColor="#111111"
+            android:textColor="@color/color_text_primary"
             android:textSize="21sp" />
 
         <View
@@ -96,7 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Alpha Factor Study"
-                android:textColor="#111111"
+                android:textColor="@color/color_text_primary"
                 android:textSize="26sp"
                 android:textStyle="bold" />
 
@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="128 首"
-                android:textColor="#666666"
+                android:textColor="@color/color_text_secondary"
                 android:textSize="16sp" />
         </LinearLayout>
     </LinearLayout>
@@ -137,7 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:text="播放全部(128)"
-                android:textColor="#111111"
+                android:textColor="@color/color_text_primary"
                 android:textSize="18sp" />
         </LinearLayout>
 

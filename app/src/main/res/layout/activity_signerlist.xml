@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/color_surface"
     android:paddingHorizontal="16dp"
     android:paddingTop="12dp"
     tools:context=".activity.SingerListActivity">
@@ -36,7 +36,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/title_singer_list"
-            android:textColor="#222222"
+            android:textColor="@color/color_text_primary"
             android:textSize="21sp"
             android:textStyle="bold" />
 
@@ -51,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_below="@id/ll_title_bar"
-        android:background="#F5F5F5"
+        android:background="@color/color_surface_subtle"
         android:radius="24dp">
 
         <TextView
@@ -61,7 +61,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
             android:text="搜索"
-            android:textColor="#999999"
+            android:textColor="@color/color_text_tertiary"
             android:textSize="16sp" />
 
         <ImageView

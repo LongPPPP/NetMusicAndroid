@@ -20,7 +20,7 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="16dp"
         android:layout_toEndOf="@id/iv_avatar"
-        android:textColor="#222222"
+        android:textColor="@color/color_text_primary"
         android:textSize="20sp" />
 
     <!-- 右侧箭头 -->

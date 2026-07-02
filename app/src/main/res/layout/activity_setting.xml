@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/color_surface"
     android:paddingHorizontal="16dp"
     tools:context=".activity.SettingActivity">
 
@@ -37,7 +37,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:text="@string/text_setting_title"
-                    android:textColor="#111111"
+                    android:textColor="@color/color_text_primary"
                     android:textSize="21sp"/>
             </RelativeLayout>
 
@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/text_group_account"
-                android:textColor="#888888"
+                android:textColor="@color/color_text_tertiary"
                 android:textSize="14sp"/>
 
             <!-- 修改个人信息 条目 -->
@@ -71,7 +71,7 @@
                     android:layout_weight="1"
                     android:layout_marginStart="16dp"
                     android:text="@string/text_modify_user_info"
-                    android:textColor="#111111"
+                    android:textColor="@color/color_text_primary"
                     android:textSize="18sp"/>
 
                 <ImageView
@@ -85,7 +85,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:background="#EEEEEE"/>
+                android:background="@color/color_divider"/>
 
             <!-- 退出登录 条目 -->
             <LinearLayout
@@ -108,7 +108,7 @@
                     android:layout_weight="1"
                     android:layout_marginStart="16dp"
                     android:text="@string/text_logout"
-                    android:textColor="#111111"
+                    android:textColor="@color/color_text_primary"
                     android:textSize="18sp"/>
 
                 <ImageView
@@ -122,7 +122,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:background="#EEEEEE"/>
+                android:background="@color/color_divider"/>
 
             <!-- 分组标题：通用 -->
             <TextView
@@ -131,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="@string/text_group_common"
-                android:textColor="#888888"
+                android:textColor="@color/color_text_tertiary"
                 android:textSize="14sp"/>
 
             <!-- 修改主题 条目 -->
@@ -155,7 +155,7 @@
                     android:layout_weight="1"
                     android:layout_marginStart="16dp"
                     android:text="@string/text_modify_theme"
-                    android:textColor="#111111"
+                    android:textColor="@color/color_text_primary"
                     android:textSize="18sp"/>
 
                 <ImageView
@@ -169,7 +169,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:background="#EEEEEE"/>
+                android:background="@color/color_divider"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

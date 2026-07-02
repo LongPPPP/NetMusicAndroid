@@ -4,11 +4,11 @@
     <style name="Theme.NetMusicAndroid" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <!-- 主题色：深灰替代默认紫色 -->
-        <item name="colorPrimary">#212121</item>
-        <item name="colorPrimaryDark">#000000</item>
-        <item name="colorAccent">#424242</item>
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="colorAccent">@color/color_accent</item>
         <!-- 全局背景白色 -->
-        <item name="android:windowBackground">#FFFFFF</item>
+        <item name="android:windowBackground">@color/color_surface</item>
     </style>
 
     <!-- 队友提供的Material3基础主题（备用，如需M3组件可切换主主题parent到此） -->
